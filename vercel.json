@@ -1,0 +1,3 @@
+{
+  "buildCommand": "echo \"No pre-deploy script configured\" && next build"
+}

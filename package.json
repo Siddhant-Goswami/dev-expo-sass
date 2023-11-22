@@ -9,12 +9,15 @@
     "db:studio": "dotenv drizzle-kit studio",
     "dev": "next dev",
     "lint": "next lint",
+    "lint:prettier": "prettier . --write --config=prettier.config.js",
+    "lint:typescript": "tsc --noEmit",
     "start": "next start"
   },
   "dependencies": {
     "@clerk/nextjs": "^4.27.1",
     "@neondatabase/serverless": "^0.6.0",
     "@planetscale/database": "^1.11.0",
+    "@radix-ui/react-slot": "^1.0.2",
     "@t3-oss/env-nextjs": "^0.7.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
