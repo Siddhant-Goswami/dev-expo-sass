@@ -1,14 +1,13 @@
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
-import { sql } from "drizzle-orm";
 import {
-  bigint,
+  bigserial,
   index,
-  mysqlTableCreator,
+  pgTableCreator,
   timestamp,
   varchar,
-} from "drizzle-orm/mysql-core";
+} from "drizzle-orm/pg-core";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -16,19 +15,20 @@ import {
  *
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
-export const mysqlTable = mysqlTableCreator((name) => `ai-showcase-sass_${name}`);
+export const pgTable = pgTableCreator((name) => `ai-showcase-sass_${name}`);
 
-export const posts = mysqlTable(
-  "post",
+export const users = pgTable(
+  "user",
   {
-    id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
+    id: bigserial("id", { mode: "number" }).primaryKey(),
     name: varchar("name", { length: 256 }),
-    createdAt: timestamp("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
+    createdAt: timestamp("createdAt")
+      .defaultNow()
+      // .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
-    updatedAt: timestamp("updatedAt").onUpdateNow(),
+    updatedAt: timestamp("updatedAt").defaultNow(),
   },
   (example) => ({
     nameIndex: index("name_idx").on(example.name),
-  })
+  }),
 );

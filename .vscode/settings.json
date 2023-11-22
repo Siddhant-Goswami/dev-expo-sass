@@ -1,0 +1,9 @@
+{
+  "typescript.tsdk": "node_modules/typescript/lib",
+  // "typescript.tsserver.experimental.enableProjectDiagnostics": true,
+  // "typescript.enablePromptUseWorkspaceTsdk": true,
+  "debug.javascript.unmapMissingSources": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": true
+  }
+}
