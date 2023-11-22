@@ -9,6 +9,8 @@
     "db:studio": "dotenv drizzle-kit studio",
     "dev": "next dev",
     "lint": "next lint",
+    "lint:prettier": "prettier . --write --config=prettier.config.js",
+    "lint:typescript": "tsc --noEmit",
     "start": "next start"
   },
   "dependencies": {
