@@ -1,5 +1,5 @@
 {
-  "name": "ai-showcase-sass",
+  "name": "dev-expo-sass",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -15,7 +15,6 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^4.27.1",
-    "@neondatabase/serverless": "^0.6.0",
     "@planetscale/database": "^1.11.0",
     "@radix-ui/react-slot": "^1.0.2",
     "@t3-oss/env-nextjs": "^0.7.1",
@@ -24,6 +23,7 @@
     "drizzle-orm": "^0.29.0",
     "lucide-react": "^0.292.0",
     "next": "^14.0.3",
+    "postgres": "^3.4.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "tailwind-merge": "^2.0.0",

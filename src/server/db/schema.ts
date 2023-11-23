@@ -15,7 +15,7 @@ import {
  *
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
-export const pgTable = pgTableCreator((name) => `ai-showcase-sass_${name}`);
+export const pgTable = pgTableCreator((name) => `dev-expo_${name}`);
 
 export const users = pgTable(
   "user",
