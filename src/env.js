@@ -1,5 +1,5 @@
-import { createEnv } from "@t3-oss/env-nextjs";
-import { z } from "zod";
+import { createEnv } from '@t3-oss/env-nextjs';
+import { z } from 'zod';
 
 export const env = createEnv({
   /**
@@ -9,8 +9,8 @@ export const env = createEnv({
   server: {
     DATABASE_URL: z.string().url(),
     NODE_ENV: z
-      .enum(["development", "test", "production"])
-      .default("development"),
+      .enum(['development', 'test', 'production'])
+      .default('development'),
   },
 
   /**
@@ -21,10 +21,18 @@ export const env = createEnv({
   client: {
     // NEXT_PUBLIC_CLIENTVAR: z.string(),
 
-    NEXT_PUBLIC_CLERK_SIGN_IN_URL: z.string().refine((url) => url.startsWith("/")),
-    NEXT_PUBLIC_CLERK_SIGN_UP_URL: z.string().refine((url) => url.startsWith("/")),
-    NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL: z.string().refine((url) => url.startsWith("/")),
-    NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL: z.string().refine((url) => url.startsWith("/")),
+    NEXT_PUBLIC_CLERK_SIGN_IN_URL: z
+      .string()
+      .refine((url) => url.startsWith('/')),
+    NEXT_PUBLIC_CLERK_SIGN_UP_URL: z
+      .string()
+      .refine((url) => url.startsWith('/')),
+    NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL: z
+      .string()
+      .refine((url) => url.startsWith('/')),
+    NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL: z
+      .string()
+      .refine((url) => url.startsWith('/')),
   },
 
   /**

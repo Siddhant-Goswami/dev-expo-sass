@@ -1,13 +1,13 @@
-import { URLs } from "@/lib/constants";
-import { SignIn } from "@clerk/nextjs";
-import { LucideTerminal } from "lucide-react";
-import Link from "next/link";
+import { URLs } from '@/lib/constants';
+import { SignIn } from '@clerk/nextjs';
+import { LucideTerminal } from 'lucide-react';
+import Link from 'next/link';
 
 export default function Page() {
   return (
     <>
       <div className="container relative grid min-h-screen flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0">
-        <div className="bg-muted relative hidden h-full flex-col p-10 text-white dark:border-r lg:flex">
+        <div className="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
           <div
             style={{
               backgroundImage:
@@ -41,18 +41,18 @@ export default function Page() {
               </p>
             </div> */}
             <UserAuthForm />
-            <p className="text-muted-foreground px-8 text-center text-sm">
-              By clicking continue, you agree to our{" "}
+            <p className="px-8 text-center text-sm text-muted-foreground">
+              By clicking continue, you agree to our{' '}
               <Link
                 href={URLs.termsOfService}
-                className="hover:text-primary underline underline-offset-4"
+                className="underline underline-offset-4 hover:text-primary"
               >
                 Terms of Service
-              </Link>{" "}
-              and{" "}
+              </Link>{' '}
+              and{' '}
               <Link
                 href={URLs.privacyPolicy}
-                className="hover:text-primary underline underline-offset-4"
+                className="underline underline-offset-4 hover:text-primary"
               >
                 Privacy Policy
               </Link>
@@ -69,8 +69,8 @@ const UserAuthForm = () => (
   <SignIn
     appearance={{
       variables: {
-        colorPrimary: "#000",
-        borderRadius: "8px",
+        colorPrimary: '#000',
+        borderRadius: '8px',
         // fontFamily: "Inter, sans-serif",
         fontWeight: {
           normal: 400,
@@ -79,35 +79,35 @@ const UserAuthForm = () => (
         },
       },
       layout: {
-        socialButtonsVariant: "blockButton",
-        socialButtonsPlacement: "bottom",
+        socialButtonsVariant: 'blockButton',
+        socialButtonsPlacement: 'bottom',
       },
       elements: {
-        card: "border border-neutral-200 rounded-3xl shadow-none",
+        card: 'border border-neutral-200 rounded-3xl shadow-none',
         logoImage: {
-          filter: "hue-rotate(342deg) brightness(1.4)",
+          filter: 'hue-rotate(342deg) brightness(1.4)',
         },
         main: {
-          gap: "1.5rem",
+          gap: '1.5rem',
         },
         headerTitle: {
-          fontSize: "24px",
+          fontSize: '24px',
         },
         headerSubtitle: {
-          fontSize: "16px",
+          fontSize: '16px',
         },
-        socialButtons: "flex flex-col",
+        socialButtons: 'flex flex-col',
         socialButtonsIconButton: {
-          borderRadius: "100%",
+          borderRadius: '100%',
           padding: 18,
         },
         dividerBox: {
-          display: "none",
+          display: 'none',
         },
 
         formButtonPrimary: {
-          borderRadius: "100px",
-          textTransform: "none",
+          borderRadius: '100px',
+          textTransform: 'none',
         },
         footerActionLink: {
           fontWeight: 500,

@@ -7,7 +7,7 @@ import {
   pgTableCreator,
   timestamp,
   varchar,
-} from "drizzle-orm/pg-core";
+} from 'drizzle-orm/pg-core';
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -18,17 +18,17 @@ import {
 export const pgTable = pgTableCreator((name) => `dev-expo_${name}`);
 
 export const users = pgTable(
-  "user",
+  'user',
   {
-    id: bigserial("id", { mode: "number" }).primaryKey(),
-    name: varchar("name", { length: 256 }),
-    createdAt: timestamp("createdAt")
+    id: bigserial('id', { mode: 'number' }).primaryKey(),
+    name: varchar('name', { length: 256 }),
+    createdAt: timestamp('createdAt')
       .defaultNow()
       // .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
-    updatedAt: timestamp("updatedAt").defaultNow(),
+    updatedAt: timestamp('updatedAt').defaultNow(),
   },
   (example) => ({
-    nameIndex: index("name_idx").on(example.name),
+    nameIndex: index('name_idx').on(example.name),
   }),
 );

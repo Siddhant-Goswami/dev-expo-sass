@@ -1,7 +1,7 @@
-import { Button } from "@/components/ui/button";
-import { URLs } from "@/lib/constants";
-import { UserButton, currentUser } from "@clerk/nextjs";
-import Link from "next/link";
+import { Button } from '@/components/ui/button';
+import { URLs } from '@/lib/constants';
+import { UserButton, currentUser } from '@clerk/nextjs';
+import Link from 'next/link';
 
 export default async function HomePage() {
   const user = await currentUser();
@@ -14,8 +14,8 @@ export default async function HomePage() {
         </h1>
         {user ? (
           <>
-            <p>Hello {user?.username ?? user?.firstName ?? "No name??"}!</p>
-            {user.externalAccounts?.[0]?.provider === "oauth_github" && (
+            <p>Hello {user?.username ?? user?.firstName ?? 'No name??'}!</p>
+            {user.externalAccounts?.[0]?.provider === 'oauth_github' && (
               <Link href={`https://github.com/${user?.username}`}>
                 Your Github
               </Link>
