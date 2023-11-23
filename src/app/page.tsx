@@ -14,9 +14,12 @@ export default async function HomePage() {
         </h1>
         {user ? (
           <>
-            <Link href={`https://github.com/${user?.username}`}>username</Link>
-
             <p>Hello {user?.username ?? user?.firstName ?? "No name??"}!</p>
+            {user.externalAccounts?.[0]?.provider === "oauth_github" && (
+              <Link href={`https://github.com/${user?.username}`}>
+                Your Github
+              </Link>
+            )}
           </>
         ) : (
           <Link href={URLs.signIn}>
