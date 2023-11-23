@@ -21,10 +21,18 @@ export const env = createEnv({
   client: {
     // NEXT_PUBLIC_CLIENTVAR: z.string(),
 
-    NEXT_PUBLIC_CLERK_SIGN_IN_URL: z.string().refine((url) => url.startsWith("/")),
-    NEXT_PUBLIC_CLERK_SIGN_UP_URL: z.string().refine((url) => url.startsWith("/")),
-    NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL: z.string().refine((url) => url.startsWith("/")),
-    NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL: z.string().refine((url) => url.startsWith("/")),
+    NEXT_PUBLIC_CLERK_SIGN_IN_URL: z
+      .string()
+      .refine((url) => url.startsWith("/")),
+    NEXT_PUBLIC_CLERK_SIGN_UP_URL: z
+      .string()
+      .refine((url) => url.startsWith("/")),
+    NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL: z
+      .string()
+      .refine((url) => url.startsWith("/")),
+    NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL: z
+      .string()
+      .refine((url) => url.startsWith("/")),
   },
 
   /**

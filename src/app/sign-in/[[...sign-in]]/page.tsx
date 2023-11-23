@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <>
       <div className="container relative grid min-h-screen flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0">
-        <div className="bg-muted relative hidden h-full flex-col p-10 text-white dark:border-r lg:flex">
+        <div className="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
           <div
             style={{
               backgroundImage:
@@ -41,18 +41,18 @@ export default function Page() {
               </p>
             </div> */}
             <UserAuthForm />
-            <p className="text-muted-foreground px-8 text-center text-sm">
+            <p className="px-8 text-center text-sm text-muted-foreground">
               By clicking continue, you agree to our{" "}
               <Link
                 href={URLs.termsOfService}
-                className="hover:text-primary underline underline-offset-4"
+                className="underline underline-offset-4 hover:text-primary"
               >
                 Terms of Service
               </Link>{" "}
               and{" "}
               <Link
                 href={URLs.privacyPolicy}
-                className="hover:text-primary underline underline-offset-4"
+                className="underline underline-offset-4 hover:text-primary"
               >
                 Privacy Policy
               </Link>
