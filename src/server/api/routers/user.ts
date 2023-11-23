@@ -1,5 +1,10 @@
-import { createTRPCRouter, publicProcedure } from '@/server/api/trpc';
-import { z } from 'zod';
+import {
+  createTRPCRouter,
+  privateProcedure,
+  publicProcedure,
+} from "@/server/api/trpc";
+import { users } from "@/server/db/schema";
+import { z } from "zod";
 
 export const userRouter = createTRPCRouter({
   hello: publicProcedure
@@ -8,6 +13,18 @@ export const userRouter = createTRPCRouter({
       return {
         greeting: `Hello ${input.text}`,
       };
+    }),
+
+  create: privateProcedure
+    .input(
+      z.object({
+        name: z.string(),
+      }),
+    )
+    .mutation(({ input, ctx }) => {
+      return ctx.db.insert(users).values({
+        name: input.name,
+      });
     }),
 
   getLatest: publicProcedure.query(({ ctx }) => {
