@@ -8,6 +8,7 @@ export default function Page() {
     <>
       <div className="container relative grid min-h-screen flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0">
         <div className="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
+        <div className="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
           <div
             style={{
               backgroundImage:
@@ -46,12 +47,14 @@ export default function Page() {
               <Link
                 href={URLs.termsOfService}
                 className="underline underline-offset-4 hover:text-primary"
+                className="underline underline-offset-4 hover:text-primary"
               >
                 Terms of Service
               </Link>{' '}
               and{' '}
               <Link
                 href={URLs.privacyPolicy}
+                className="underline underline-offset-4 hover:text-primary"
                 className="underline underline-offset-4 hover:text-primary"
               >
                 Privacy Policy
