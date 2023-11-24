@@ -20,7 +20,7 @@ export const pgTable = pgTableCreator((name) => `dev-expo_${name}`);
 export const users = pgTable(
   'user',
   {
-    userId: bigserial('userId', { mode: 'number' }).primaryKey(), // Comes from Clerk
+    id: bigserial('id', { mode: 'number' }).primaryKey(),
     displayName: varchar('displayName', { length: 256 }).notNull(),
     displayPicture: varchar('displayPicture', { length: 1024 }).notNull(),
     username: varchar('username', { length: 50 }).notNull().unique(),
@@ -50,9 +50,7 @@ export const projects = pgTable(
   'project',
   {
     id: bigserial('id', { mode: 'number' }).primaryKey(),
-    userId: bigserial('userId', { mode: 'number' }).references(
-      () => users.userId,
-    ),
+    userId: bigserial('userId', { mode: 'number' }).references(() => users.id),
     slug: varchar('slug', { length: 50 }).notNull().unique(),
     createdAt: timestamp('createdAt', { withTimezone: true })
       .defaultNow()
@@ -130,9 +128,7 @@ export const comments = pgTable(
   'comment',
   {
     id: bigserial('id', { mode: 'number' }).primaryKey(),
-    userId: bigserial('userId', { mode: 'number' }).references(
-      () => users.userId,
-    ),
+    userId: bigserial('userId', { mode: 'number' }).references(() => users.id),
     projectId: bigserial('projectId', { mode: 'number' }).references(
       () => projects.id,
     ),
@@ -156,9 +152,7 @@ export const comments = pgTable(
 export const favorites = pgTable(
   'favorite',
   {
-    userId: bigserial('userId', { mode: 'number' }).references(
-      () => users.userId,
-    ),
+    userId: bigserial('userId', { mode: 'number' }).references(() => users.id),
     projectId: bigserial('projectId', { mode: 'number' }).references(
       () => projects.id,
     ),
@@ -199,10 +193,10 @@ export const userFollows = pgTable(
   {
     id: bigserial('id', { mode: 'number' }).primaryKey(),
     followerId: bigserial('followerId', { mode: 'number' }).references(
-      () => users.userId,
+      () => users.id,
     ),
-    followUserId: bigserial('followUserId', { mode: 'number' }).references(
-      () => users.userId,
+    followingId: bigserial('followingId', { mode: 'number' }).references(
+      () => users.id,
     ),
     timestamp: timestamp('timestamp', { withTimezone: true })
       .notNull()
@@ -214,7 +208,7 @@ export const userFollows = pgTable(
   (table) => {
     return {
       followerIdIndex: index('follower_id_idx').on(table.followerId),
-      followUserIdIndex: index('follow_user_id_idx').on(table.followUserId),
+      followingIdIndex: index('following_id_idx').on(table.followingId),
     };
   },
 );
@@ -226,9 +220,7 @@ export const projectBookmarks = pgTable(
     projectsId: bigserial('projectsId', { mode: 'number' }).references(
       () => projects.id,
     ),
-    userId: bigserial('userId', { mode: 'number' }).references(
-      () => users.userId,
-    ),
+    userId: bigserial('userId', { mode: 'number' }).references(() => users.id),
     timestamp: timestamp('timestamp', { withTimezone: true })
       .notNull()
       .defaultNow(),
