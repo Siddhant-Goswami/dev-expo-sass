@@ -194,30 +194,62 @@ export const projectsCategoriesJoin = pgTable(
   },
 );
 
-export const follow = pgTable('follow', {
-  id: bigserial('id', { mode: 'number' }).primaryKey(),
-  followerId: bigserial('followerId', { mode: 'number' }).references(
-    () => users.userId,
-  ),
-  followUserId: bigserial('followUserId', { mode: 'number' }).references(
-    () => users.userId,
-  ),
-  timestamp: timestamp('timestamp', { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-  createdAt: timestamp('createdAt', { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-});
+export const userFollows = pgTable(
+  'userFollow',
+  {
+    id: bigserial('id', { mode: 'number' }).primaryKey(),
+    followerId: bigserial('followerId', { mode: 'number' }).references(
+      () => users.userId,
+    ),
+    followUserId: bigserial('followUserId', { mode: 'number' }).references(
+      () => users.userId,
+    ),
+    timestamp: timestamp('timestamp', { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    createdAt: timestamp('createdAt', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => {
+    return {
+      followerIdIndex: index('follower_id_idx').on(table.followerId),
+      followUserIdIndex: index('follow_user_id_idx').on(table.followUserId),
+    };
+  },
+);
 
-export const bookmarks = pgTable('bookmark', {
+export const projectBookmarks = pgTable(
+  'projectBookmark',
+  {
+    id: bigserial('id', { mode: 'number' }).primaryKey(),
+    projectsId: bigserial('projectsId', { mode: 'number' }).references(
+      () => projects.id,
+    ),
+    userId: bigserial('userId', { mode: 'number' }).references(
+      () => users.userId,
+    ),
+    timestamp: timestamp('timestamp', { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    createdAt: timestamp('createdAt', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => {
+    return {
+      projectsIdIndex: index('projects_id_idx').on(table.projectsId),
+      userIdIndex: index('user_id_idx').on(table.userId),
+    };
+  },
+);
+
+export const projectViews = pgTable('projectView', {
   id: bigserial('id', { mode: 'number' }).primaryKey(),
-  projectsId: bigserial('projectsId', { mode: 'number' }).references(
+  projectId: bigserial('projectId', { mode: 'number' }).references(
     () => projects.id,
   ),
-  userId: bigserial('userId', { mode: 'number' }).references(
-    () => users.userId,
-  ),
+  uniqueFingerprint: varchar('uniqueFingerprint', { length: 1024 }).notNull(),
   timestamp: timestamp('timestamp', { withTimezone: true })
     .notNull()
     .defaultNow(),
