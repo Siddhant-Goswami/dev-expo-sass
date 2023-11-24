@@ -2,9 +2,9 @@ import {
   createTRPCRouter,
   privateProcedure,
   publicProcedure,
-} from "@/server/api/trpc";
-import { users } from "@/server/db/schema";
-import { z } from "zod";
+} from '@/server/api/trpc';
+import { users } from '@/server/db/schema';
+import { z } from 'zod';
 
 export const userRouter = createTRPCRouter({
   hello: publicProcedure
