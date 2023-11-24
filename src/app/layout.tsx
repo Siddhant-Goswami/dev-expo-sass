@@ -2,7 +2,6 @@ import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import "@/styles/globals.css";
 import { TRPCReactProvider } from "@/trpc/react";
 import { ClerkProvider } from "@clerk/nextjs";
-import { GeistSans } from "geist/font/sans";
 import { cookies } from "next/headers";
 
 export const metadata = {
@@ -19,7 +18,7 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={GeistSans.className}>
+        <body>
           <TRPCReactProvider cookies={cookies().toString()}>
             <ThemeProvider
               attribute="class"
