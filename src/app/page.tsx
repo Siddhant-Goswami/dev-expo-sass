@@ -1,5 +1,5 @@
-import { ModeToggle } from "@/components/ui/toggle";
-import { UserButton } from "@clerk/nextjs";
+import { ModeToggle } from '@/components/ui/toggle';
+import { UserButton } from '@clerk/nextjs';
 
 export default function Page() {
   return (
