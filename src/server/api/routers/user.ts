@@ -3,7 +3,6 @@ import {
   privateProcedure,
   publicProcedure,
 } from '@/server/api/trpc';
-import { users } from '@/server/db/schema';
 import { z } from 'zod';
 
 export const userRouter = createTRPCRouter({
@@ -22,9 +21,7 @@ export const userRouter = createTRPCRouter({
       }),
     )
     .mutation(({ input, ctx }) => {
-      return ctx.db.insert(users).values({
-        name: input.name,
-      });
+      //
     }),
 
   getLatest: publicProcedure.query(({ ctx }) => {
