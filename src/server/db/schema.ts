@@ -209,3 +209,19 @@ export const follow = pgTable('follow', {
     .defaultNow()
     .notNull(),
 });
+
+export const bookmarks = pgTable('bookmark', {
+  id: bigserial('id', { mode: 'number' }).primaryKey(),
+  projectsId: bigserial('projectsId', { mode: 'number' }).references(
+    () => projects.id,
+  ),
+  userId: bigserial('userId', { mode: 'number' }).references(
+    () => users.userId,
+  ),
+  timestamp: timestamp('timestamp', { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  createdAt: timestamp('createdAt', { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+});
