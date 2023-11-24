@@ -125,3 +125,86 @@ export const projectCategories = pgTable(
     };
   },
 );
+
+export const comments = pgTable(
+  'comment',
+  {
+    id: bigserial('id', { mode: 'number' }).primaryKey(),
+    userId: bigserial('userId', { mode: 'number' }).references(
+      () => users.userId,
+    ),
+    projectId: bigserial('projectId', { mode: 'number' }).references(
+      () => projects.id,
+    ),
+    content: varchar('content', { length: 1500 }).notNull(),
+    postedAt: timestamp('postedAt', { withTimezone: true }).notNull(),
+    createdAt: timestamp('createdAt', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp('updatedAt', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => {
+    return {
+      userIdIndex: index('user_id_idx').on(table.userId),
+      projectIdIndex: index('project_id_idx').on(table.projectId),
+    };
+  },
+);
+
+export const favorites = pgTable(
+  'favorite',
+  {
+    userId: bigserial('userId', { mode: 'number' }).references(
+      () => users.userId,
+    ),
+    projectId: bigserial('projectId', { mode: 'number' }).references(
+      () => projects.id,
+    ),
+    timestamp: timestamp('timestamp', { withTimezone: true }).notNull(),
+    createdAt: timestamp('createdAt', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => {
+    return {
+      userIdIndex: index('user_id_idx').on(table.userId),
+      projectIdIndex: index('project_id_idx').on(table.projectId),
+    };
+  },
+);
+
+export const projectsCategoriesJoin = pgTable(
+  'projectsCategoriesJoin',
+  {
+    id: bigserial('id', { mode: 'number' }).primaryKey(),
+    projectId: bigserial('projectId', { mode: 'number' }).references(
+      () => projects.id,
+    ),
+    categoryId: bigserial('categoryId', { mode: 'number' }).references(
+      () => projectCategories.id,
+    ),
+  },
+  (table) => {
+    return {
+      projectIdIndex: index('project_id_idx').on(table.projectId),
+      categoryIdIndex: index('category_id_idx').on(table.categoryId),
+    };
+  },
+);
+
+export const follow = pgTable('follow', {
+  followerId: bigserial('followerId', { mode: 'number' }).references(
+    () => users.userId,
+  ),
+  followUserId: bigserial('followUserId', { mode: 'number' }).references(
+    () => users.userId,
+  ),
+  timestamp: timestamp('timestamp', { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  createdAt: timestamp('createdAt', { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+});
