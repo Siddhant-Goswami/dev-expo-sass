@@ -7,6 +7,7 @@
     "build": "next build",
     "db:push": "dotenv drizzle-kit push:pg",
     "db:studio": "dotenv drizzle-kit studio",
+    "db:introspect": "dotenv drizzle-kit introspect:pg",
     "dev": "next dev",
     "lint": "next lint",
     "lint:prettier": "prettier . --write --config=prettier.config.js",
