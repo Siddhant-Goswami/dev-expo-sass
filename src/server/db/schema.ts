@@ -195,6 +195,7 @@ export const projectsCategoriesJoin = pgTable(
 );
 
 export const follow = pgTable('follow', {
+  id: bigserial('id', { mode: 'number' }).primaryKey(),
   followerId: bigserial('followerId', { mode: 'number' }).references(
     () => users.userId,
   ),
