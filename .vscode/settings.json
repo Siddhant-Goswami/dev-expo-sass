@@ -4,6 +4,6 @@
   // "typescript.enablePromptUseWorkspaceTsdk": true,
   "debug.javascript.unmapMissingSources": true,
   "editor.codeActionsOnSave": {
-    "source.organizeImports": true
+    "source.organizeImports": "explicit"
   }
 }
