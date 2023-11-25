@@ -63,7 +63,7 @@ export const createProject = async ({
   userId,
   title,
   description,
-  coverImageUrl,
+  images,
   hostedUrl,
   sourceCodeUrl,
   tagsList,
@@ -71,19 +71,22 @@ export const createProject = async ({
   userId: number;
   title: string;
   description: string;
-  coverImageUrl: string;
   hostedUrl: string;
+  images: FileList[];
   sourceCodeUrl: string;
   tagsList: Array<{
     name: string;
   }>;
 }) => {
   // TODO: slug handling and image handling
+
+  const coverImageUrl = '';
+
   const [result] = await db
     .insert(projects)
     .values({
       userId,
-      slug: '',
+      slug: title,
       title,
       description,
       coverImageUrl,
@@ -96,8 +99,8 @@ export const createProject = async ({
   const projectId = result?.projectId;
 
   for (const currentTag of tagsList) {
-    let [tagResult] = await db.select({ tagId: tags.id }).from(tags);
-    let tagId = tagResult!.tagId;
+    let [tagResult] = await db.select({ tagId: tags.id }).from(tags).where(eq(tags.name, currentTag.name));
+    let tagId = tagResult?.tagId;
 
     await db.query.tags.findFirst({
       where: eq(tags.name, currentTag.name),
