@@ -1,8 +1,6 @@
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import '@/styles/globals.css';
-import { TRPCReactProvider } from '@/trpc/react';
-import { ClerkProvider } from '@clerk/nextjs';
-import { cookies } from 'next/headers';
+import { GeistSans } from 'geist/font/sans';
 
 export const metadata = {
   title: 'Create T3 App',
@@ -16,21 +14,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider>
-      <html lang="en">
-        <body>
-          <TRPCReactProvider cookies={cookies().toString()}>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-            >
-              {children}
-            </ThemeProvider>
-          </TRPCReactProvider>
-        </body>
-      </html>
-    </ClerkProvider>
+    <html lang="en">
+      <body className={GeistSans.className}>
+        <ThemeProvider
+          enableSystem
+          attribute="class"
+          defaultTheme="system"
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
+      </body>
+    </html>
   );
 }
