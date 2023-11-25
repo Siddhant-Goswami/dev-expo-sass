@@ -1,12 +1,9 @@
-import { ModeToggle } from '@/components/ui/toggle';
-import { UserButton } from '@clerk/nextjs';
+import Navbar from '@/components/ui/navbar';
 
 export default function Page() {
   return (
     <div>
-      <h1 className="bg-background text-foreground">Page</h1>
-      <ModeToggle />
-      <UserButton />
+      <Navbar />
     </div>
   );
 }
