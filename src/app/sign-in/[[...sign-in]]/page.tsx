@@ -96,12 +96,14 @@ export default function Page() {
 const UserAuthForm = () => {
   const supabase = supabaseClientComponentClient();
 
-  // Apply predefined theme
   return (
-    <Auth
-      supabaseClient={supabase}
-      providers={['github', 'google']}
-      appearance={{ theme: ThemeSupa }}
-    />
+    <>
+      <Auth
+        onlyThirdPartyProviders
+        supabaseClient={supabase}
+        providers={['github', 'google']}
+        appearance={{ theme: ThemeSupa }}
+      />
+    </>
   );
 };
