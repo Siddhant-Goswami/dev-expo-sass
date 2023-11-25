@@ -17,17 +17,15 @@ export const getAllProjects = async () => {
   const allProjects = await db.query.projects.findMany({
     orderBy: [desc(projects.publishedAt)],
   });
-
   return allProjects;
 };
 
 // get all projects of a user
-export const getUserProjects = async (userId: number) => {
+export const getUserProjects = async ({userId}:{userId:number}) => {
   const userProjects = await db.query.projects.findMany({
     where: eq(projects.userId, userId),
     orderBy: [desc(projects.publishedAt)],
   });
-
   return userProjects;
 };
 

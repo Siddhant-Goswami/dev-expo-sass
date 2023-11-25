@@ -2,7 +2,7 @@
 import { Button } from '@/components/ui/button';
 import Navbar from '@/components/ui/navbar';
 import { OnboardingSteps } from '@/components/ui/onboarding-steps';
-import { createProject } from '@/server/actions/projects';
+import { createProject, getAllProjects, getUserProjects } from '@/server/actions/projects';
 import { createUser } from '@/server/actions/users';
 
 export default function Page() {
@@ -46,6 +46,22 @@ export default function Page() {
         }}
       >
         create project
+      </Button>
+
+      <Button
+        onClick={() => {
+          void getAllProjects();
+        }}
+      >
+        get projects
+      </Button>
+
+      <Button
+        onClick={() => {
+          void getUserProjects(0);
+        }}
+      >
+        get user projects
       </Button>
 
       <OnboardingSteps
