@@ -99,7 +99,10 @@ export const createProject = async ({
   const projectId = result?.projectId;
 
   for (const currentTag of tagsList) {
-    let [tagResult] = await db.select({ tagId: tags.id }).from(tags).where(eq(tags.name, currentTag.name));
+    let [tagResult] = await db
+      .select({ tagId: tags.id })
+      .from(tags)
+      .where(eq(tags.name, currentTag.name));
     let tagId = tagResult?.tagId;
 
     await db.query.tags.findFirst({

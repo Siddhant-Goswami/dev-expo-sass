@@ -32,17 +32,19 @@ export default function Page() {
         create rishabh
       </Button>
 
-      <Button onClick={()=>{
-        void createProject({
-          userId:1,
-          title:'testProject3',
-          description:'test project description',
-          tagsList:[{name:'test-tag-1'}, {name:'test-tag-2'}],
-          hostedUrl:'test-hosted-url',
-          sourceCodeUrl:'test-source-code-url',
-          images:[],
-        })
-      }} >
+      <Button
+        onClick={() => {
+          void createProject({
+            userId: 1,
+            title: 'testProject3',
+            description: 'test project description',
+            tagsList: [{ name: 'test-tag-1' }, { name: 'test-tag-2' }],
+            hostedUrl: 'test-hosted-url',
+            sourceCodeUrl: 'test-source-code-url',
+            images: [],
+          });
+        }}
+      >
         create project
       </Button>
 
