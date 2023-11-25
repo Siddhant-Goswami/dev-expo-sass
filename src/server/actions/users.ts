@@ -4,71 +4,76 @@ import { eq } from 'drizzle-orm';
 import { db } from '../db';
 import { devs, projects, recruiters, users } from '../db/schema';
 
+// TODO: get in touch with the user
+
 // create user
 export const createUser = async ({
+  authId,
   username,
   displayName,
-  displayPictureURL,
+  displayPictureUrl,
   bio,
 }: {
+  authId: number,
   username: string;
   displayName: string;
-  displayPictureURL: string;
+  displayPictureUrl: string;
   bio: string;
 }) => {
-  const userID = await db.insert(users).values({
+  const userId = await db.insert(users).values({
+    id: authId,
     username,
     displayName,
-    displayPictureURL,
+    displayPictureUrl,
     bio,
   });
-
-  return userID;
+  console.log(userId);
+  return userId;
 };
 // create dev
 export const approveDev = async ({
-  userID,
+  userId,
   availibity,
-  gitHubURL,
-  linkedInURL,
-  twitterURL,
-  websiteURL,
+  gitHubUrl,
+  linkedInUrl,
+  twitterUrl,
+  websiteUrl,
 }: {
-  userID: number;
+  userId: number;
   availibity: boolean;
-  gitHubURL: string;
-  linkedInURL: string;
-  twitterURL: string;
-  websiteURL: string;
+  gitHubUrl: string;
+  linkedInUrl: string;
+  twitterUrl: string;
+  websiteUrl: string;
 }) => {
   await db.insert(devs).values({
-    userID,
+    userId,
     availibity,
-    gitHubURL,
-    linkedInURL,
-    twitterURL,
-    websiteURL,
+    gitHubUrl,
+    linkedInUrl,
+    twitterUrl,
+    websiteUrl,
   });
 };
 
 // create recruiter
 export const approveRecruiter = async ({
-  userID,
-  orgURL,
+  userId,
+  orgUrl,
 }: {
-  userID: number;
-  orgURL: string;
+  userId: number;
+  orgUrl: string;
 }) => {
   await db.insert(recruiters).values({
-    userID,
-    orgURL,
+    userId,
+    orgUrl,
   });
 };
 
 // getUserInfo
-export const getUserInfo = async ({ userID }: { userID: number }) => {
+export const getUserInfo = async ({ userId }: { userId: number }) => {
   const userInfo = await db.query.users.findFirst({
-    where: eq(users.id, userID),
+    where: eq(users.id, userId),
     with: {
       dev: true,
       recruiter: true,
@@ -76,8 +81,17 @@ export const getUserInfo = async ({ userID }: { userID: number }) => {
   });
 
   const projectsCount = await db.query.projects.findMany({
-    where: eq(projects.userID, userID),
+    where: eq(projects.userId, userId),
   });
 
   return { userInfo, projectsCount };
 };
+
+// const createUserResult = await createUser({
+//   username: 'johndoe',
+//   displayName: 'John Doe',
+//   displayPictureUrl: 'https://example.com/profile.jpg',
+//   bio: 'Software Engineer',
+// });
+
+// console.log('Created user:', createUserResult);

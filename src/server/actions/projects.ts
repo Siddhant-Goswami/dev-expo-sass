@@ -1,3 +1,4 @@
+'use server';
 import { db } from '../db';
 import { eq, desc } from 'drizzle-orm';
 import {
@@ -9,7 +10,7 @@ import {
   tags,
 } from '../db/schema';
 
-// TODO project info bhi saath main bhejo (n(likes), n(comments), n(bookmarks))
+// TODO: filter categories
 
 // get all projects ordered by date
 export const getAllProjects = async () => {
@@ -23,14 +24,14 @@ export const getAllProjects = async () => {
 // get all projects of a user
 export const getUserProjects = async (userId: number) => {
   const userProjects = await db.query.projects.findMany({
-    where: eq(projects.userID, userId),
+    where: eq(projects.userId, userId),
     orderBy: [desc(projects.publishedAt)],
   });
 
   return userProjects;
 };
 
-// get project by ID
+// get project by Id
 export const getProjectById = async (projectId: number) => {
   const project = await db.query.projects.findFirst({
     where: eq(projects.id, projectId),
@@ -38,19 +39,19 @@ export const getProjectById = async (projectId: number) => {
 
   const likeCount = (
     await db.query.likes.findMany({
-      where: eq(likes.projectID, projectId),
+      where: eq(likes.projectId, projectId),
     })
   ).length;
 
   const commentCount = (
     await db.query.comments.findMany({
-      where: eq(comments.projectID, projectId),
+      where: eq(comments.projectId, projectId),
     })
   ).length;
 
   const bookmarkCount = (
     await db.query.projectBookmarks.findMany({
-      where: eq(projectBookmarks.projectID, projectId),
+      where: eq(projectBookmarks.projectId, projectId),
     })
   ).length;
 
@@ -59,7 +60,7 @@ export const getProjectById = async (projectId: number) => {
 
 // create a new project
 export const createProject = async ({
-  userID,
+  userId,
   title,
   description,
   coverImageUrl,
@@ -67,7 +68,7 @@ export const createProject = async ({
   sourceCodeUrl,
   tagsList,
 }: {
-  userID: number;
+  userId: number;
   title: string;
   description: string;
   coverImageUrl: string;
@@ -81,7 +82,7 @@ export const createProject = async ({
   const [result] = await db
     .insert(projects)
     .values({
-      userID,
+      userId,
       slug: '',
       title,
       description,
@@ -90,86 +91,86 @@ export const createProject = async ({
       sourceCodeUrl,
       publishedAt: new Date(),
     })
-    .returning({ projectID: projects.id });
+    .returning({ projectId: projects.id });
 
-  const projectID = result?.projectID;
+  const projectId = result?.projectId;
 
   for (const currentTag of tagsList) {
-    let [tagResult] = await db.select({ tagID: tags.id }).from(tags);
-    let tagID = tagResult!.tagID;
+    let [tagResult] = await db.select({ tagId: tags.id }).from(tags);
+    let tagId = tagResult!.tagId;
 
     await db.query.tags.findFirst({
       where: eq(tags.name, currentTag.name),
     });
 
-    if (!tagID) {
+    if (!tagId) {
       [tagResult] = await db
         .insert(tags)
         .values({
           name: currentTag.name,
         })
-        .returning({ tagID: tags.id });
-      tagID = tagResult!.tagID;
+        .returning({ tagId: tags.id });
+      tagId = tagResult!.tagId;
     }
 
     await db.insert(projectTags).values({
-      projectID,
-      tagID,
+      projectId,
+      tagId,
     });
   }
 
-  return projectID;
+  return projectId;
 };
 
 // add comment
 export const createComment = async ({
-  userID,
-  projectID,
+  userId,
+  projectId,
   content,
 }: {
-  userID: number;
-  projectID: number;
+  userId: number;
+  projectId: number;
   content: string;
 }) => {
-  const commentID = await db
+  const commentId = await db
     .insert(comments)
     .values({
-      userID,
-      projectID,
+      userId,
+      projectId,
       content,
       postedAt: new Date(),
     })
-    .returning({ commentID: comments.id });
+    .returning({ commentId: comments.id });
 
-  return commentID;
+  return commentId;
 };
 
 // add like
 export const createLike = async ({
-  userID,
-  projectID,
+  userId,
+  projectId,
 }: {
-  userID: number;
-  projectID: number;
+  userId: number;
+  projectId: number;
 }) => {
   await db.insert(likes).values({
-    userID,
-    projectID,
+    userId,
+    projectId,
     timestamp: new Date(),
   });
 };
 
 // bookmark
 export const createBookmark = async ({
-  userID,
-  projectID,
+  userId,
+  projectId,
 }: {
-  userID: number;
-  projectID: number;
+  userId: number;
+  projectId: number;
 }) => {
   await db.insert(projectBookmarks).values({
-    userID,
-    projectID,
+    userId,
+    projectId,
     timestamp: new Date(),
   });
 };

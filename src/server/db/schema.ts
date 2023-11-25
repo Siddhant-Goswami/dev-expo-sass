@@ -5,14 +5,11 @@ import {
   bigserial,
   boolean,
   index,
-  pgTable,
+  pgTableCreator,
   primaryKey,
   timestamp,
   varchar,
 } from 'drizzle-orm/pg-core';
-
-// user.displayname pe index kyun? username pe rehna chahiye
-// project-devs join table
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -20,15 +17,15 @@ import {
  *
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
-// export const pgTable = pgTableCreator((name) => `dev-expo_${name}`);
+export const pgTable = pgTableCreator((name) => `dev_expo_${name}`);
 
 export const users = pgTable(
-  'user',
+  'userProfile',
   {
     id: bigserial('id', { mode: 'number' }).primaryKey(),
     username: varchar('username', { length: 50 }).notNull().unique(),
     displayName: varchar('displayName', { length: 256 }).notNull(),
-    displayPictureURL: varchar('displayPictureURL', { length: 1024 })
+    displayPictureUrl: varchar('displayPictureUrl', { length: 1024 })
       .notNull()
       .default(''),
     bio: varchar('bio', { length: 512 }).notNull().default(''),
@@ -44,33 +41,33 @@ export const users = pgTable(
   }),
 );
 
-export const devs = pgTable('dev', {
-  userID: bigserial('userId', { mode: 'number' })
+export const devs = pgTable('devProfile', {
+  userId: bigserial('userId', { mode: 'number' })
     .primaryKey()
     .references(() => users.id),
   availibity: boolean('availibity').notNull().default(true),
   devApprovedAt: timestamp('devApprovedAt', { withTimezone: true }),
-  gitHubURL: varchar('gitHubURL', { length: 1024 }),
-  linkedInURL: varchar('linkedInURL', { length: 1024 }),
-  twitterURL: varchar('twitterURL', { length: 1024 }),
-  websiteURL: varchar('websiteURL', { length: 1024 }),
+  gitHubUrl: varchar('gitHubUrl', { length: 1024 }),
+  linkedInUrl: varchar('linkedInUrl', { length: 1024 }),
+  twitterUrl: varchar('twitterUrl', { length: 1024 }),
+  websiteUrl: varchar('websiteUrl', { length: 1024 }),
 });
 
-export const recruiters = pgTable('recruiter', {
-  userID: bigserial('userId', { mode: 'number' })
+export const recruiters = pgTable('recruiterProfile', {
+  userId: bigserial('userId', { mode: 'number' })
     .primaryKey()
     .references(() => users.id),
-  orgURL: varchar('websiteURL', { length: 1024 }),
+  orgUrl: varchar('orgUrl', { length: 1024 }),
 });
 
 export const projects = pgTable(
   'project',
   {
     id: bigserial('id', { mode: 'number' }).primaryKey(),
-    userID: bigserial('userID', { mode: 'number' }).references(() => users.id),
+    userId: bigserial('userId', { mode: 'number' }).references(() => users.id),
     title: varchar('title', { length: 50 }).notNull(),
     slug: varchar('slug', { length: 50 }).notNull().unique(),
-    description: varchar('description', { length: 2000 }).notNull().default(''),
+    description: varchar('description', { length: 6000 }).notNull().default(''),
     coverImageUrl: varchar('coverImageUrl', { length: 1024 })
       .notNull()
       .default(''),
@@ -100,7 +97,7 @@ export const tags = pgTable(
     id: bigserial('id', { mode: 'number' }).primaryKey(),
     name: varchar('name', { length: 50 }).notNull().unique(),
     isCategory: boolean('isCategory').notNull().default(false),
-    desccription: varchar('description', { length: 512 }).notNull().default(''),
+    description: varchar('description', { length: 512 }).notNull().default(''),
   },
   (table) => {
     return {
@@ -113,14 +110,14 @@ export const tags = pgTable(
 export const projectTags = pgTable(
   'projectTag',
   {
-    projectID: bigserial('projectID', { mode: 'number' }).references(
+    projectId: bigserial('projectId', { mode: 'number' }).references(
       () => projects.id,
     ),
-    tagID: bigserial('tagID', { mode: 'number' }).references(() => tags.id),
+    tagId: bigserial('tagId', { mode: 'number' }).references(() => tags.id),
   },
   (table) => {
     return {
-      pk: primaryKey({ columns: [table.projectID, table.tagID] }),
+      pk: primaryKey({ columns: [table.projectId, table.tagId] }),
     };
   },
 );
@@ -152,10 +149,10 @@ export const comments = pgTable(
   'comment',
   {
     id: bigserial('id', { mode: 'number' }).primaryKey(),
-    userID: bigserial('userID', { mode: 'number' })
+    userId: bigserial('userId', { mode: 'number' })
       .references(() => users.id)
       .notNull(),
-    projectID: bigserial('projectID', { mode: 'number' })
+    projectId: bigserial('projectId', { mode: 'number' })
       .references(() => projects.id)
       .notNull(),
     content: varchar('content', { length: 1500 }).notNull(),
@@ -169,8 +166,8 @@ export const comments = pgTable(
   },
   (table) => {
     return {
-      userIdIndex: index('user_id_idx').on(table.userID),
-      projectIdIndex: index('project_id_idx').on(table.projectID),
+      userIdIndex: index('user_id_idx').on(table.userId),
+      projectIdIndex: index('project_id_idx').on(table.projectId),
     };
   },
 );
@@ -179,8 +176,8 @@ export const likes = pgTable(
   'likes',
   {
     id: bigserial('id', { mode: 'number' }).primaryKey(),
-    userID: bigserial('userID', { mode: 'number' }).references(() => users.id),
-    projectID: bigserial('projectID', { mode: 'number' }).references(
+    userId: bigserial('userId', { mode: 'number' }).references(() => users.id),
+    projectId: bigserial('projectId', { mode: 'number' }).references(
       () => projects.id,
     ),
     timestamp: timestamp('timestamp', { withTimezone: true }).notNull(),
@@ -190,8 +187,8 @@ export const likes = pgTable(
   },
   (table) => {
     return {
-      userIdIndex: index('user_id_idx').on(table.userID),
-      projectIdIndex: index('project_id_idx').on(table.projectID),
+      userIdIndex: index('user_id_idx').on(table.userId),
+      projectIdIndex: index('project_id_idx').on(table.projectId),
     };
   },
 );
@@ -200,10 +197,10 @@ export const projectBookmarks = pgTable(
   'projectBookmark',
   {
     id: bigserial('id', { mode: 'number' }).primaryKey(),
-    projectID: bigserial('projectID', { mode: 'number' }).references(
+    projectId: bigserial('projectId', { mode: 'number' }).references(
       () => projects.id,
     ),
-    userID: bigserial('userID', { mode: 'number' }).references(() => users.id),
+    userId: bigserial('userId', { mode: 'number' }).references(() => users.id),
     timestamp: timestamp('timestamp', { withTimezone: true }).notNull(),
     createdAt: timestamp('createdAt', { withTimezone: true })
       .defaultNow()
@@ -211,8 +208,8 @@ export const projectBookmarks = pgTable(
   },
   (table) => {
     return {
-      projectsIdIndex: index('projects_id_idx').on(table.projectID),
-      userIdIndex: index('user_id_idx').on(table.userID),
+      projectsIdIndex: index('projects_id_idx').on(table.projectId),
+      userIdIndex: index('user_id_idx').on(table.userId),
     };
   },
 );
