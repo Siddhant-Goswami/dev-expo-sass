@@ -1,3 +1,4 @@
+import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import '@/styles/globals.css';
 import { GeistSans } from 'geist/font/sans';
 
@@ -14,7 +15,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={GeistSans.className}>{children}</body>
+      <body className={GeistSans.className}>
+        <ThemeProvider
+          enableSystem
+          attribute="class"
+          defaultTheme="system"
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
