@@ -16,17 +16,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={GeistSans.className}>
-        
-      <ThemeProvider
-              enableSystem
-              attribute="class"
-              defaultTheme="system"
-              disableTransitionOnChange
-            >
-              {children}
-            </ThemeProvider>
-        
-        </body>
+        <ThemeProvider
+          enableSystem
+          attribute="class"
+          defaultTheme="system"
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
