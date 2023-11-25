@@ -18,6 +18,10 @@ module.exports = {
       },
     },
     extend: {
+      fontSize: {
+        '3xl': ['36px', '40px'],
+        '4xl': ['40px', '44px'],
+      },
       fontFamily: {
         sans: ['Instrument Sans', ...defaultTheme.fontFamily.sans],
       },
