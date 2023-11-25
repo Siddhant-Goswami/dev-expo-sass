@@ -26,11 +26,12 @@ export const getUserProjects = async ({userId}:{userId:number}) => {
     where: eq(projects.userId, userId),
     orderBy: [desc(projects.publishedAt)],
   });
+  console.log(userProjects);
   return userProjects;
 };
 
 // get project by Id
-export const getProjectById = async (projectId: number) => {
+export const getProjectById = async ({projectId}:{projectId: number}) => {
   const project = await db.query.projects.findFirst({
     where: eq(projects.id, projectId),
   });
@@ -52,7 +53,8 @@ export const getProjectById = async (projectId: number) => {
       where: eq(projectBookmarks.projectId, projectId),
     })
   ).length;
-
+  
+  console.log(project, likeCount, commentCount, bookmarkCount);
   return { project, likeCount, commentCount, bookmarkCount };
 };
 
