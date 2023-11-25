@@ -1,12 +1,10 @@
-import { URLs } from '@/lib/constants';
-import Link from 'next/link';
+import { ModeToggle } from '@/components/ui/toggle';
 
 export default function Page() {
   return (
     <div>
-      <h1>Page</h1>
-
-      <Link href={URLs.signIn}>Sign in</Link>
+      <h1 className="bg-background text-foreground">Page</h1>
+      <ModeToggle />
     </div>
   );
 }
