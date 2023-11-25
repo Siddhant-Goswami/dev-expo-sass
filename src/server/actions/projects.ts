@@ -17,22 +17,21 @@ export const getAllProjects = async () => {
   const allProjects = await db.query.projects.findMany({
     orderBy: [desc(projects.publishedAt)],
   });
-
   return allProjects;
 };
 
 // get all projects of a user
-export const getUserProjects = async (userId: number) => {
+export const getUserProjects = async ({ userId }: { userId: number }) => {
   const userProjects = await db.query.projects.findMany({
     where: eq(projects.userId, userId),
     orderBy: [desc(projects.publishedAt)],
   });
-
+  console.log(userProjects);
   return userProjects;
 };
 
 // get project by Id
-export const getProjectById = async (projectId: number) => {
+export const getProjectById = async ({ projectId }: { projectId: number }) => {
   const project = await db.query.projects.findFirst({
     where: eq(projects.id, projectId),
   });
@@ -55,6 +54,7 @@ export const getProjectById = async (projectId: number) => {
     })
   ).length;
 
+  console.log(project, likeCount, commentCount, bookmarkCount);
   return { project, likeCount, commentCount, bookmarkCount };
 };
 

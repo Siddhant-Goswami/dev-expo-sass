@@ -40,4 +40,5 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
-src/server/db/app/db-test
+src/app/db-test/page.tsx
+src/app/db-test/page.tsx
