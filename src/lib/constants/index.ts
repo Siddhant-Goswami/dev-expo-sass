@@ -5,4 +5,6 @@ export const URLs = {
   signUp: '/sign-up',
   termsOfService: '/terms',
   privacyPolicy: '/privacy',
+
+  onboardDev: '/onboard/dev',
 } as const;

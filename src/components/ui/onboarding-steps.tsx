@@ -28,6 +28,9 @@ type OnboardingStepsOptions = {
 type OnboardingStepProps = {
   skillLevels: OnboardingStepsOptions;
   defaultSkillLevel: string;
+  title: string;
+  buttonText: string;
+  onClickNext: () => void;
 };
 
 const createSkillLevelSchema = (skillLevels: OnboardingStepsOptions) => {
@@ -40,7 +43,10 @@ const createSkillLevelSchema = (skillLevels: OnboardingStepsOptions) => {
 };
 
 export const OnboardingSteps: React.FC<OnboardingStepProps> = ({
+  title,
   skillLevels,
+  buttonText,
+  onClickNext,
   defaultSkillLevel,
 }) => {
   const skillLevelSchema = createSkillLevelSchema(skillLevels);
@@ -59,13 +65,13 @@ export const OnboardingSteps: React.FC<OnboardingStepProps> = ({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-8">
         <FormField
           control={form.control}
           name="skillLevel"
           render={({ field }) => (
             <FormItem className="space-y-3">
-              <FormLabel>Select your skill level</FormLabel>
+              <FormLabel>{title}</FormLabel>
               <FormControl>
                 <RadioGroup
                   onValueChange={field.onChange}
@@ -79,7 +85,13 @@ export const OnboardingSteps: React.FC<OnboardingStepProps> = ({
             </FormItem>
           )}
         />
-        <Button type="submit">Submit Skill Level</Button>
+        <Button
+          className="ml-auto w-40 rounded-md"
+          onClick={onClickNext}
+          type="submit"
+        >
+          {buttonText}
+        </Button>
       </form>
     </Form>
   );
