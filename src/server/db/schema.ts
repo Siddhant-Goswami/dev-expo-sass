@@ -30,11 +30,8 @@ export const users = pgTable(
     id: bigserial('id', { mode: 'number' }).primaryKey(),
     username: varchar('username', { length: 50 }).notNull().unique(),
     displayName: varchar('displayName', { length: 256 }).notNull(),
-    displayPicturURL: varchar('displayPicture', { length: 1024 }).notNull(),
+    displayPictureURL: varchar('displayPictureURL', { length: 1024 }).notNull().default(''),
     bio: varchar('bio', { length: 512 }).notNull().default(''),
-    recruiterApprovedAt: timestamp('recruiterApprovedAt', {
-      withTimezone: true,
-    }),
     createdAt: timestamp('createdAt', { withTimezone: true })
       .defaultNow()
       .notNull(),
@@ -75,7 +72,7 @@ export const projects = pgTable(
   'project',
   {
     id: bigserial('id', { mode: 'number' }).primaryKey(),
-    userId: bigserial('userId', { mode: 'number' }).references(() => users.id),
+    userID: bigserial('userID', { mode: 'number' }).references(() => users.id),
     title: varchar('title', { length: 50 }).notNull(),
     slug: varchar('slug', { length: 50 }).notNull().unique(),
     description: varchar('description', { length: 2000 }).notNull().default(''),
@@ -123,14 +120,12 @@ export const tags = pgTable(
 export const projectTags = pgTable(
   'projectTag',
   {
-    projectId: bigserial('projectId', { mode: 'number' }).references(
-      () => projects.id,
-    ),
-    tagId: bigserial('tagId', { mode: 'number' }).references(() => tags.id),
+    projectID: bigserial('projectID', { mode: 'number' }).references(() => projects.id,),
+    tagID: bigserial('tagID', { mode: 'number' }).references(() => tags.id),
   },
   (table) => {
     return {
-      pk: primaryKey({columns: [table.projectId, table.tagId]}),
+      pk: primaryKey({columns: [table.projectID, table.tagID]}),
     };
   },
 );
@@ -164,8 +159,8 @@ export const comments = pgTable(
   'comment',
   {
     id: bigserial('id', { mode: 'number' }).primaryKey(),
-    userId: bigserial('userId', { mode: 'number' }).references(() => users.id).notNull(),
-    projectId: bigserial('projectId', { mode: 'number' }).references(
+    userID: bigserial('userID', { mode: 'number' }).references(() => users.id).notNull(),
+    projectID: bigserial('projectID', { mode: 'number' }).references(
       () => projects.id,
     ).notNull(),
     content: varchar('content', { length: 1500 }).notNull(),
@@ -179,8 +174,8 @@ export const comments = pgTable(
   },
   (table) => {
     return {
-      userIdIndex: index('user_id_idx').on(table.userId),
-      projectIdIndex: index('project_id_idx').on(table.projectId),
+      userIdIndex: index('user_id_idx').on(table.userID),
+      projectIdIndex: index('project_id_idx').on(table.projectID),
     };
   },
 );
@@ -189,8 +184,8 @@ export const comments = pgTable(
 export const likes = pgTable(
   'likes',
   {
-    userId: bigserial('userId', { mode: 'number' }).references(() => users.id),
-    projectId: bigserial('projectId', { mode: 'number' }).references(
+    userID: bigserial('userID', { mode: 'number' }).references(() => users.id),
+    projectID: bigserial('projectID', { mode: 'number' }).references(
       () => projects.id,
     ),
     timestamp: timestamp('timestamp', { withTimezone: true }).notNull(),
@@ -200,8 +195,9 @@ export const likes = pgTable(
   },
   (table) => {
     return {
-      userIdIndex: index('user_id_idx').on(table.userId),
-      projectIdIndex: index('project_id_idx').on(table.projectId),
+      pk: primaryKey({columns: [table.userID, table.projectID]}),
+      userIdIndex: index('user_id_idx').on(table.userID),
+      projectIdIndex: index('project_id_idx').on(table.projectID),
     };
   },
 );
@@ -211,21 +207,20 @@ export const projectBookmarks = pgTable(
   'projectBookmark',
   {
     id: bigserial('id', { mode: 'number' }).primaryKey(),
-    projectsId: bigserial('projectsId', { mode: 'number' }).references(
+    projectID: bigserial('projectID', { mode: 'number' }).references(
       () => projects.id,
     ),
-    userId: bigserial('userId', { mode: 'number' }).references(() => users.id),
+    userID: bigserial('userID', { mode: 'number' }).references(() => users.id),
     timestamp: timestamp('timestamp', { withTimezone: true })
-      .notNull()
-      .defaultNow(),
+      .notNull(),
     createdAt: timestamp('createdAt', { withTimezone: true })
       .defaultNow()
       .notNull(),
   },
   (table) => {
     return {
-      projectsIdIndex: index('projects_id_idx').on(table.projectsId),
-      userIdIndex: index('user_id_idx').on(table.userId),
+      projectsIdIndex: index('projects_id_idx').on(table.projectID),
+      userIdIndex: index('user_id_idx').on(table.userID),
     };
   },
 );
