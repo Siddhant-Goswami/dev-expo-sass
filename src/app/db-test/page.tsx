@@ -17,18 +17,19 @@ export default function Page() {
         defaultSkillLevel="noob"
       />
 
-<Button onClick={()=>{
-        void createUser({
-          authId: 123,
-          username: 'johndoe',
-          displayName: 'John Doe',
-          displayPictureUrl: 'https://example.com/profile.jpg',
-          bio: 'Software Engineer',
-        });
-      }}>
+      <Button
+        onClick={() => {
+          void createUser({
+            authId: 123,
+            username: 'johndoe',
+            displayName: 'John Doe',
+            displayPictureUrl: 'https://example.com/profile.jpg',
+            bio: 'Software Engineer',
+          });
+        }}
+      >
         create rishabh
       </Button>
-
 
       <OnboardingSteps
         skillLevels={[

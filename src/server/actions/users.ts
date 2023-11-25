@@ -14,7 +14,7 @@ export const createUser = async ({
   displayPictureUrl,
   bio,
 }: {
-  authId: number,
+  authId: number;
   username: string;
   displayName: string;
   displayPictureUrl: string;
