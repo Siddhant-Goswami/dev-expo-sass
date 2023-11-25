@@ -19,6 +19,7 @@ export default function Page() {
 
 <Button onClick={()=>{
         void createUser({
+          authId: 123,
           username: 'johndoe',
           displayName: 'John Doe',
           displayPictureUrl: 'https://example.com/profile.jpg',
