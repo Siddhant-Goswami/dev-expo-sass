@@ -1,10 +1,11 @@
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { ModeToggle } from '@/components/ui/toggle';
-import { UserButton, auth } from '@clerk/nextjs';
+
 import Link from 'next/link';
 
 const NavBar = () => {
-  const { userId } = auth();
+  const userId = true;
 
   return (
     <nav className="flex w-screen items-center justify-between bg-background px-6 py-4">
@@ -16,7 +17,10 @@ const NavBar = () => {
         </div>
         <div className="flex items-center gap-6">
           {userId ? (
-            <UserButton />
+            <Avatar>
+              <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+              <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
           ) : (
             <div className="flex items-center gap-2">
               <Button variant="ghost">Log In</Button>
