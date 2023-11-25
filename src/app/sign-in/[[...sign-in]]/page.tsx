@@ -1,10 +1,33 @@
+'use client';
+
 import { URLs } from '@/lib/constants';
+import { createClient } from '@/utils/supabase/client';
 import { LucideTerminal } from 'lucide-react';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
+
+// async function handleGithubSignin() {
+//   'use server';
+
+//   const supabase = createClient(cookies());
+
+//   const sesh = await supabase.auth.getSession();
+//   console.log({ sesh });
+
+//   const githubResult = await supabase.auth.signInWithOAuth({
+//     provider: 'github',
+//   });
+
+//   const redirectUrl = githubResult.data.url;
+
+//   if (!redirectUrl) {
+//     throw new Error('No redirect URL');
+//   }
+
+//   redirect(redirectUrl);
+// }
 
 export default function Page() {
-  console.log(`Yes this is the sign in page`);
-
   return (
     <>
       <div className="container relative grid min-h-screen flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0">
@@ -67,7 +90,7 @@ export default function Page() {
 }
 
 const UserAuthForm = () => (
-  <div className="rounded-xl border bg-card text-card-foreground shadow">
+  <form className="rounded-xl border bg-card text-card-foreground shadow">
     <div className="flex flex-col space-y-1 p-6">
       <h3 className="text-2xl font-semibold tracking-tight">
         Create an account
@@ -76,9 +99,34 @@ const UserAuthForm = () => (
         Enter your email below to create your account
       </p>
     </div>
+
     <div className="grid gap-4 p-6 pt-0">
       <div className="grid grid-cols-2 gap-6">
-        <button className="inline-flex h-9 items-center justify-center whitespace-nowrap rounded-md border border-input bg-transparent px-4 py-2 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50">
+        <button
+          formAction={async () => {
+            const supabase = createClient();
+
+            const sesh = await supabase.auth.getSession();
+            console.log({ sesh });
+
+            const githubResult = await supabase.auth.signInWithOAuth({
+              provider: 'github',
+            });
+
+            const redirectUrl = githubResult.data.url;
+
+            if (!redirectUrl) {
+              return alert('No redirect URL');
+            }
+
+            console.log({ redirectUrl });
+
+            await new Promise((resolve) => setTimeout(resolve, 3000));
+
+            redirect(redirectUrl);
+          }}
+          className="inline-flex h-9 items-center justify-center whitespace-nowrap rounded-md border border-input bg-transparent px-4 py-2 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+        >
           <svg viewBox="0 0 438.549 438.549" className="mr-2 h-4 w-4">
             <path
               fill="currentColor"
@@ -140,7 +188,7 @@ const UserAuthForm = () => (
         Create account
       </button>
     </div>
-  </div>
+  </form>
 
   // <SignIn
   //   appearance={{
