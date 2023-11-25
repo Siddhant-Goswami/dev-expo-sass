@@ -13,15 +13,6 @@ export default function Page() {
         ]}
         defaultSkillLevel="noob"
       />
-
-      <OnboardingSteps
-        skillLevels={[
-          { id: 'naruto', label: 'Naruto' },
-          { id: 'sasuke', label: 'Sasuke' },
-          { id: 'sakura', label: 'Sakura' },
-        ]}
-        defaultSkillLevel="naruto"
-      />
     </div>
   );
 }

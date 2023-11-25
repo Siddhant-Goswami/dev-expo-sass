@@ -4,6 +4,7 @@ import { URLs } from './lib/constants';
 
 // TODO: protect all routes including api/trpc routes
 // Please edit this to allow other routes to be public as needed.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const publicRoutes = [
   URLs.home,
   URLs.termsOfService,

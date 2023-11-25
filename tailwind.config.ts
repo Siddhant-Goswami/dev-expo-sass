@@ -18,6 +18,12 @@ module.exports = {
       },
     },
     extend: {
+      height: {
+        'screen-1/2': '50vh',
+      },
+      minWidth: {
+        '50': '50rem',
+      },
       fontSize: {
         '3xl': ['36px', '40px'],
         '4xl': ['40px', '44px'],
