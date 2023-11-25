@@ -3,12 +3,12 @@
 
 import {
   bigserial,
+  boolean,
   index,
-  pgTableCreator,
+  pgTable,
+  primaryKey,
   timestamp,
   varchar,
-  boolean,
-  primaryKey,
 } from 'drizzle-orm/pg-core';
 
 // user.displayname pe index kyun? username pe rehna chahiye
@@ -20,7 +20,7 @@ import {
  *
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
-export const pgTable = pgTableCreator((name) => `dev-expo_${name}`);
+// export const pgTable = pgTableCreator((name) => `dev-expo_${name}`);
 
 export const users = pgTable(
   'user',
@@ -178,6 +178,7 @@ export const comments = pgTable(
 export const likes = pgTable(
   'likes',
   {
+    id: bigserial('id', { mode: 'number' }).primaryKey(),
     userID: bigserial('userID', { mode: 'number' }).references(() => users.id),
     projectID: bigserial('projectID', { mode: 'number' }).references(
       () => projects.id,
@@ -189,7 +190,6 @@ export const likes = pgTable(
   },
   (table) => {
     return {
-      pk: primaryKey({ columns: [table.userID, table.projectID] }),
       userIdIndex: index('user_id_idx').on(table.userID),
       projectIdIndex: index('project_id_idx').on(table.projectID),
     };

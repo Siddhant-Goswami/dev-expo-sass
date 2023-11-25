@@ -7,5 +7,5 @@ export default {
   dbCredentials: {
     connectionString: env.DATABASE_URL,
   },
-  tablesFilter: ['dev-expo_*'],
+  tablesFilter: ['*'],
 } satisfies Config;
