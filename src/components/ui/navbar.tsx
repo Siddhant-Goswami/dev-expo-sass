@@ -1,24 +1,18 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { ModeToggle } from '@/components/ui/toggle';
 import { URLs } from '@/lib/constants';
 
-import {
-  supabaseClientComponentClient,
-  useUserSession,
-} from '@/hooks/user/auth';
+import { supabaseClientComponentClient, useAuth } from '@/hooks/user/auth';
 import Link from 'next/link';
-import UserAuthButton from '../UserButton';
+import UserAuthButton from '../UserAuthButton';
 
 const NavBar = () => {
-  const { session } = useUserSession();
+  const { session, isLoaded } = useAuth();
 
   const supabase = supabaseClientComponentClient();
 
   const userId = session?.user?.id;
-  const avatarUrl = session?.user?.identities?.[0]?.identity_data
-    ?.avatar_url as unknown as string | null;
 
   return (
     <nav className="flex w-screen items-center justify-between bg-background px-6 py-4">
@@ -28,8 +22,11 @@ const NavBar = () => {
             Innov<span className="font-bold text-blue-600">AI</span>te
           </Link>
         </div>
-        <div className="flex items-center gap-6">
-          {userId ? (
+        <div className="flex h-10 items-center gap-6">
+          {!isLoaded ? (
+            <span className="inline-block aspect-square h-9 w-9 animate-pulse rounded-full bg-gray-300"></span>
+          ) : // <LucideLoader className="animate-spin" />
+          userId ? (
             <UserAuthButton />
           ) : (
             <div className="flex items-center gap-2">
@@ -56,7 +53,7 @@ const NavBar = () => {
             </div>
           )}
 
-          <ModeToggle />
+          {/* <ThemeToggle /> */}
         </div>
       </div>
     </nav>

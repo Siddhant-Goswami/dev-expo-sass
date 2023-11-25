@@ -5,16 +5,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import {
-  supabaseClientComponentClient,
-  useUserSession,
-} from '@/hooks/user/auth';
+import { supabaseClientComponentClient, useAuth } from '@/hooks/user/auth';
 import { URLs } from '@/lib/constants';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
 
 export default function UserAuthButton() {
-  const { session } = useUserSession();
+  const { session } = useAuth();
   const supabase = supabaseClientComponentClient();
 
   return (
@@ -28,12 +25,17 @@ export default function UserAuthButton() {
                 | string
                 | null) ?? `https://avatar.vercel.sh/1`
             }
-            // alt={session.data.user?.user_metadata?.name ?? 'NO NAME'}
+            alt={
+              // ! Bad types, please use zod for this instead...
+              (session?.user?.user_metadata?.name as unknown as
+                | string
+                | null) ?? 'User Avatar'
+            }
           />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
       </PopoverTrigger>
-      <PopoverContent>
+      <PopoverContent className="">
         <Button
           onClick={async () => {
             const { error } = await supabase.auth.signOut();
@@ -47,7 +49,6 @@ export default function UserAuthButton() {
         >
           Logout
         </Button>
-        {/*  */}
       </PopoverContent>
     </Popover>
   );
