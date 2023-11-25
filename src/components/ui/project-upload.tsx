@@ -29,6 +29,7 @@ const projectFormSchema = z.object({
     .min(1, 'Please provide at least one tag for your project.'),
   description: z
     .string()
+    .min(20, 'Please provide a description for your project.')
     .max(500, 'Description must not exceed 500 characters.'),
 });
 
@@ -50,9 +51,10 @@ export function ProjectUpload() {
   });
 
   function onSubmit(data: ProjectUploadValues) {
-    // You would need to handle file uploads separately, usually in a FormData object
-    const formData = new FormData();
-    console.log('ProjectUpload data:', formData, data);
+    console.log(' data:', data);
+    console.log(' form:', form.getValues('files'));
+    const lol = form.getValues('files');
+    console.log(' lol:', lol);
   }
 
   return (
