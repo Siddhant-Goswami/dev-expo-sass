@@ -4,9 +4,16 @@ import Grid from '@/components/ui/grid';
 import Navbar from '@/components/ui/navbar';
 import SignUpModal from '@/components/ui/sign-up-modal';
 import { URLs } from '@/lib/constants';
+import { createClient } from '@/utils/supabase/server';
 import Link from 'next/link';
 
-export default function Page() {
+export default async function Page() {
+  const supabase = createClient();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  const userId = session?.user?.id;
+
   return (
     <div>
       <Navbar />
@@ -37,10 +44,13 @@ export default function Page() {
           expertise.
         </p>
 
-        {/* <Link href={URLs.feed}> */}
-        <SignUpModal />
-        {/* <Button className="mt-10 p-6">Get Started Now</Button> */}
-        {/* </Link> */}
+        {userId ? (
+          <Link href={URLs.feed}>
+            <Button className="mt-10 p-6">Get Started Now</Button>
+          </Link>
+        ) : (
+          <SignUpModal />
+        )}
       </section>
 
       <section className="min-h-screen w-full px-5 sm:px-18">
@@ -70,14 +80,19 @@ export default function Page() {
           Join Job Board today and take your first step towards being recognized
           in the world of Generative AI.
         </p>
-        <Link href={URLs.signIn}>
-          <Button
-            variant="link"
-            className="mt-10 py-8 text-lg underline sm:text-xl"
-          >
-            Join Now
-          </Button>
-        </Link>
+
+        {userId ? (
+          <Link href={URLs.feed}>
+            <Button
+              variant="link"
+              className="mt-10 py-8 text-lg underline sm:text-xl"
+            >
+              Explore
+            </Button>
+          </Link>
+        ) : (
+          <SignUpModal />
+        )}
       </section>
       <Footer />
     </div>
