@@ -1,5 +1,7 @@
+import Grid from '@/components/ui/grid';
 import Navbar from '@/components/ui/navbar';
 import { OnboardingSteps } from '@/components/ui/onboarding-steps';
+import ProjectCard from '@/components/ui/project-card';
 
 export default function Page() {
   return (
@@ -14,14 +16,9 @@ export default function Page() {
         defaultSkillLevel="noob"
       />
 
-      <OnboardingSteps
-        skillLevels={[
-          { id: 'naruto', label: 'Naruto' },
-          { id: 'sasuke', label: 'Sasuke' },
-          { id: 'sakura', label: 'Sakura' },
-        ]}
-        defaultSkillLevel="naruto"
-      />
+      <ProjectCard />
+
+      <Grid />
     </div>
   );
 }

@@ -1,18 +1,20 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import ProjectUploadModal from '@/components/ui/project-upload-modal';
+import { ThemeToggle } from '@/components/ui/toggle';
+import { useAuth } from '@/hooks/user/auth';
 import { URLs } from '@/lib/constants';
-
-import { supabaseClientComponentClient, useAuth } from '@/hooks/user/auth';
 import Link from 'next/link';
 import UserAuthButton from '../UserAuthButton';
 
 const NavBar = () => {
   const { session, isLoaded } = useAuth();
-
-  const supabase = supabaseClientComponentClient();
-
+  // const supabase = supabaseClientComponentClient();
   const userId = session?.user?.id;
+
+  console.log('session', userId);
+  console.log('isLoaded', isLoaded);
 
   return (
     <nav className="flex w-screen items-center justify-between bg-background px-6 py-4">
@@ -23,37 +25,24 @@ const NavBar = () => {
           </Link>
         </div>
         <div className="flex h-10 items-center gap-6">
-          {!isLoaded ? (
-            <span className="inline-block aspect-square h-9 w-9 animate-pulse rounded-full bg-gray-300"></span>
-          ) : // <LucideLoader className="animate-spin" />
-          userId ? (
-            <UserAuthButton />
-          ) : (
-            <div className="flex items-center gap-2">
-              <Link href={URLs.signIn}>
-                <Button>Sign In</Button>
-              </Link>
-
-              <Button
-                onClick={async () => {
-                  console.log(`Signing out...`);
-                  const { error } = await supabase.auth.signOut();
-
-                  if (error) {
-                    alert(error.message);
-                  }
-                }}
-              >
-                Sign out
-              </Button>
-
-              <Link href={URLs.signUp}>
-                <Button>Sign Up</Button>
-              </Link>
+          {userId && isLoaded && (
+            <div className="flex items-center gap-4">
+              <ProjectUploadModal />
+              <UserAuthButton />
             </div>
           )}
 
-          {/* <ThemeToggle /> */}
+          {!userId && isLoaded && (
+            <Link href={URLs.signIn}>
+              <Button>Get Started</Button>
+            </Link>
+          )}
+
+          {!isLoaded && !userId && (
+            <span className="inline-block aspect-square h-9 w-9 animate-pulse rounded-full bg-gray-300"></span>
+          )}
+
+          <ThemeToggle />
         </div>
       </div>
     </nav>
