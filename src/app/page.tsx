@@ -38,8 +38,8 @@ export default function Page() {
         </p>
 
         {/* <Link href={URLs.feed}> */}
-        <SignUpModal/>
-          {/* <Button className="mt-10 p-6">Get Started Now</Button> */}
+        <SignUpModal />
+        {/* <Button className="mt-10 p-6">Get Started Now</Button> */}
         {/* </Link> */}
       </section>
 

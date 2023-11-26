@@ -13,7 +13,9 @@ function ProjectUploadModal() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-      <Button variant="" className="mt-10 p-6">Get Started Now</Button>
+        <Button variant="default" className="mt-10 p-6">
+          Get Started Now
+        </Button>
       </DialogTrigger>
       <DialogContent className="h-screen min-w-full overflow-scroll md:h-screen-3/4 md:min-w-50">
         <DialogHeader>
