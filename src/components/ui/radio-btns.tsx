@@ -14,7 +14,7 @@ function RadioBtns({ radioArr }: RadioBtnsProps) {
   return (
     <>
       {radioArr.map((radio) => (
-        <div key={radio.id}>
+        <div key={radio.id} className="w-full">
           <RadioGroupItem
             value={radio.id}
             id={radio.id}

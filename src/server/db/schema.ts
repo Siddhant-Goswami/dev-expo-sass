@@ -6,6 +6,7 @@ import {
   bigserial,
   boolean,
   index,
+  integer,
   pgTableCreator,
   primaryKey,
   timestamp,
@@ -236,3 +237,27 @@ export const projectBookmarks = pgTable(
     };
   },
 );
+
+export const recruiterReachouts = pgTable('recruiterReachout', {
+  id: bigserial('id', { mode: 'number' }).primaryKey(),
+  recruiterId: commonUserIdSchema('recruiterId')
+    .references(() => userProfiles.id)
+    .notNull(),
+  devId: commonUserIdSchema('devId')
+    .references(() => userProfiles.id)
+    .notNull(),
+  workType: varchar('workType', { enum: ['freelance', 'full-time'] }).notNull(),
+  quotePrice: integer('quotePrice').notNull(),
+  message: varchar('message', { length: 1500 }).notNull(),
+  timestamp: timestamp('timestamp', { withTimezone: true }).notNull(),
+  createdAt: timestamp('createdAt', { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+});
+
+export type RecruiterReachoutSelect = InferSelectModel<
+  typeof recruiterReachouts
+>;
+export type RecruiterReachoutInsert = InferInsertModel<
+  typeof recruiterReachouts
+>;

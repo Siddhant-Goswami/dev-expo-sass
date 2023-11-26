@@ -17,7 +17,12 @@ const config = {
   eslint: { ignoreDuringBuilds: true },
 
   images: {
-    remotePatterns: [],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'cdn.dribbble.com',
+      },
+    ],
   },
 };
 

@@ -18,6 +18,15 @@ module.exports = {
       },
     },
     extend: {
+      screens: {
+        tablet: '950px',
+      },
+      spacing: {
+        18: '4.5rem',
+        500: '31.25rem',
+        900: '56.25rem',
+        hero: 'calc(100vh - 4.5rem)',
+      },
       height: {
         'screen-3/4': '75vh',
       },
@@ -32,6 +41,7 @@ module.exports = {
         sans: ['Instrument Sans', ...defaultTheme.fontFamily.sans],
       },
       colors: {
+        blackGradient: 'rgba(0, 0, 0, .25)',
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',

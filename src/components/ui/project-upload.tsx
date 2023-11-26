@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';

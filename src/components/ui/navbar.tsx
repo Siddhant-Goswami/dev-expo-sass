@@ -20,7 +20,7 @@ const NavBar = () => {
   console.log('session', session?.user);
 
   return (
-    <nav className="flex w-screen items-center justify-between bg-background px-6 py-4">
+    <nav className="sticky top-0 z-50 flex w-screen items-center justify-between bg-background px-6 py-4">
       <div className="flex w-full items-center justify-between space-x-4">
         <div className="flex items-center">
           <Link href="/" className="text-2xl font-semibold">
@@ -37,7 +37,7 @@ const NavBar = () => {
 
           {!userId && isLoaded && (
             <Link href={URLs.signIn}>
-              <Button>Get Started</Button>
+              <Button variant="secondary">Sign In</Button>
             </Link>
           )}
 

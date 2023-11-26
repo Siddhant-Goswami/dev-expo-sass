@@ -31,11 +31,10 @@ import Link from 'next/link';
 //   redirect(redirectUrl);
 // }
 
-export default function Page() {
+export default function SignUp() {
   return (
     <>
-      <NavBar />
-      <div className="container relative grid min-h-screen flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0">
+      <div className="">
         <div className="lg:p-8">
           <div className="mx-auto flex w-full flex-col items-center justify-center space-y-6 sm:w-80">
             {/* <div className="flex flex-col space-y-2 text-center">
