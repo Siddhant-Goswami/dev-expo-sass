@@ -11,19 +11,19 @@ import { ProjectUpload } from '@/components/ui/project-upload';
 import { GetInTouch } from './get-in-touch';
 
 function GetInTouchModal() {
-  const userName = "Rishabh";
+  const userName = 'Rishabh';
   return (
     <Dialog>
       <DialogTrigger asChild>
-      <Button variant="default" className="rounded-xl">
-        Get in touch
+        <Button variant="default" className="rounded-xl">
+          Get in touch
         </Button>
       </DialogTrigger>
-      <DialogContent className="h-screen min-w-full overflow-scroll md:h-screen-3/4 md:min-w-50 p-">
+      <DialogContent className="p- h-screen min-w-full overflow-scroll md:h-screen-3/4 md:min-w-50">
         <DialogHeader>
           <DialogTitle>Message {userName}</DialogTitle>
         </DialogHeader>
-        <GetInTouch/>
+        <GetInTouch />
       </DialogContent>
     </Dialog>
   );

@@ -23,36 +23,21 @@ import { Textarea } from '@/components/ui/textarea';
 // message
 // pricing
 
-
-const getInTouchFormSchema = z.object({
-  
-});
+const getInTouchFormSchema = z.object({});
 
 export function GetInTouch() {
-  const userName = "Rishabh";
+  const userName = 'Rishabh';
 
-  const form = useForm({
-    
-  });
-
-  function onSubmit(data) {
-
-  }
-
-  const requestAction = () => {
-    
-  }
+  const form = useForm({});
 
   const radioArr = [
     { id: 'freelance', label: 'Hire for freelance work' },
     { id: 'full-time', label: 'Hire for full-time work' },
-  ]
+  ];
 
   return (
     <>
-      <RadioGroup
-        className="flex w-full"
-      >
+      <RadioGroup className="flex w-full">
         <RadioBtns radioArr={radioArr} />
       </RadioGroup>
     </>
