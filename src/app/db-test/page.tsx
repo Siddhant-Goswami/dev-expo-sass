@@ -2,8 +2,8 @@
 import { Button } from '@/components/ui/button';
 import Navbar from '@/components/ui/navbar';
 import { OnboardingSteps } from '@/components/ui/onboarding-steps';
-import { createProject, getAllProjects, getProjectById, getUserProjects } from '@/server/actions/projects';
-import { createUser } from '@/server/actions/users';
+import { createBookmark, createComment, createLike, createProject, getAllProjects, getProjectById, getUserProjects } from '@/server/actions/projects';
+import { approveDev, createUser, getUserInfo } from '@/server/actions/users';
 
 export default function Page() {
   return (
@@ -36,12 +36,11 @@ export default function Page() {
         onClick={() => {
           void createProject({
             userId: 1,
-            title: 'testProject3',
+            title: 'testProject4',
             description: 'test project description',
-            tagsList: [{ name: 'test-tag-1' }, { name: 'test-tag-2' }],
+            tagsList: ['lol', 'ok'],
             hostedUrl: 'test-hosted-url',
             sourceCodeUrl: 'test-source-code-url',
-            images: [],
           });
         }}
       >
@@ -70,6 +69,61 @@ export default function Page() {
         }}
       >
         get project by ID
+      </Button>
+
+      <Button
+        onClick={() => {
+          void createComment({
+            userId: 1,
+            projectId: 12,
+            content: 'test comment',
+          });
+        }}
+      >
+        add comment
+      </Button>
+
+      <Button
+        onClick={() => {
+          void createLike({
+            userId: 1,
+            projectId: 12,
+          });
+        }}
+      >
+        add like
+      </Button>
+
+      <Button
+        onClick={() => {
+          void createBookmark({
+            userId: 1,
+            projectId: 12,
+          });
+        }}
+      >
+        add bookmark
+      </Button>
+
+      <Button
+        onClick={() => {
+          void getUserInfo({
+            userId: 1,
+          });
+        }}
+      >
+        get user info
+      </Button>
+
+      <Button
+        onClick={() => {
+          void approveDev({
+            userId: 1,
+            availibity: true,
+          });
+        }}
+      >
+        approve dev
       </Button>
 
       <OnboardingSteps

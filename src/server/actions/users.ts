@@ -41,10 +41,10 @@ export const approveDev = async ({
 }: {
   userId: number;
   availibity: boolean;
-  gitHubUrl: string;
-  linkedInUrl: string;
-  twitterUrl: string;
-  websiteUrl: string;
+  gitHubUrl?: string;
+  linkedInUrl?: string;
+  twitterUrl?: string;
+  websiteUrl?: string;
 }) => {
   await db.insert(devs).values({
     userId,
@@ -74,24 +74,25 @@ export const approveRecruiter = async ({
 export const getUserInfo = async ({ userId }: { userId: number }) => {
   const userInfo = await db.query.users.findFirst({
     where: eq(users.id, userId),
-    with: {
-      dev: true,
-      recruiter: true,
-    },
   });
 
-  const projectsCount = await db.query.projects.findMany({
+  const devInfo = await db.query.devs.findFirst({
+    where: eq(devs.userId, userId),
+  });
+
+  const recruiterInfo = await db.query.recruiters.findFirst({
+    where: eq(recruiters.userId, userId),
+  });
+
+  const projectsCount = (await db.query.projects.findMany({
     where: eq(projects.userId, userId),
-  });
+  })).length;
 
-  return { userInfo, projectsCount };
+  console.log(userInfo, devInfo, recruiterInfo, projectsCount)
+
+  return { info: {
+    userInfo,
+    devInfo,
+    recruiterInfo,
+  }, projectsCount };
 };
-
-// const createUserResult = await createUser({
-//   username: 'johndoe',
-//   displayName: 'John Doe',
-//   displayPictureUrl: 'https://example.com/profile.jpg',
-//   bio: 'Software Engineer',
-// });
-
-// console.log('Created user:', createUserResult);

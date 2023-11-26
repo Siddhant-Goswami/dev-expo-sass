@@ -17,6 +17,7 @@ export const getAllProjects = async () => {
   const allProjects = await db.query.projects.findMany({
     orderBy: [desc(projects.publishedAt)],
   });
+  console.log(allProjects);
   return allProjects;
 };
 
@@ -63,7 +64,7 @@ export const createProject = async ({
   userId,
   title,
   description,
-  images,
+  // images,
   hostedUrl,
   sourceCodeUrl,
   tagsList,
@@ -72,11 +73,9 @@ export const createProject = async ({
   title: string;
   description: string;
   hostedUrl: string;
-  images: FileList[];
+  // images: FileList;
   sourceCodeUrl: string;
-  tagsList: Array<{
-    name: string;
-  }>;
+  tagsList: string[];
 }) => {
   // TODO: slug handling and image handling
 
@@ -102,18 +101,18 @@ export const createProject = async ({
     let [tagResult] = await db
       .select({ tagId: tags.id })
       .from(tags)
-      .where(eq(tags.name, currentTag.name));
+      .where(eq(tags.name, currentTag));
     let tagId = tagResult?.tagId;
 
     await db.query.tags.findFirst({
-      where: eq(tags.name, currentTag.name),
+      where: eq(tags.name, currentTag),
     });
 
     if (!tagId) {
       [tagResult] = await db
         .insert(tags)
         .values({
-          name: currentTag.name,
+          name: currentTag,
         })
         .returning({ tagId: tags.id });
       tagId = tagResult!.tagId;
