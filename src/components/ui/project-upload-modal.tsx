@@ -17,7 +17,7 @@ function ProjectUploadModal() {
           Upload Project
         </Button>
       </DialogTrigger>
-      <DialogContent className="md:h-screen-3/4 h-screen min-w-full overflow-scroll md:min-w-50">
+      <DialogContent className="h-screen min-w-full overflow-scroll md:h-screen-3/4 md:min-w-50">
         <DialogHeader>
           <DialogTitle>Upload Project</DialogTitle>
           <DialogDescription>
