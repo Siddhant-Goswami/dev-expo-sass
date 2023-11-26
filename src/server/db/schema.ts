@@ -5,6 +5,7 @@ import {
   bigserial,
   boolean,
   index,
+  integer,
   pgTableCreator,
   primaryKey,
   timestamp,
@@ -213,3 +214,23 @@ export const projectBookmarks = pgTable(
     };
   },
 );
+
+export const recruiterReachouts = pgTable(
+  'recruiterReachout',
+  {
+    id: bigserial('id', { mode: 'number' }).primaryKey(),
+    recruiterId: bigserial('recruiterId', { mode: 'number' }).references(
+      () => users.id,
+    ),
+    devId: bigserial('devId', { mode: 'number' }).references(
+      () => users.id,
+    ),
+    workType: varchar('workType',{enum: ['freelance', 'full-time']}).notNull(),
+    quotePrice: integer('quotePrice').notNull(),
+    message: varchar('message', { length: 1500 }).notNull(),
+    timestamp: timestamp('timestamp', { withTimezone: true }).notNull(),
+    createdAt: timestamp('createdAt', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+)
