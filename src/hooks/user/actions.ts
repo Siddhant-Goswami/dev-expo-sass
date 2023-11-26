@@ -4,7 +4,7 @@ import {
   createUserProfileInDb,
   getUserProfileFromDb,
 } from '@/server/actions/users';
-import { UserProfileSelect } from '@/server/db/schema';
+import { type UserProfileSelect } from '@/server/db/schema';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 
