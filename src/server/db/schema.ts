@@ -87,6 +87,7 @@ export const projects = pgTable(
       .notNull()
       .default(''),
     hostedUrl: varchar('hostedUrl', { length: 1024 }).notNull().default(''),
+    youtubeUrl: varchar('youtubeUrl', { length: 1024 }).notNull().default(''),
     // ! TODO: This should be either specific to the git provider (github) or a generic URL
     sourceCodeUrl: varchar('sourceCodeUrl', { length: 1024 })
       .notNull()
