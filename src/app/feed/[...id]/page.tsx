@@ -19,40 +19,11 @@ async function Page({ params }: PageProps) {
     return notFound();
   }
 
-  console.log('projectId', projectId);
   const projectDetails = await getProjectById(Number(projectId));
-
-  console.log('projectDetails', projectDetails);
-
-  // project: {
-  //   id: 6,
-  //   userId: '0f320908-9b8a-4520-94ad-c4dcfc7d4063',
-  //   title: '324567654321`2345678',
-  //   slug: '324567654321`2345678-1701012939506',
-  //   description: 'adsfghfderwtdfhgjw5qertygjhkterwtyugkhjltewrryufgkhjtewryuhjk',
-  //   coverImageUrl: '',
-  //   hostedUrl: 'http://localhost:3000/',
-  //   youtubeUrl: '',
-  //   sourceCodeUrl: 'http://localhost:3000/',
-  //   createdAt: 2023-11-26T15:35:41.778Z,
-  //   publishedAt: null,
-  //   updatedAt: 2023-11-26T15:35:41.778Z
-  // },
-  // dev: {
-  //   id: '0f320908-9b8a-4520-94ad-c4dcfc7d4063',
-  //   username: 'kishanmandora7',
-  //   displayName: 'Kishan Mandora',
-  //   displayPictureUrl: 'https://lh3.googleusercontent.com/a/ACg8ocJEQRXFqEX_ODLBzxjX7qOZeoKFmzIVKnJnK4ygmrDKzfY=s96-c',
-  //   bio: "Hi, I'm Kishan Mandora, one of the early users of this platform!",
-  //   createdAt: 2023-11-26T12:45:49.707Z,
-  //   updatedAt: 2023-11-26T12:45:49.707Z
-  // },
-  // tags: [],
-  // media: []
 
   if (!projectDetails) return notFound();
 
-  const { project, dev, tags, media } = projectDetails;
+  const { project, dev, media } = projectDetails;
   const { title, description } = project;
   const { displayName, displayPictureUrl } = dev!;
   const video = media.find((m) => m.type === 'video');

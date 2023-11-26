@@ -51,11 +51,6 @@ export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
     }
     const formValues = form.getValues();
 
-    console.log('fields:', formValues);
-    console.log('files:', {
-      images: selectedImages,
-      videos: selectedVideos,
-    });
     const images = selectedImages;
 
     const {
@@ -76,8 +71,6 @@ export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
       images,
     };
 
-    console.log('requestObject', requestObject);
-
     const formData = new FormData();
     formData.append('projectData', JSON.stringify(formValues));
 
@@ -91,8 +84,6 @@ export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
       method: 'POST',
       body: formData,
     });
-
-    console.log('res', res);
 
     if (res.ok) {
       const { projectId } = (await res.json()) as { projectId: string };
@@ -218,8 +209,6 @@ export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
                   type="file"
                   // value={selectedImages}
                   onChange={(e) => {
-                    console.log('images:', e.target.files);
-
                     const images = e.target.files;
 
                     if (!images) return;
@@ -265,8 +254,6 @@ export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
                   accept="video/*"
                   type="file"
                   onChange={(e) => {
-                    console.log('Videos:', e.target.files);
-
                     const videos = e.target.files;
                     if (!videos?.[0]) return;
 

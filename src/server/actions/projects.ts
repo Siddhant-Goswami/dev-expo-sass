@@ -56,7 +56,7 @@ export const getProjectsByUserId = async (userId: UserProfileSelect['id']) => {
     where: eq(projects.userId, userId.toString()),
     orderBy: [desc(projects.publishedAt)],
   });
-  console.log(userProjects);
+
   return userProjects;
 };
 

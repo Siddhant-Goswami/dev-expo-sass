@@ -54,7 +54,7 @@ export const OnboardingSteps: React.FC<OnboardingStepProps> = ({
   });
 
   function onSubmit(data: OnboardingStepValues) {
-    console.log(data);
+    // console.log(data);
   }
 
   return (

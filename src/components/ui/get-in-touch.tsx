@@ -54,7 +54,6 @@ export function GetInTouch({ setIsModalOpen }: GetInTouchProps) {
       devId: '3',
     };
 
-    console.log(data);
     const { success } = await createRecruiterReachout(requestObject);
     if (success) {
       toast({

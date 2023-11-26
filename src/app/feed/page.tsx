@@ -32,8 +32,6 @@ async function feed() {
     },
   );
 
-  console.log('filteredProjectsData', filteredProjectsData);
-
   return (
     <>
       <NavBar />

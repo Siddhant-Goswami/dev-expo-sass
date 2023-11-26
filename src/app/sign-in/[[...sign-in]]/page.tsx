@@ -10,27 +10,6 @@ import {
 } from '@supabase/auth-ui-shared';
 import Link from 'next/link';
 
-// async function handleGithubSignin() {
-//   'use server';
-
-//   const supabase = createClient(cookies());
-
-//   const sesh = await supabase.auth.getSession();
-//   console.log({ sesh });
-
-//   const githubResult = await supabase.auth.signInWithOAuth({
-//     provider: 'github',
-//   });
-
-//   const redirectUrl = githubResult.data.url;
-
-//   if (!redirectUrl) {
-//     throw new Error('No redirect URL');
-//   }
-
-//   redirect(redirectUrl);
-// }
-
 export default function Page() {
   return (
     <>

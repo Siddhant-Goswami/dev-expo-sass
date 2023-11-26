@@ -28,7 +28,6 @@ const ScrollableChips: React.FC<ScrollableChipsProps> = ({ items }) => {
   const [activeChip, setActiveChip] = useState<string | null>(null);
 
   const handleChipClick = (label: string) => {
-    console.log('clicked', label);
     setActiveChip(label);
   };
 

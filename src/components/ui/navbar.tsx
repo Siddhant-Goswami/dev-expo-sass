@@ -17,8 +17,6 @@ const NavBar = () => {
   // ! DO THIS IN A BETTER WAY, DO NOT DELETE FOR NOW
   useUserProfile();
 
-  console.log('session', session?.user);
-
   return (
     <nav className="sticky top-0 z-50 flex w-screen items-center justify-between bg-background px-6 py-4">
       <div className="flex w-full items-center justify-between space-x-4">
