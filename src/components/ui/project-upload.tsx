@@ -16,14 +16,15 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { createProject } from '@/server/actions/projects';
 
 const projectFormSchema = z.object({
   title: z
     .string()
     .min(1, 'Please provide a title for your project.')
     .max(50, 'Title must not exceed 50 characters.'),
-  hostedURL: z.string().url('Please enter a valid URL for the hosted project.'),
-  sourceCodeURL: z.string().url('Please enter a valid source code URL.'),
+  hostedUrl: z.string().url('Please enter a valid URL for the hosted project.'),
+  sourceCodeUrl: z.string().url('Please enter a valid source code URL.'),
   tags: z
     .array(z.string())
     .min(1, 'Please provide at least one tag for your project.'),
@@ -42,8 +43,8 @@ export function ProjectUpload() {
     resolver: zodResolver(projectFormSchema),
     defaultValues: {
       title: '',
-      hostedURL: '',
-      sourceCodeURL: '',
+      hostedUrl: '',
+      sourceCodeUrl: '',
       tags: [],
       description: '', // Default description value
       files: null, // Default files value
@@ -53,13 +54,68 @@ export function ProjectUpload() {
   function onSubmit(data: ProjectUploadValues) {
     console.log(' data:', data);
     console.log(' form:', form.getValues('files'));
-    const lol = form.getValues('files');
-    console.log(' lol:', lol);
+    const images = form.getValues('files') ?? [];
+
+    const {
+      title,
+      description,
+      hostedUrl,
+      sourceCodeUrl,
+      tags: tagsList,
+    } = data;
+
+    const requestObject = {
+      userId: 1,
+      title,
+      description,
+      hostedUrl,
+      sourceCodeUrl,
+      tagsList,
+      images,
+    };
+
+    console.log('requestObject', requestObject);
+
+    createProject.bind(requestObject);
   }
+
+  const requestAction = () => {
+    const data = form.getValues();
+
+    const {
+      title,
+      description,
+      hostedUrl,
+      sourceCodeUrl,
+      tags: tagsList,
+    } = data;
+
+    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+    // const images = form.getValues('files');
+
+    // if (images) {
+    const requestObject = {
+      userId: 1,
+      title,
+      description,
+      hostedUrl,
+      sourceCodeUrl,
+      tagsList,
+      // images,
+    };
+
+    void createProject(requestObject);
+    // }
+  };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form
+        action={requestAction}
+        method="post"
+        // onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-8"
+      >
         <FormField
           control={form.control}
           name="title"
@@ -91,7 +147,7 @@ export function ProjectUpload() {
         />
         <FormField
           control={form.control}
-          name="hostedURL"
+          name="hostedUrl"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Hosted URL</FormLabel>
@@ -104,7 +160,7 @@ export function ProjectUpload() {
         />
         <FormField
           control={form.control}
-          name="sourceCodeURL"
+          name="sourceCodeUrl"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Source Code URL</FormLabel>

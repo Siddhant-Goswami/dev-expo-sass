@@ -33,7 +33,7 @@ const NavBar = () => {
           )}
 
           {!userId && isLoaded && (
-            <Link href={URLs.signUp}>
+            <Link href={URLs.signIn}>
               <Button>Get Started</Button>
             </Link>
           )}
