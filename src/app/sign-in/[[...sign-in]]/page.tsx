@@ -1,5 +1,6 @@
 'use client';
 
+import NavBar from '@/components/ui/navbar';
 import { supabaseClientComponentClient } from '@/hooks/user/auth';
 import { URLs } from '@/lib/constants';
 import { Auth } from '@supabase/auth-ui-react';
@@ -7,7 +8,6 @@ import {
   // Import predefined theme
   ThemeSupa,
 } from '@supabase/auth-ui-shared';
-import { LucideTerminal } from 'lucide-react';
 import Link from 'next/link';
 
 // async function handleGithubSignin() {
@@ -34,30 +34,8 @@ import Link from 'next/link';
 export default function Page() {
   return (
     <>
+      <NavBar />
       <div className="container relative grid min-h-screen flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0">
-        <div className="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
-          <div
-            style={{
-              backgroundImage:
-                "url('https://img.freepik.com/free-vector/gradient-network-connection-background_23-2148871843.jpg')",
-            }}
-            className="absolute inset-0 bg-zinc-900 bg-cover bg-center bg-no-repeat"
-          />
-          <div className="relative z-20 flex items-center text-lg font-medium">
-            <LucideTerminal className="mr-2 h-6 w-6" />
-            Dev Expo
-          </div>
-          <div className="relative z-20 mt-auto">
-            <blockquote className="space-y-2">
-              <p className="text-lg">
-                &ldquo;Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Nulla, odio tempore incidunt facilis quis fuga rerum! Impedit
-                ipsa tenetur quaerat recusandae sapiente.&rdquo;
-              </p>
-              <footer className="text-sm">Lorem Ipsum</footer>
-            </blockquote>
-          </div>
-        </div>
         <div className="lg:p-8">
           <div className="mx-auto flex w-full flex-col items-center justify-center space-y-6 sm:w-80">
             {/* <div className="flex flex-col space-y-2 text-center">

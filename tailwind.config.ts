@@ -23,6 +23,8 @@ module.exports = {
       },
       spacing: {
         18: '4.5rem',
+        500: '31.25rem',
+        900: '56.25rem',
         hero: 'calc(100vh - 4.5rem)',
       },
       height: {
