@@ -240,10 +240,12 @@ export const projectBookmarks = pgTable(
 
 export const recruiterReachouts = pgTable('recruiterReachout', {
   id: bigserial('id', { mode: 'number' }).primaryKey(),
-  recruiterId: commonUserIdSchema('recruiterId').references(
-    () => userProfiles.id,
-  ).notNull(),
-  devId: commonUserIdSchema('devId').references(() => userProfiles.id).notNull(),
+  recruiterId: commonUserIdSchema('recruiterId')
+    .references(() => userProfiles.id)
+    .notNull(),
+  devId: commonUserIdSchema('devId')
+    .references(() => userProfiles.id)
+    .notNull(),
   workType: varchar('workType', { enum: ['freelance', 'full-time'] }).notNull(),
   quotePrice: integer('quotePrice').notNull(),
   message: varchar('message', { length: 1500 }).notNull(),
@@ -254,6 +256,8 @@ export const recruiterReachouts = pgTable('recruiterReachout', {
 });
 
 export type RecruiterReachoutSelect = InferSelectModel<
-  typeof recruiterReachouts>
+  typeof recruiterReachouts
+>;
 export type RecruiterReachoutInsert = InferInsertModel<
-  typeof recruiterReachouts>
+  typeof recruiterReachouts
+>;

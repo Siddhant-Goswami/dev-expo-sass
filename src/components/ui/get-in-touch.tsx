@@ -22,11 +22,11 @@ import { createRecruiterReachout } from '@/server/actions/reachouts';
 
 const workTypeArr = [
   { id: 'freelance', label: 'Freelance' },
-  { id: 'fulltime', label: 'Fulltime' },
+  { id: 'full-time', label: 'Full-time' },
 ];
 
 const getInTouchSchema = z.object({
-  employmentType: z.enum(['freelance', 'fulltime'], {
+  employmentType: z.enum(['freelance', 'full-time'], {
     required_error: 'Employment type is required.',
   }),
   message: z.string().min(1, 'Message is required.'),
@@ -47,8 +47,8 @@ export function GetInTouch() {
       workType: data.employmentType,
       quotePrice: data.pricing,
       message: data.message,
-      recruiterId: 2,
-      devId: 3,
+      recruiterId: '2',
+      devId: '3',
     };
 
     console.log(data);

@@ -9,7 +9,10 @@ const createRecruiterReachout = async ({
   workType,
   quotePrice,
   message,
-}: RecruiterReachoutInsert ) => {
+}: Pick<
+  RecruiterReachoutInsert,
+  'recruiterId' | 'devId' | 'workType' | 'quotePrice' | 'message'
+>) => {
   await db.insert(recruiterReachouts).values({
     recruiterId,
     devId,
