@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import ProjectUploadModal from '@/components/ui/project-upload-modal';
 import { ThemeToggle } from '@/components/ui/toggle';
 import { useAuth } from '@/hooks/user/auth';
+import { useUserProfile } from '@/hooks/user/profile';
 import { URLs } from '@/lib/constants';
 import Link from 'next/link';
 import UserAuthButton from '../UserAuthButton';
@@ -13,8 +14,10 @@ const NavBar = () => {
   // const supabase = supabaseClientComponentClient();
   const userId = session?.user?.id;
 
-  console.log('session', userId);
-  console.log('isLoaded', isLoaded);
+  // ! DO THIS IN A BETTER WAY, DO NOT DELETE FOR NOW
+  useUserProfile();
+
+  console.log('session', session?.user);
 
   return (
     <nav className="sticky top-0 z-50 flex w-screen items-center justify-between bg-background px-6 py-4">

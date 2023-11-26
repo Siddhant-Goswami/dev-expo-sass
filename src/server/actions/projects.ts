@@ -1,7 +1,10 @@
 'use server';
+import { desc, eq } from 'drizzle-orm';
 import { db } from '../db';
-import { eq, desc } from 'drizzle-orm';
 import {
+  ProjectInsert,
+  ProjectSelect,
+  UserProfileSelect,
   comments,
   likes,
   projectBookmarks,
@@ -22,9 +25,9 @@ export const getAllProjects = async () => {
 };
 
 // get all projects of a user
-export const getUserProjects = async ({ userId }: { userId: number }) => {
+export const getProjectsByUserId = async (userId: UserProfileSelect['id']) => {
   const userProjects = await db.query.projects.findMany({
-    where: eq(projects.userId, userId),
+    where: eq(projects.userId, userId.toString()),
     orderBy: [desc(projects.publishedAt)],
   });
   console.log(userProjects);
@@ -32,7 +35,7 @@ export const getUserProjects = async ({ userId }: { userId: number }) => {
 };
 
 // get project by Id
-export const getProjectById = async ({ projectId }: { projectId: number }) => {
+export const getProjectById = async (projectId: ProjectSelect['id']) => {
   const project = await db.query.projects.findFirst({
     where: eq(projects.id, projectId),
   });
@@ -68,13 +71,7 @@ export const createProject = async ({
   hostedUrl,
   sourceCodeUrl,
   tagsList,
-}: {
-  userId: number;
-  title: string;
-  description: string;
-  hostedUrl: string;
-  // images: FileList;
-  sourceCodeUrl: string;
+}: ProjectInsert & {
   tagsList: string[];
 }) => {
   // TODO: slug handling and image handling
@@ -84,8 +81,9 @@ export const createProject = async ({
   const [result] = await db
     .insert(projects)
     .values({
-      userId,
-      slug: title,
+      userId: userId.toString(),
+      slug:
+        title.replace(/\s+/g, '-').toLowerCase() + '-' + Date.now().toString(),
       title,
       description,
       coverImageUrl,
@@ -140,7 +138,7 @@ export const createComment = async ({
   const commentId = await db
     .insert(comments)
     .values({
-      userId,
+      userId: userId.toString(),
       projectId,
       content,
       postedAt: new Date(),
@@ -159,7 +157,7 @@ export const createLike = async ({
   projectId: number;
 }) => {
   await db.insert(likes).values({
-    userId,
+    userId: userId.toString(),
     projectId,
     timestamp: new Date(),
   });
@@ -174,7 +172,7 @@ export const createBookmark = async ({
   projectId: number;
 }) => {
   await db.insert(projectBookmarks).values({
-    userId,
+    userId: userId.toString(),
     projectId,
     timestamp: new Date(),
   });
