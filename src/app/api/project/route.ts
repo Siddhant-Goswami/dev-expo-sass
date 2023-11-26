@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { projectFormSchema } from '@/lib/validations/project';
 import { db } from '@/server/db';
 import { projectMedia, projects } from '@/server/db/schema';

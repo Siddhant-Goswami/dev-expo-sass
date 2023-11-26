@@ -57,7 +57,7 @@ export default function Page() {
             </div>
           </div>
           <img
-            className="w-900 h-500 rounded-sm"
+            className="h-500 w-900 rounded-sm"
             src="https://cdn.dribbble.com/userupload/11597547/file/original-0bc15864f71e1fcdfa8152b2379fdb44.jpg"
             alt="3D Cube Network"
           />

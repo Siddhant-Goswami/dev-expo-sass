@@ -6,11 +6,11 @@ import {
   bigserial,
   boolean,
   index,
+  integer,
   pgTableCreator,
   primaryKey,
   timestamp,
   varchar,
-  integer,
 } from 'drizzle-orm/pg-core';
 
 /**
@@ -240,10 +240,10 @@ export const projectBookmarks = pgTable(
 
 export const recruiterReachouts = pgTable('recruiterReachout', {
   id: bigserial('id', { mode: 'number' }).primaryKey(),
-  recruiterId: bigserial('recruiterId', { mode: 'number' }).references(
-    () => users.id,
+  recruiterId: commonUserIdSchema('recruiterId').references(
+    () => userProfiles.id,
   ),
-  devId: bigserial('devId', { mode: 'number' }).references(() => users.id),
+  devId: commonUserIdSchema('devId').references(() => userProfiles.id),
   workType: varchar('workType', { enum: ['freelance', 'full-time'] }).notNull(),
   quotePrice: integer('quotePrice').notNull(),
   message: varchar('message', { length: 1500 }).notNull(),
