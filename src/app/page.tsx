@@ -3,11 +3,13 @@ import Footer from '@/components/ui/footer';
 import Navbar from '@/components/ui/navbar';
 import SignUpModal from '@/components/ui/sign-up-modal';
 import { URLs } from '@/lib/constants';
-import { createClient } from '@/utils/supabase/server';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 import Link from 'next/link';
 
 export default async function Page() {
-  const supabase = createClient();
+  const supabase = createServerComponentClient({ cookies });
+
   const {
     data: { session },
   } = await supabase.auth.getSession();

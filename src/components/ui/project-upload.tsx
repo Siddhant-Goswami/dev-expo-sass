@@ -18,9 +18,9 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
-import { useAuth } from '@/hooks/user/auth';
 import { MAX_IMAGE_SIZE, MAX_VIDEO_SIZE } from '@/lib/constants';
 import { projectFormSchema } from '@/lib/validations/project';
+import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 
 type ProjectUploadValues = z.infer<typeof projectFormSchema>;
@@ -29,7 +29,6 @@ type ProjectUploadProps = {
 };
 
 export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
-  const { userId } = useAuth();
   const { toast } = useToast();
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [selectedVideos, setSelectedVideos] = useState<File[]>([]);
@@ -45,67 +44,55 @@ export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
     },
   });
 
-  async function onSubmit() {
-    if (!userId) {
-      return;
-    }
-    const formValues = form.getValues();
+  const { mutate, isPending } = useMutation({
+    mutationFn: async () => {
+      const formValues = form.getValues();
 
-    const images = selectedImages;
+      const formData = new FormData();
+      formData.append('projectData', JSON.stringify(formValues));
 
-    const {
-      title,
-      description,
-      hostedUrl,
-      sourceCodeUrl,
-      tags: tagsList,
-    } = formValues;
+      if (selectedImages[0]) formData.append('image1', selectedImages[0]);
+      if (selectedImages[1]) formData.append('image2', selectedImages[1]);
+      if (selectedImages[2]) formData.append('image3', selectedImages[2]);
 
-    const requestObject = {
-      userId,
-      title,
-      description,
-      hostedUrl,
-      sourceCodeUrl,
-      tagsList,
-      images,
-    };
+      if (selectedVideos[0]) formData.append('video', selectedVideos[0]);
 
-    const formData = new FormData();
-    formData.append('projectData', JSON.stringify(formValues));
+      const res = await fetch(`/api/project`, {
+        method: 'POST',
+        body: formData,
+      });
 
-    if (selectedImages[0]) formData.append('image0', selectedImages[0]);
-    if (selectedImages[1]) formData.append('image1', selectedImages[1]);
-    if (selectedImages[2]) formData.append('image2', selectedImages[2]);
+      if (res.ok) {
+        const result = (await res.json()) as { projectId: string };
+        return result;
+      } else {
+        throw new Error('Something went wrong');
+      }
+    },
 
-    if (selectedVideos[0]) formData.append('video', selectedVideos[0]);
-
-    const res = await fetch(`/api/project`, {
-      method: 'POST',
-      body: formData,
-    });
-
-    if (res.ok) {
-      const { projectId } = (await res.json()) as { projectId: string };
+    onSuccess: (data) => {
       toast({
         title: 'Project uploaded successfully!',
       });
       setIsModalOpen(false);
       // Redirect user to their new project page
-      window.location.href = `/feed/${projectId}`;
-    } else {
+      window.location.href = `/feed/${data?.projectId}`;
+    },
+
+    onError: (err) => {
       toast({
         variant: 'destructive',
         title:
-          'Oops! Something went wrong. Please try again. ' + res.statusText,
+          'Oops! Something went wrong. Please try again.' + err?.message ??
+          'Unknown error',
       });
-    }
-  }
+    },
+  });
 
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(() => mutate())}
         method="post"
         // onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-8"
@@ -210,10 +197,10 @@ export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
                   // value={selectedImages}
                   onChange={(e) => {
                     const images = e.target.files;
-
                     if (!images) return;
 
                     const imagesArray = Array.from(images);
+                    console.log(`Selected images:`, imagesArray);
                     imagesArray.forEach((image) => {
                       if (!image.type.startsWith('image/')) {
                         return toast({
@@ -224,13 +211,15 @@ export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
                       if (image.size > MAX_IMAGE_SIZE) {
                         return toast({
                           variant: 'destructive',
-                          title: 'Image size should be less than 2MB',
+                          title: 'Image size should be less than 5MB',
                         });
                       }
                     });
                     const filteredImages = imagesArray.filter(
                       (image) => image.size < MAX_IMAGE_SIZE,
                     );
+
+                    console.log(`Filtered images:`, filteredImages);
                     setSelectedImages(filteredImages);
 
                     // alert("You've selected " + imagesArray.length + ' images.');
@@ -255,6 +244,7 @@ export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
                   type="file"
                   onChange={(e) => {
                     const videos = e.target.files;
+
                     if (!videos?.[0]) return;
 
                     if (!videos?.[0]?.type.startsWith('video/')) {
@@ -283,7 +273,7 @@ export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
         />
 
         <div className="flex justify-end">
-          <Button type="submit" className="ml-auto">
+          <Button type="submit" className="ml-auto" disabled={isPending}>
             Submit Project
           </Button>
         </div>
