@@ -9,7 +9,7 @@ export default function Page() {
   return (
     <div>
       <Navbar />
-      <section className="h-hero sm:px-18 relative flex w-full flex-col items-center justify-center px-5">
+      <section className="relative flex h-hero w-full flex-col items-center justify-center px-5 sm:px-18">
         <div
           className="absolute inset-x-0 top-[-10rem] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[-20rem]"
           aria-hidden="true"
@@ -41,14 +41,14 @@ export default function Page() {
         </Link>
       </section>
 
-      <section className="sm:px-18 min-h-screen w-full px-5">
+      <section className="min-h-screen w-full px-5 sm:px-18">
         <h2 className="mb-12 text-center text-2xl font-medium sm:text-5xl">
           Explore Trending Projects
         </h2>
         <Grid />
       </section>
 
-      <section className="sm:px-18 relative flex w-full flex-col items-center justify-center px-5 py-36">
+      <section className="relative flex w-full flex-col items-center justify-center px-5 py-36 sm:px-18">
         <div
           className="absolute inset-x-0 top-[-10rem] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[-20rem]"
           aria-hidden="true"

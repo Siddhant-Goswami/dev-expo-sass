@@ -65,7 +65,7 @@ const projectsList = [
 
 function Grid() {
   return (
-    <div className="tablet:grid-cols-3 grid h-max w-full grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
+    <div className="grid h-max w-full grid-cols-1 gap-6 sm:grid-cols-2 tablet:grid-cols-3 xl:grid-cols-4">
       {projectsList.map((project) => (
         <ProjectCard
           projectName={project.projectName}

@@ -15,7 +15,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     <div className="rounded-sm">
       <div className="group relative h-64 overflow-hidden  rounded-sm sm:h-56">
         <Image fill={true} src="/images/demo.png" alt="demo" />
-        <h2 className="group-hover:bg-blackGradient absolute bottom-0 z-10 w-full px-4 py-3 text-xl font-semibold text-transparent transition-all duration-200 group-hover:text-white">
+        <h2 className="absolute bottom-0 z-10 w-full px-4 py-3 text-xl font-semibold text-transparent transition-all duration-200 group-hover:bg-blackGradient group-hover:text-white">
           {projectName}
         </h2>
       </div>
