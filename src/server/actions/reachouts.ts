@@ -1,34 +1,41 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 'use server';
 
+import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 import { db } from '../db';
 import { RecruiterReachoutInsert, recruiterReachouts } from '../db/schema';
 
 const createRecruiterReachout = async ({
-  recruiterId,
   devId,
   workType,
   quotePrice,
   message,
 }: Pick<
   RecruiterReachoutInsert,
-  'recruiterId' | 'devId' | 'workType' | 'quotePrice' | 'message'
+  'devId' | 'workType' | 'quotePrice' | 'message'
 >) => {
-  try {
-    await db.insert(recruiterReachouts).values({
-      recruiterId,
-      devId,
-      workType: workType as 'freelance' | 'full-time',
-      quotePrice,
-      message,
-      timestamp: new Date(),
-    });
+  const supabase = createServerActionClient({
+    cookies,
+  });
 
-    return { success: true };
-  } catch (e) {
-    console.log(e);
-    return { success: false };
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session) {
+    throw new Error('Unauthenticated');
   }
+
+  const recruiterId = session.user.id;
+  await db.insert(recruiterReachouts).values({
+    recruiterId,
+    devId,
+    workType: workType as 'freelance' | 'full-time',
+    quotePrice,
+    message,
+    timestamp: new Date(),
+  });
 };
 
 // const getIncomingReachouts = async ({ userId }: { userId: number }) => {

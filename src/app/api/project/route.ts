@@ -109,7 +109,6 @@ export async function POST(req: NextRequest) {
       slug: projectSlug,
       title: sanitizedProjectData.title,
       description: sanitizedProjectData.description,
-
       hostedUrl: sanitizedProjectData.hostedUrl,
       sourceCodeUrl: sanitizedProjectData.sourceCodeUrl,
 
