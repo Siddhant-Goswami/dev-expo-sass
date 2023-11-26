@@ -84,15 +84,20 @@ export const getUserInfo = async ({ userId }: { userId: number }) => {
     where: eq(recruiters.userId, userId),
   });
 
-  const projectsCount = (await db.query.projects.findMany({
-    where: eq(projects.userId, userId),
-  })).length;
+  const projectsCount = (
+    await db.query.projects.findMany({
+      where: eq(projects.userId, userId),
+    })
+  ).length;
 
-  console.log(userInfo, devInfo, recruiterInfo, projectsCount)
+  console.log(userInfo, devInfo, recruiterInfo, projectsCount);
 
-  return { info: {
-    userInfo,
-    devInfo,
-    recruiterInfo,
-  }, projectsCount };
+  return {
+    info: {
+      userInfo,
+      devInfo,
+      recruiterInfo,
+    },
+    projectsCount,
+  };
 };
