@@ -2,6 +2,8 @@ import { Button } from '@/components/ui/button';
 import Footer from '@/components/ui/footer';
 import Grid from '@/components/ui/grid';
 import Navbar from '@/components/ui/navbar';
+import { URLs } from '@/lib/constants';
+import Link from 'next/link';
 
 export default function Page() {
   return (
@@ -34,7 +36,9 @@ export default function Page() {
           expertise.
         </p>
 
-        <Button className="mt-10 p-6">Get Started Now</Button>
+        <Link href={URLs.feed}>
+          <Button className="mt-10 p-6">Get Started Now</Button>
+        </Link>
       </section>
 
       <section className="sm:px-18 min-h-screen w-full px-5">
@@ -64,12 +68,14 @@ export default function Page() {
           Join Job Board today and take your first step towards being recognized
           in the world of Generative AI.
         </p>
-        <Button
-          variant="link"
-          className="mt-10 py-8 text-lg underline sm:text-xl"
-        >
-          Join Now
-        </Button>
+        <Link href={URLs.signIn}>
+          <Button
+            variant="link"
+            className="mt-10 py-8 text-lg underline sm:text-xl"
+          >
+            Join Now
+          </Button>
+        </Link>
       </section>
       <Footer />
     </div>
