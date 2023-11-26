@@ -13,7 +13,7 @@ const categories = [
   'Cloud',
 ];
 
-function feed() {
+async function feed() {
   return (
     <>
       <NavBar />

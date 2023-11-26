@@ -17,6 +17,7 @@ import { Input } from '@/components/ui/input';
 import RadioBtns from '@/components/ui/radio-btns';
 import { RadioGroup } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/components/ui/use-toast';
 import { createRecruiterReachout } from '@/server/actions/reachouts';
 // import { toast } from '@/registry/new-york/ui/use-toast';
 
@@ -29,20 +30,22 @@ const getInTouchSchema = z.object({
   employmentType: z.enum(['freelance', 'full-time'], {
     required_error: 'Employment type is required.',
   }),
-  message: z.string().min(1, 'Message is required.'),
-  pricing: z.number().min(0, 'Pricing must be a non-negative number.'),
+  message: z.string().min(20, 'Message is should have atleast 20 characters.'),
+  pricing: z.number().min(50, 'Pricing must be a more than 50 Rupees.'),
 });
 
 type GetInTouchValues = z.infer<typeof getInTouchSchema>;
+type GetInTouchProps = {
+  setIsModalOpen: (isOpen: boolean) => void;
+};
 
-export function GetInTouch() {
+export function GetInTouch({ setIsModalOpen }: GetInTouchProps) {
+  const { toast } = useToast();
   const form = useForm<GetInTouchValues>({
     resolver: zodResolver(getInTouchSchema),
   });
 
-  const requestReachOut = () => {
-    const data = form.getValues();
-
+  const requestReachOut = async (data: GetInTouchValues) => {
     const requestObject = {
       workType: data.employmentType,
       quotePrice: data.pricing,
@@ -52,12 +55,25 @@ export function GetInTouch() {
     };
 
     console.log(data);
-    void createRecruiterReachout(requestObject);
+    const { success } = await createRecruiterReachout(requestObject);
+    if (success) {
+      toast({
+        title: 'Your message has been sent.',
+      });
+
+      setIsModalOpen(false);
+    } else {
+      toast({
+        variant: 'destructive',
+        title: 'Uh oh! Something went wrong.',
+        description: 'There was a problem with your request.',
+      });
+    }
   };
 
   return (
     <Form {...form}>
-      <form action={requestReachOut} className="space-y-8">
+      <form onSubmit={form.handleSubmit(requestReachOut)} className="space-y-8">
         <FormField
           control={form.control}
           name="employmentType"

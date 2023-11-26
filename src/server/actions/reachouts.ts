@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 'use server';
 
 import { db } from '../db';
@@ -13,14 +14,21 @@ const createRecruiterReachout = async ({
   RecruiterReachoutInsert,
   'recruiterId' | 'devId' | 'workType' | 'quotePrice' | 'message'
 >) => {
-  await db.insert(recruiterReachouts).values({
-    recruiterId,
-    devId,
-    workType: workType as 'freelance' | 'full-time',
-    quotePrice,
-    message,
-    timestamp: new Date(),
-  });
+  try {
+    await db.insert(recruiterReachouts).values({
+      recruiterId,
+      devId,
+      workType: workType as 'freelance' | 'full-time',
+      quotePrice,
+      message,
+      timestamp: new Date(),
+    });
+
+    return { success: true };
+  } catch (e) {
+    console.log(e);
+    return { success: false };
+  }
 };
 
 // const getIncomingReachouts = async ({ userId }: { userId: number }) => {
