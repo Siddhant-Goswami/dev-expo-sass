@@ -1,4 +1,3 @@
-import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -9,15 +8,15 @@ import {
 } from '@/components/ui/dialog';
 import SignUp from '@/components/ui/sign-up';
 
-function SignUpModal() {
+type SignUpModalProps = {
+  children: React.ReactNode;
+};
+
+function SignUpModal({ children }: SignUpModalProps) {
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="outline" className="mt-10 p-6">
-          Get Started Now
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="h-screen min-w-full overflow-scroll md:h-screen-3/4 md:min-w-50">
+      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogContent className="h-screen w-full overflow-scroll md:h-max md:max-w-xl">
         <DialogHeader>
           <DialogTitle>Get Started</DialogTitle>
           <DialogDescription>

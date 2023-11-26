@@ -2,6 +2,7 @@ import ScrollableChips from '@/components/ui/chip';
 import Footer from '@/components/ui/footer';
 import Grid from '@/components/ui/grid';
 import NavBar from '@/components/ui/navbar';
+import { getAllProjects } from '@/server/actions/projects';
 
 const categories = [
   'GenAI',
@@ -14,6 +15,25 @@ const categories = [
 ];
 
 async function feed() {
+  const allProjects = await getAllProjects();
+  const filteredProjectsData = allProjects.map(
+    ({ project, user, tags, media }) => {
+      const { id, title, coverImageUrl } = project;
+      const displayName = user?.displayName ?? ' ';
+
+      return {
+        id,
+        title,
+        coverImageUrl,
+        media,
+        tags,
+        displayName,
+      };
+    },
+  );
+
+  console.log('filteredProjectsData', filteredProjectsData);
+
   return (
     <>
       <NavBar />
@@ -22,7 +42,7 @@ async function feed() {
           <ScrollableChips items={categories} />
         </div>
 
-        <Grid />
+        {filteredProjectsData && <Grid data={filteredProjectsData} />}
       </section>
       <Footer />
     </>

@@ -211,6 +211,7 @@ export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
               <FormLabel> Upload Images </FormLabel>
               <FormControl>
                 <Input
+                  required
                   multiple
                   accept="image/*"
                   id="imageFile"

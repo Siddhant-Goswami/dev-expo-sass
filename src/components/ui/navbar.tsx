@@ -2,10 +2,10 @@
 
 import { Button } from '@/components/ui/button';
 import ProjectUploadModal from '@/components/ui/project-upload-modal';
+import SignUpModal from '@/components/ui/sign-up-modal';
 import { ThemeToggle } from '@/components/ui/toggle';
 import { useAuth } from '@/hooks/user/auth';
 import { useUserProfile } from '@/hooks/user/profile';
-import { URLs } from '@/lib/constants';
 import Link from 'next/link';
 import UserAuthButton from '../UserAuthButton';
 
@@ -36,9 +36,9 @@ const NavBar = () => {
           )}
 
           {!userId && isLoaded && (
-            <Link href={URLs.signIn}>
+            <SignUpModal>
               <Button variant="secondary">Sign In</Button>
-            </Link>
+            </SignUpModal>
           )}
 
           {!isLoaded && !userId && (

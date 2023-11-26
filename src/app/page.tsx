@@ -1,6 +1,5 @@
 import { Button } from '@/components/ui/button';
 import Footer from '@/components/ui/footer';
-import Grid from '@/components/ui/grid';
 import Navbar from '@/components/ui/navbar';
 import SignUpModal from '@/components/ui/sign-up-modal';
 import { URLs } from '@/lib/constants';
@@ -46,10 +45,14 @@ export default async function Page() {
 
         {userId ? (
           <Link href={URLs.feed}>
-            <Button className="mt-10 p-6">Get Started Now</Button>
+            <Button className="mt-10 p-6">Explore Projects</Button>
           </Link>
         ) : (
-          <SignUpModal />
+          <SignUpModal>
+            <Button variant="default" className="mt-10 p-6">
+              Get Started Now
+            </Button>
+          </SignUpModal>
         )}
       </section>
 
@@ -57,7 +60,7 @@ export default async function Page() {
         <h2 className="mb-12 text-center text-2xl font-medium sm:text-5xl">
           Explore Trending Projects
         </h2>
-        <Grid />
+        {/* <Grid /> */}
       </section>
 
       <section className="relative flex w-full flex-col items-center justify-center px-5 py-36 sm:px-18">
@@ -87,11 +90,15 @@ export default async function Page() {
               variant="link"
               className="mt-10 py-8 text-lg underline sm:text-xl"
             >
-              Explore
+              Explore Projects
             </Button>
           </Link>
         ) : (
-          <SignUpModal />
+          <SignUpModal>
+            <Button variant="default" className="mt-10 p-6">
+              Get Started Now
+            </Button>
+          </SignUpModal>
         )}
       </section>
       <Footer />
