@@ -91,8 +91,8 @@ export function ProjectUpload() {
       alert('Project uploaded successfully!');
       const { projectId } = (await res.json()) as { projectId: string };
 
-      // TODO: Redirect user to their new project page
-      // window.location.href = `/project/${projectId}`;
+      // Redirect user to their new project page
+      window.location.href = `/feed/${projectId}`;
     } else {
       alert('Oops! Something went wrong. Please try again. ' + res.statusText);
     }
