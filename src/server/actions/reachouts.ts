@@ -1,8 +1,7 @@
 'use server';
 
-import { recruiterReachouts } from '../db/schema';
 import { db } from '../db';
-import { eq } from 'drizzle-orm';
+import { recruiterReachouts } from '../db/schema';
 
 const createRecruiterReachout = async ({
   recruiterId,
@@ -27,9 +26,11 @@ const createRecruiterReachout = async ({
   });
 };
 
-const getIncomingReachouts = async ({ userId }: { userId: number }) => {
-  const reachouts = await db.query.recruiterReachouts.findMany({
-    where: eq(recruiterReachouts.devId, userId),
-  });
-  return reachouts;
-};
+// const getIncomingReachouts = async ({ userId }: { userId: number }) => {
+//   // const reachouts = await db.query.recruiterReachouts.findMany({
+//   //   where: eq(recruiterReachouts.devId, userId),
+//   // });
+//   // return reachouts;
+// };
+
+export { createRecruiterReachout };

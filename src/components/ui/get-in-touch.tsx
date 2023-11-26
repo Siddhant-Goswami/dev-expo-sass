@@ -17,6 +17,7 @@ import { Input } from '@/components/ui/input';
 import RadioBtns from '@/components/ui/radio-btns';
 import { RadioGroup } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
+import { createRecruiterReachout } from '@/server/actions/reachouts';
 // import { toast } from '@/registry/new-york/ui/use-toast';
 
 const workTypeArr = [
@@ -39,13 +40,24 @@ export function GetInTouch() {
     resolver: zodResolver(getInTouchSchema),
   });
 
-  function onSubmit(data: GetInTouchValues) {
+  const requestReachOut = () => {
+    const data = form.getValues();
+
+    const requestObject = {
+      workType: data.employmentType,
+      quotePrice: data.pricing,
+      message: data.message,
+      recruiterId: 2,
+      devId: 3,
+    };
+
     console.log(data);
-  }
+    void createRecruiterReachout(requestObject);
+  };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form action={requestReachOut} className="space-y-8">
         <FormField
           control={form.control}
           name="employmentType"
