@@ -13,8 +13,7 @@ const NavBar = () => {
   // const supabase = supabaseClientComponentClient();
   const userId = session?.user?.id;
 
-  console.log('session', userId);
-  console.log('isLoaded', isLoaded);
+  console.log('session', session?.user);
 
   return (
     <nav className="flex w-screen items-center justify-between bg-background px-6 py-4">
