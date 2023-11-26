@@ -107,6 +107,9 @@ export const projects = pgTable(
   },
 );
 
+export type ProjectSelect = InferSelectModel<typeof projects>;
+export type ProjectInsert = InferInsertModel<typeof projects>;
+
 export const tags = pgTable(
   'tag',
   {

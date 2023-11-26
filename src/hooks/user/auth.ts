@@ -30,6 +30,7 @@ export const useAuth = () => {
   return {
     isLoaded: !userSessionQuery.isLoading && userSessionQuery.isSuccess,
     session: userSessionQuery.data,
+    userId: userSessionQuery.data?.user.id,
     refetch: userSessionQuery.refetch,
   };
 };
