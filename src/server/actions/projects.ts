@@ -2,6 +2,9 @@
 import { desc, eq } from 'drizzle-orm';
 import { db } from '../db';
 import {
+  ProjectInsert,
+  ProjectSelect,
+  UserProfileSelect,
   comments,
   likes,
   projectBookmarks,
@@ -22,7 +25,7 @@ export const getAllProjects = async () => {
 };
 
 // get all projects of a user
-export const getUserProjects = async ({ userId }: { userId: number }) => {
+export const getProjectsByUserId = async (userId: UserProfileSelect['id']) => {
   const userProjects = await db.query.projects.findMany({
     where: eq(projects.userId, userId.toString()),
     orderBy: [desc(projects.publishedAt)],
@@ -32,7 +35,7 @@ export const getUserProjects = async ({ userId }: { userId: number }) => {
 };
 
 // get project by Id
-export const getProjectById = async ({ projectId }: { projectId: number }) => {
+export const getProjectById = async (projectId: ProjectSelect['id']) => {
   const project = await db.query.projects.findFirst({
     where: eq(projects.id, projectId),
   });
@@ -68,13 +71,7 @@ export const createProject = async ({
   hostedUrl,
   sourceCodeUrl,
   tagsList,
-}: {
-  userId: number;
-  title: string;
-  description: string;
-  hostedUrl: string;
-  // images: FileList;
-  sourceCodeUrl: string;
+}: ProjectInsert & {
   tagsList: string[];
 }) => {
   // TODO: slug handling and image handling
@@ -85,7 +82,8 @@ export const createProject = async ({
     .insert(projects)
     .values({
       userId: userId.toString(),
-      slug: title,
+      slug:
+        title.replace(/\s+/g, '-').toLowerCase() + '-' + Date.now().toString(),
       title,
       description,
       coverImageUrl,

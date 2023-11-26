@@ -16,29 +16,17 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { createProject } from '@/server/actions/projects';
+import { useAuth } from '@/hooks/user/auth';
+import { projectFormSchema } from '@/lib/validations/project';
+import { useState } from 'react';
+import { Label } from './label';
 
-const projectFormSchema = z.object({
-  title: z
-    .string()
-    .min(1, 'Please provide a title for your project.')
-    .max(50, 'Title must not exceed 50 characters.'),
-  hostedUrl: z.string().url('Please enter a valid URL for the hosted project.'),
-  sourceCodeUrl: z.string().url('Please enter a valid source code URL.'),
-  tags: z
-    .array(z.string())
-    .min(1, 'Please provide at least one tag for your project.'),
-  description: z
-    .string()
-    .min(20, 'Please provide a description for your project.')
-    .max(500, 'Description must not exceed 500 characters.'),
-});
-
-type ProjectUploadValues = z.infer<typeof projectFormSchema> & {
-  files: FileList | null;
-};
-
+type ProjectUploadValues = z.infer<typeof projectFormSchema>;
 export function ProjectUpload() {
+  const { userId } = useAuth();
+  const [selectedImages, setSelectedImages] = useState<File[]>([]);
+  const [selectedVideos, setSelectedVideos] = useState<File[]>([]);
+
   const form = useForm<ProjectUploadValues>({
     resolver: zodResolver(projectFormSchema),
     defaultValues: {
@@ -47,14 +35,23 @@ export function ProjectUpload() {
       sourceCodeUrl: '',
       tags: [],
       description: '', // Default description value
-      files: null, // Default files value
     },
   });
 
-  function onSubmit(data: ProjectUploadValues) {
-    console.log(' data:', data);
-    console.log(' form:', form.getValues('files'));
-    const images = form.getValues('files') ?? [];
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    if (!userId) {
+      return alert('Oops! You must be logged in to upload a project.');
+    }
+    const formValues = form.getValues();
+
+    console.log('fields:', formValues);
+    console.log('files:', {
+      images: selectedImages,
+      videos: selectedVideos,
+    });
+    const images = selectedImages;
 
     const {
       title,
@@ -62,10 +59,10 @@ export function ProjectUpload() {
       hostedUrl,
       sourceCodeUrl,
       tags: tagsList,
-    } = data;
+    } = formValues;
 
     const requestObject = {
-      userId: 1,
+      userId,
       title,
       description,
       hostedUrl,
@@ -76,42 +73,35 @@ export function ProjectUpload() {
 
     console.log('requestObject', requestObject);
 
-    createProject.bind(requestObject);
+    const formData = new FormData();
+    formData.append('projectData', JSON.stringify(formValues));
+
+    if (selectedImages[0]) formData.append('image0', selectedImages[0]);
+    if (selectedImages[1]) formData.append('image1', selectedImages[1]);
+    if (selectedImages[2]) formData.append('image2', selectedImages[2]);
+
+    if (selectedVideos[0]) formData.append('video', selectedVideos[0]);
+
+    const res = await fetch(`/api/project`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (res.ok) {
+      alert('Project uploaded successfully!');
+      const { projectId } = (await res.json()) as { projectId: string };
+
+      // Redirect user to their new project page
+      window.location.href = `/feed/${projectId}`;
+    } else {
+      alert('Oops! Something went wrong. Please try again. ' + res.statusText);
+    }
   }
-
-  const requestAction = () => {
-    const data = form.getValues();
-
-    const {
-      title,
-      description,
-      hostedUrl,
-      sourceCodeUrl,
-      tags: tagsList,
-    } = data;
-
-    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-    // const images = form.getValues('files');
-
-    // if (images) {
-    const requestObject = {
-      userId: 1,
-      title,
-      description,
-      hostedUrl,
-      sourceCodeUrl,
-      tagsList,
-      // images,
-    };
-
-    void createProject(requestObject);
-    // }
-  };
 
   return (
     <Form {...form}>
       <form
-        action={requestAction}
+        onSubmit={onSubmit}
         method="post"
         // onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-8"
@@ -199,9 +189,48 @@ export function ProjectUpload() {
             </FormItem>
           )}
         />
-        <FormField
+
+        <Label>Files</Label>
+
+        <Input
+          multiple
+          id="images"
+          type="file"
+          onChange={(e) => {
+            console.log('images:', e.target.files);
+
+            const images = e.target.files;
+
+            if (!images) return;
+
+            const imagesArray = Array.from(images);
+            setSelectedImages(imagesArray);
+
+            // alert("You've selected " + imagesArray.length + ' images.');
+          }}
+        />
+
+        <Input
+          multiple
+          id="video"
+          type="file"
+          onChange={(e) => {
+            console.log('Videos:', e.target.files);
+
+            const videos = e.target.files;
+
+            if (!videos) return;
+
+            const VideosArray = Array.from(videos);
+            setSelectedVideos(VideosArray);
+
+            // alert("You've selected " + VideosArray.length + ' Videos.');
+          }}
+        />
+
+        {/* <FormField
           control={form.control}
-          name="files"
+          name="videos"
           render={(
             {
               // field
@@ -211,20 +240,19 @@ export function ProjectUpload() {
               <FormLabel>Files</FormLabel>
               <FormControl>
                 <Input
-                  id="files"
+                  id="videos"
                   type="file"
                   // {...field}
                   onChange={(e) => {
-                    console.log('Files:', e.target.files);
-                    form.setValue('files', e.target.files);
+                    console.log('videos:', e.target.files);
+                    form.setValue('videos', e.target.files);
                   }}
-                  multiple
                 />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
-        />
+        /> */}
         <div className="flex justify-end">
           <Button type="submit" className="ml-auto">
             Submit Project
