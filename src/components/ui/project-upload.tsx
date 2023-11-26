@@ -51,34 +51,6 @@ export function ProjectUpload() {
     },
   });
 
-  function onSubmit(data: ProjectUploadValues) {
-    console.log(' data:', data);
-    console.log(' form:', form.getValues('files'));
-    const images = form.getValues('files') ?? [];
-
-    const {
-      title,
-      description,
-      hostedUrl,
-      sourceCodeUrl,
-      tags: tagsList,
-    } = data;
-
-    const requestObject = {
-      userId: 1,
-      title,
-      description,
-      hostedUrl,
-      sourceCodeUrl,
-      tagsList,
-      images,
-    };
-
-    console.log('requestObject', requestObject);
-
-    createProject.bind(requestObject);
-  }
-
   const requestAction = () => {
     const data = form.getValues();
 

@@ -17,7 +17,7 @@ const NavBar = () => {
   console.log('isLoaded', isLoaded);
 
   return (
-    <nav className="flex w-screen items-center justify-between bg-background px-6 py-4">
+    <nav className="sticky top-0 z-50 flex w-screen items-center justify-between bg-background px-6 py-4">
       <div className="flex w-full items-center justify-between space-x-4">
         <div className="flex items-center">
           <Link href="/" className="text-2xl font-semibold">

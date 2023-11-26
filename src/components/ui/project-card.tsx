@@ -1,21 +1,36 @@
-import React from 'react';
-// If you're using an icon library like react-icons, import the specific icon
-// This is just an example, replace with your actual icon import
+import Image from 'next/image';
 
 type ProjectCardProps = {
-  // Define props here if needed, for example:
-  // title: string;
+  projectName: string;
+  creator: string;
+  tags: string[];
 };
 
-const ProjectCard: React.FC<ProjectCardProps> = (props) => {
+const ProjectCard: React.FC<ProjectCardProps> = ({
+  projectName,
+  creator,
+  tags,
+}) => {
   return (
-    <div className="w-64 overflow-hidden rounded-xl bg-gray-200 shadow-md">
-      <div className="flex items-center justify-between p-4">
-        {/* Here you should use the actual icon that represents the 'X' in your card */}
-        {/* <XIcon className="h-6 w-6 text-gray-600" aria-hidden="true" /> */}
-        <div className="ml-4"> X </div>
+    <div className="rounded-sm">
+      <div className="group relative h-64 overflow-hidden  rounded-sm sm:h-56">
+        <Image fill={true} src="/images/demo.png" alt="demo" />
+        <h2 className="group-hover:bg-blackGradient absolute bottom-0 z-10 w-full px-4 py-3 text-xl font-semibold text-transparent transition-all duration-200 group-hover:text-white">
+          {projectName}
+        </h2>
       </div>
-      Additional content goes here, for example a title using props.title
+      <div className="flex items-center justify-between px-4 py-2">
+        <span className="text-center text-sm font-medium">{creator}</span>
+        <span className="text-center text-xs font-medium text-gray-700">
+          {tags.map((tag, index) => {
+            return index === tags.length - 1 ? (
+              <span className="ml-1">#{tag}</span>
+            ) : (
+              <span className="ml-1">#{tag},</span>
+            );
+          })}
+        </span>
+      </div>
     </div>
   );
 };
