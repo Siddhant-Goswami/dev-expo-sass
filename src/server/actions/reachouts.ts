@@ -1,18 +1,30 @@
 'use server';
 
+import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
 import { db } from '../db';
 import { RecruiterReachoutInsert, recruiterReachouts } from '../db/schema';
+import { cookies } from 'next/headers';
 
 const createRecruiterReachout = async ({
-  recruiterId,
   devId,
   workType,
   quotePrice,
   message,
 }: Pick<
   RecruiterReachoutInsert,
-  'recruiterId' | 'devId' | 'workType' | 'quotePrice' | 'message'
+  | 'devId' | 'workType' | 'quotePrice' | 'message'
 >) => {
+  const supabase = createServerActionClient({
+    cookies
+  });
+
+  const { data: { session } } = await supabase.auth.getSession();
+
+  if (!session) {
+    throw new Error('Unauthenticated');
+  }
+
+  const recruiterId = session.user.id;
   await db.insert(recruiterReachouts).values({
     recruiterId,
     devId,

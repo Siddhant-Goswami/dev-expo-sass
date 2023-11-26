@@ -8,20 +8,39 @@ import {
   comments,
   likes,
   projectBookmarks,
+  projectMedia,
   projectTags,
   projects,
   tags,
+  userProfiles,
 } from '../db/schema';
 
 // TODO: filter categories
 
 // get all projects ordered by date
+// for home feed
 export const getAllProjects = async () => {
-  const allProjects = await db.query.projects.findMany({
-    orderBy: [desc(projects.publishedAt)],
-  });
-  console.log(allProjects);
-  return allProjects;
+  const allProjects = await db.select().from(projects).orderBy(desc(projects.publishedAt));
+  const result = allProjects.map( async (project) => {
+    const devId = project.userId;
+    const userPromise = db.query.userProfiles.findFirst({
+      where: eq(userProfiles.id, devId)
+    })
+    const tagsPromise = db.query.projectTags.findMany({
+      where: eq(projectTags.projectId, project.id)
+    })
+    const mediaPromise = db.query.projectMedia.findMany({
+      where: eq(projectMedia.projectId, project.id)
+    })
+    const [user, tags, media] = await Promise.all([userPromise, tagsPromise, mediaPromise]);
+    return {
+      project,
+      user,
+      tags,
+      media
+    }
+  })
+  return await Promise.all(result);
 };
 
 // get all projects of a user
@@ -36,30 +55,53 @@ export const getProjectsByUserId = async (userId: UserProfileSelect['id']) => {
 
 // get project by Id
 export const getProjectById = async (projectId: ProjectSelect['id']) => {
+
   const project = await db.query.projects.findFirst({
     where: eq(projects.id, projectId),
   });
 
-  const likeCount = (
-    await db.query.likes.findMany({
-      where: eq(likes.projectId, projectId),
-    })
-  ).length;
+  if(!project){
+    return null;
+  }
 
-  const commentCount = (
-    await db.query.comments.findMany({
-      where: eq(comments.projectId, projectId),
-    })
-  ).length;
+  const tagsPromise = db.query.projectTags.findMany({
+    where: eq(projectTags.projectId, project.id)
+  })
 
-  const bookmarkCount = (
-    await db.query.projectBookmarks.findMany({
-      where: eq(projectBookmarks.projectId, projectId),
-    })
-  ).length;
+  const mediaPromise = db.query.projectMedia.findMany({
+    where: eq(projectMedia.projectId, project.id)
+  })
 
-  console.log(project, likeCount, commentCount, bookmarkCount);
-  return { project, likeCount, commentCount, bookmarkCount };
+  const userPromise = db.query.userProfiles.findFirst({
+    where: eq(userProfiles.id, project?.userId),
+  });
+
+  const [tags, media, user] = await Promise.all([tagsPromise, mediaPromise, userPromise]);
+
+  // const likeCount = (
+  //   await db.query.likes.findMany({
+  //     where: eq(likes.projectId, projectId),
+  //   })
+  // ).length;
+
+  // const commentCount = (
+  //   await db.query.comments.findMany({
+  //     where: eq(comments.projectId, projectId),
+  //   })
+  // ).length;
+
+  // const bookmarkCount = (
+  //   await db.query.projectBookmarks.findMany({
+  //     where: eq(projectBookmarks.projectId, projectId),
+  //   })
+  // ).length;
+
+  return {
+    project,
+    dev: user,
+    tags,
+    media
+  };
 };
 
 // create a new project
