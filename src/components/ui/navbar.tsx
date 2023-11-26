@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import ProjectUploadModal from '@/components/ui/project-upload-modal';
 import { ThemeToggle } from '@/components/ui/toggle';
 import { useAuth } from '@/hooks/user/auth';
+import { useUserProfile } from '@/hooks/user/profile';
 import { URLs } from '@/lib/constants';
 import Link from 'next/link';
 import UserAuthButton from '../UserAuthButton';
@@ -12,6 +13,9 @@ const NavBar = () => {
   const { session, isLoaded } = useAuth();
   // const supabase = supabaseClientComponentClient();
   const userId = session?.user?.id;
+
+  // ! DO THIS IN A BETTER WAY, DO NOT DELETE FOR NOW
+  useUserProfile();
 
   console.log('session', session?.user);
 
