@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import Footer from '@/components/ui/footer';
 import Grid from '@/components/ui/grid';
 import Navbar from '@/components/ui/navbar';
+import SignUpModal from '@/components/ui/sign-up-modal';
 import { URLs } from '@/lib/constants';
 import Link from 'next/link';
 
@@ -36,9 +37,10 @@ export default function Page() {
           expertise.
         </p>
 
-        <Link href={URLs.feed}>
-          <Button className="mt-10 p-6">Get Started Now</Button>
-        </Link>
+        {/* <Link href={URLs.feed}> */}
+        <SignUpModal/>
+          {/* <Button className="mt-10 p-6">Get Started Now</Button> */}
+        {/* </Link> */}
       </section>
 
       <section className="min-h-screen w-full px-5 sm:px-18">
