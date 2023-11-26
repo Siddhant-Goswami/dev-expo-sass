@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import { MAX_IMAGE_SIZE, MAX_VIDEO_SIZE } from '@/lib/constants';
 import { projectFormSchema } from '@/lib/validations/project';
 import { db } from '@/server/db';
 import { projectMedia, projects } from '@/server/db/schema';
@@ -10,11 +11,6 @@ import cloudinary from 'cloudinary';
 import fs from 'fs';
 import { cookies } from 'next/headers';
 import { NextResponse, type NextRequest } from 'next/server';
-
-const MAX_NUMBER_OF_IMAGES = 3;
-const MAX_NUMBER_OF_VIDEOS = 1;
-const MAX_VIDEO_SIZE = 5 * 1024 * 1024; // 5MB
-const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 2MB
 
 // POST schema
 
@@ -151,15 +147,7 @@ export async function POST(req: NextRequest) {
       { status: 200 },
     );
   } catch (e) {
-    // Set status to failed in db
-
-    if (e instanceof Error) {
-      throw e;
-    }
-
-    throw new Error(
-      `🔴 Workflow failed: ${(e as Error)?.message ?? 'unknown error!'}`,
-    );
+    return new NextResponse('Failed to upload the video', { status: 500 });
   }
 }
 

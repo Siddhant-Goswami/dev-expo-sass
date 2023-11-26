@@ -8,10 +8,13 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { ProjectUpload } from '@/components/ui/project-upload';
+import { useState } from 'react';
 
 function ProjectUploadModal() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
-    <Dialog>
+    <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" className="rounded-sm">
           Upload Project
@@ -24,7 +27,7 @@ function ProjectUploadModal() {
             Add and showcase your project to the community.
           </DialogDescription>
         </DialogHeader>
-        <ProjectUpload />
+        <ProjectUpload setIsModalOpen={setIsModalOpen} />
       </DialogContent>
     </Dialog>
   );
