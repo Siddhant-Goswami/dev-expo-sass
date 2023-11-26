@@ -26,13 +26,15 @@ module.exports = {
         500: '31.25rem',
         900: '56.25rem',
         hero: 'calc(100svh - 4.5rem)',
-        feed: 'calc(100svh - 9.75rem)',
       },
       height: {
         'screen-3/4': '75vh',
       },
       minWidth: {
         '50': '50rem',
+      },
+      minHeight: {
+        feed: 'calc(100vh - 9.75rem)',
       },
       fontSize: {
         '3xl': ['36px', '40px'],
