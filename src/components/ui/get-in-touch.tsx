@@ -18,6 +18,7 @@ import RadioBtns from '@/components/ui/radio-btns';
 import { RadioGroup } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
+import { useAuth } from '@/hooks/user/auth';
 import { createRecruiterReachout } from '@/server/actions/reachouts';
 // import { toast } from '@/registry/new-york/ui/use-toast';
 
@@ -45,13 +46,19 @@ export function GetInTouch({ setIsModalOpen }: GetInTouchProps) {
     resolver: zodResolver(getInTouchSchema),
   });
 
+  const user = useAuth();
+  const { userId } = user;
+
   const requestReachOut = async (data: GetInTouchValues) => {
+    if (!userId) {
+      return;
+    }
+
     const requestObject = {
       workType: data.employmentType,
       quotePrice: data.pricing,
       message: data.message,
-      recruiterId: '2',
-      devId: '3',
+      devId: userId,
     };
 
     const { success } = await createRecruiterReachout(requestObject);

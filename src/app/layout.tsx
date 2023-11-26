@@ -28,9 +28,14 @@ const NeueMont = localFont({
 });
 
 export const metadata = {
-  title: 'InnovAIte',
-  description: 'INNOVAITE | Innovating the way you for AI talent',
-  icons: [{ rel: 'icon', url: '/favicon.ico' }],
+  title: '100xTalent',
+  description: '100xTalent | For finding 100x AI talent for the right job.',
+  icons: [
+    {
+      rel: 'icon',
+      url: 'https://framerusercontent.com/images/yQZPiDumORgz6c8KG1wLzbJi9rQ.png',
+    },
+  ],
 };
 
 export default function RootLayout({
