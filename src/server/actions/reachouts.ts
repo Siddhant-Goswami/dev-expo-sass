@@ -12,13 +12,15 @@ const createRecruiterReachout = async ({
   message,
 }: Pick<
   RecruiterReachoutInsert,
-  | 'devId' | 'workType' | 'quotePrice' | 'message'
+  'devId' | 'workType' | 'quotePrice' | 'message'
 >) => {
   const supabase = createServerActionClient({
-    cookies
+    cookies,
   });
 
-  const { data: { session } } = await supabase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
 
   if (!session) {
     throw new Error('Unauthenticated');

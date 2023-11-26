@@ -20,26 +20,33 @@ import {
 // get all projects ordered by date
 // for home feed
 export const getAllProjects = async () => {
-  const allProjects = await db.select().from(projects).orderBy(desc(projects.publishedAt));
-  const result = allProjects.map( async (project) => {
+  const allProjects = await db
+    .select()
+    .from(projects)
+    .orderBy(desc(projects.publishedAt));
+  const result = allProjects.map(async (project) => {
     const devId = project.userId;
     const userPromise = db.query.userProfiles.findFirst({
-      where: eq(userProfiles.id, devId)
-    })
+      where: eq(userProfiles.id, devId),
+    });
     const tagsPromise = db.query.projectTags.findMany({
-      where: eq(projectTags.projectId, project.id)
-    })
+      where: eq(projectTags.projectId, project.id),
+    });
     const mediaPromise = db.query.projectMedia.findMany({
-      where: eq(projectMedia.projectId, project.id)
-    })
-    const [user, tags, media] = await Promise.all([userPromise, tagsPromise, mediaPromise]);
+      where: eq(projectMedia.projectId, project.id),
+    });
+    const [user, tags, media] = await Promise.all([
+      userPromise,
+      tagsPromise,
+      mediaPromise,
+    ]);
     return {
       project,
       user,
       tags,
-      media
-    }
-  })
+      media,
+    };
+  });
   return await Promise.all(result);
 };
 
@@ -55,28 +62,31 @@ export const getProjectsByUserId = async (userId: UserProfileSelect['id']) => {
 
 // get project by Id
 export const getProjectById = async (projectId: ProjectSelect['id']) => {
-
   const project = await db.query.projects.findFirst({
     where: eq(projects.id, projectId),
   });
 
-  if(!project){
+  if (!project) {
     return null;
   }
 
   const tagsPromise = db.query.projectTags.findMany({
-    where: eq(projectTags.projectId, project.id)
-  })
+    where: eq(projectTags.projectId, project.id),
+  });
 
   const mediaPromise = db.query.projectMedia.findMany({
-    where: eq(projectMedia.projectId, project.id)
-  })
+    where: eq(projectMedia.projectId, project.id),
+  });
 
   const userPromise = db.query.userProfiles.findFirst({
     where: eq(userProfiles.id, project?.userId),
   });
 
-  const [tags, media, user] = await Promise.all([tagsPromise, mediaPromise, userPromise]);
+  const [tags, media, user] = await Promise.all([
+    tagsPromise,
+    mediaPromise,
+    userPromise,
+  ]);
 
   // const likeCount = (
   //   await db.query.likes.findMany({
@@ -100,7 +110,7 @@ export const getProjectById = async (projectId: ProjectSelect['id']) => {
     project,
     dev: user,
     tags,
-    media
+    media,
   };
 };
 
