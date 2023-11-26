@@ -1,7 +1,7 @@
 'use server';
 
 import { db } from '../db';
-import { recruiterReachouts } from '../db/schema';
+import { RecruiterReachoutInsert, recruiterReachouts } from '../db/schema';
 
 const createRecruiterReachout = async ({
   recruiterId,
@@ -9,13 +9,7 @@ const createRecruiterReachout = async ({
   workType,
   quotePrice,
   message,
-}: {
-  recruiterId: number;
-  devId: number;
-  workType: string;
-  quotePrice: number;
-  message: string;
-}) => {
+}: RecruiterReachoutInsert ) => {
   await db.insert(recruiterReachouts).values({
     recruiterId,
     devId,
