@@ -1,6 +1,6 @@
 'use server';
+import { desc, eq } from 'drizzle-orm';
 import { db } from '../db';
-import { eq, desc } from 'drizzle-orm';
 import {
   comments,
   likes,
@@ -24,7 +24,7 @@ export const getAllProjects = async () => {
 // get all projects of a user
 export const getUserProjects = async ({ userId }: { userId: number }) => {
   const userProjects = await db.query.projects.findMany({
-    where: eq(projects.userId, userId),
+    where: eq(projects.userId, userId.toString()),
     orderBy: [desc(projects.publishedAt)],
   });
   console.log(userProjects);
@@ -84,7 +84,7 @@ export const createProject = async ({
   const [result] = await db
     .insert(projects)
     .values({
-      userId,
+      userId: userId.toString(),
       slug: title,
       title,
       description,
@@ -140,7 +140,7 @@ export const createComment = async ({
   const commentId = await db
     .insert(comments)
     .values({
-      userId,
+      userId: userId.toString(),
       projectId,
       content,
       postedAt: new Date(),
@@ -159,7 +159,7 @@ export const createLike = async ({
   projectId: number;
 }) => {
   await db.insert(likes).values({
-    userId,
+    userId: userId.toString(),
     projectId,
     timestamp: new Date(),
   });
@@ -174,7 +174,7 @@ export const createBookmark = async ({
   projectId: number;
 }) => {
   await db.insert(projectBookmarks).values({
-    userId,
+    userId: userId.toString(),
     projectId,
     timestamp: new Date(),
   });

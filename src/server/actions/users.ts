@@ -1,35 +1,44 @@
 'use server';
 import { eq } from 'drizzle-orm';
+// TODO: make these regular functions instead of server actions, and import `server-only`
 
 import { db } from '../db';
-import { devs, projects, recruiters, users } from '../db/schema';
+import {
+  devProfiles,
+  projects,
+  recruiterProfiles,
+  userProfiles,
+  type DevProfileInsert,
+  type RecruiterProfileInsert,
+  type UserProfileInsert,
+  type UserProfileSelect,
+} from '../db/schema';
 
 // TODO: get in touch with the user
 
-// create user
-export const createUser = async ({
-  authId,
-  username,
-  displayName,
-  displayPictureUrl,
-  bio,
-}: {
-  authId: number;
-  username: string;
-  displayName: string;
-  displayPictureUrl: string;
-  bio: string;
-}) => {
-  const userId = await db.insert(users).values({
-    id: authId,
-    username,
-    displayName,
-    displayPictureUrl,
-    bio,
+export const createUserProfileInDb = async (
+  userProfileInsertData: UserProfileInsert,
+) => {
+  // TODO: Add zod validation for this data
+
+  await db.insert(userProfiles).values(userProfileInsertData);
+
+  const newUser = await db.query.userProfiles.findFirst({
+    where: (u, { eq }) => eq(u.id, userProfileInsertData.id),
   });
-  console.log(userId);
-  return userId;
+
+  if (!newUser) {
+    throw new Error(
+      `Could not get newly created User! ${userProfileInsertData.id}`,
+    );
+  }
+
+  return {
+    success: true,
+    user: newUser,
+  } as const;
 };
+
 // create dev
 export const approveDev = async ({
   userId,
@@ -38,15 +47,8 @@ export const approveDev = async ({
   linkedInUrl,
   twitterUrl,
   websiteUrl,
-}: {
-  userId: number;
-  availibity: boolean;
-  gitHubUrl?: string;
-  linkedInUrl?: string;
-  twitterUrl?: string;
-  websiteUrl?: string;
-}) => {
-  await db.insert(devs).values({
+}: DevProfileInsert) => {
+  await db.insert(devProfiles).values({
     userId,
     availibity,
     gitHubUrl,
@@ -60,28 +62,23 @@ export const approveDev = async ({
 export const approveRecruiter = async ({
   userId,
   orgUrl,
-}: {
-  userId: number;
-  orgUrl: string;
-}) => {
-  await db.insert(recruiters).values({
-    userId,
-    orgUrl,
-  });
+}: RecruiterProfileInsert) => {
+  await db.insert(recruiterProfiles).values({ userId, orgUrl });
 };
 
 // getUserInfo
-export const getUserInfo = async ({ userId }: { userId: number }) => {
-  const userInfo = await db.query.users.findFirst({
-    where: eq(users.id, userId),
+// TODO: dont fetch everything in one go, when in trpc.
+export const getUserInfo = async (userId: UserProfileSelect['id']) => {
+  const userInfo = await db.query.userProfiles.findFirst({
+    where: eq(userProfiles.id, userId),
   });
 
-  const devInfo = await db.query.devs.findFirst({
-    where: eq(devs.userId, userId),
+  const devInfo = await db.query.devProfiles.findFirst({
+    where: eq(devProfiles.userId, userId),
   });
 
-  const recruiterInfo = await db.query.recruiters.findFirst({
-    where: eq(recruiters.userId, userId),
+  const recruiterInfo = await db.query.recruiterProfiles.findFirst({
+    where: eq(recruiterProfiles.userId, userId),
   });
 
   const projectsCount = (
@@ -100,4 +97,16 @@ export const getUserInfo = async ({ userId }: { userId: number }) => {
     },
     projectsCount,
   };
+};
+
+export const getUserProfileFromDb = async (userId: UserProfileSelect['id']) => {
+  try {
+    const user = await db.query.userProfiles.findFirst({
+      where: (u, { eq }) => eq(u.id, userId),
+    });
+
+    return user ?? null;
+  } catch (err) {
+    return null;
+  }
 };
