@@ -26,7 +26,7 @@ function GetInTouchModal({
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
       <DialogTrigger asChild>
-        <Button variant="default" className={roundedFull ? '' : 'rounded-xl'}>
+        <Button variant="brand" className={roundedFull ? '' : 'rounded-xl'}>
           {text}
         </Button>
       </DialogTrigger>

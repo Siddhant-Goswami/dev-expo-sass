@@ -3,8 +3,12 @@ import Footer from '@/components/ui/footer';
 import NavBar from '@/components/ui/navbar';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
 import GetInTouchModal from '@/components/ui/get-in-touch-modal';
+import SignUpModal from '@/components/ui/sign-up-modal';
 import { getProjectById } from '@/server/actions/projects';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 
 type PageProps = {
@@ -12,7 +16,10 @@ type PageProps = {
 };
 async function Page({ params }: PageProps) {
   const availableForWork = true;
-
+  const supabase = createServerComponentClient({ cookies });
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
   const projectId = params.id[0];
 
   if (!projectId) {
@@ -32,11 +39,16 @@ async function Page({ params }: PageProps) {
 
   const initialLetter = displayName.charAt(0).toUpperCase();
 
+  const userId = session?.user?.id;
+  const isSameUser = project.userId === userId;
+
+  console.log('userId', userId);
+
   return (
     <>
       <NavBar />
-      <section className="mt-8 flex justify-center">
-        <main className="flex w-8/12 flex-col justify-center">
+      <section className="h-feed flex items-start justify-center">
+        <main className="mt-8 flex w-8/12 flex-col justify-center">
           <h1 className="mb-4 w-full text-left text-2xl font-semibold">
             {title}
           </h1>
@@ -70,17 +82,20 @@ async function Page({ params }: PageProps) {
                 </div>
               </div>
             </div>
-            <div className="flex gap-2">
-              {/* <Button variant="outline" className="icon">
-                Like
-              </Button> */}
 
-              <GetInTouchModal
-                username={displayName}
-                text="Get in Touch"
-                roundedFull={false}
-              />
-            </div>
+            {!isSameUser && (
+              <>
+                {!userId ? null : (
+                  <div className="flex gap-2">
+                    <GetInTouchModal
+                      username={displayName}
+                      text="Get in Touch"
+                      roundedFull={false}
+                    />
+                  </div>
+                )}
+              </>
+            )}
           </div>
 
           {primaryMedia?.type === 'video' && (
@@ -115,16 +130,27 @@ async function Page({ params }: PageProps) {
             ))}
           </div>
 
-          <div className="mt-6 flex w-full flex-col items-center justify-center border-t border-gray-500 py-8">
-            <h3 className="text-xl font-medium">
-              {' '}
-              Liked {displayName}'s work??{' '}
-            </h3>
-            <p className="mb-4 mt-2 text-sm">
-              Get in touch with {displayName} to discuss your project.
-            </p>
-            <GetInTouchModal username="Rishabh" text="Get in Touch" />
-          </div>
+          {!isSameUser && (
+            <div className="mt-6 flex w-full flex-col items-center justify-center border-t border-gray-500 py-8">
+              <h3 className="text-xl font-medium">
+                {' '}
+                Liked {displayName}'s work??{' '}
+              </h3>
+              <p className="mb-4 mt-2 text-sm">
+                Get in touch with {displayName} to discuss your project.
+              </p>
+
+              {!userId ? (
+                <SignUpModal>
+                  <Button variant="brand" className="mt-10 p-6">
+                    Login in To Get in Touch
+                  </Button>
+                </SignUpModal>
+              ) : (
+                <GetInTouchModal username="Rishabh" text="Get in Touch" />
+              )}
+            </div>
+          )}
         </main>
       </section>
       <Footer />

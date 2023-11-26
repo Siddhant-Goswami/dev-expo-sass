@@ -2,7 +2,30 @@ import { ReactQueryProvider } from '@/components/ReactQueryProvider';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import { Toaster } from '@/components/ui/toaster';
 import '@/styles/globals.css';
-import { GeistSans } from 'geist/font/sans';
+
+import localFont from 'next/font/local';
+
+const NeueMont = localFont({
+  src: [
+    {
+      path: '../../public/fonts/NeueMontreal-Light.otf',
+      weight: '300',
+    },
+    {
+      path: '../../public/fonts/NeueMontreal-Regular.otf',
+      weight: '400',
+    },
+    {
+      path: '../../public/fonts/NeueMontreal-Medium.otf',
+      weight: '500',
+    },
+    {
+      path: '../../public/fonts/NeueMontreal-Bold.otf',
+      weight: '700',
+    },
+  ],
+  display: 'swap',
+});
 
 export const metadata = {
   title: 'InnovAIte',
@@ -17,7 +40,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={GeistSans.className}>
+      <body className={NeueMont.className}>
         <ReactQueryProvider>
           <ThemeProvider
             enableSystem

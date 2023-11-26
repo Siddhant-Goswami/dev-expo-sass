@@ -22,7 +22,7 @@ export default async function Page() {
           aria-hidden="true"
         >
           <div
-            className="relative left-1/2 -z-10 aspect-[1155/678] w-[36.125rem] max-w-none -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-40rem)] sm:w-[72.1875rem]"
+            className="relative left-1/2 -z-10 aspect-[1155/678] w-[36.125rem] max-w-none -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#fc4a1a] to-[#f7b733] opacity-30 sm:left-[calc(50%-40rem)] sm:w-[72.1875rem]"
             style={{
               clipPath:
                 'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
@@ -34,7 +34,7 @@ export default async function Page() {
         </h3>
         <h2 className="mt-12 text-center text-3xl font-semibold sm:w-2/3 sm:text-5xl sm:font-bold">
           Join the elite circle of{' '}
-          <span className="bg-blue-100 dark:bg-blue-800"> GenAI</span>{' '}
+          <span className="bg-orange-200 dark:bg-orange-300"> GenAI</span>{' '}
           innovators. Showcase your projects, inspire, and be discovered.
         </h2>
         <p className="mt-10 text-center text-lg font-normal sm:w-3/4 sm:text-xl sm:font-medium">
@@ -49,7 +49,7 @@ export default async function Page() {
           </Link>
         ) : (
           <SignUpModal>
-            <Button variant="default" className="mt-10 p-6">
+            <Button variant="brand" className="mt-10 p-6">
               Get Started Now
             </Button>
           </SignUpModal>
@@ -69,7 +69,7 @@ export default async function Page() {
           aria-hidden="true"
         >
           <div
-            className="relative left-1/2 -z-10 aspect-[1155/678] w-[36.125rem] max-w-none -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-40rem)] sm:w-[72.1875rem]"
+            className="relative left-1/2 -z-10 aspect-[1155/678] w-[36.125rem] max-w-none -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#fc4a1a] to-[#f7b733] opacity-30 sm:left-[calc(50%-40rem)] sm:w-[72.1875rem]"
             style={{
               clipPath:
                 'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
@@ -95,7 +95,7 @@ export default async function Page() {
           </Link>
         ) : (
           <SignUpModal>
-            <Button variant="default" className="mt-10 p-6">
+            <Button variant="brand" className="mt-10 p-6">
               Get Started Now
             </Button>
           </SignUpModal>
