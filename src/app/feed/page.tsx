@@ -15,7 +15,7 @@ const categories = [
 ];
 
 async function feed() {
-  const allProjects = await getAllProjects();
+  const allProjects = await getAllProjects({});
   const filteredProjectsData = allProjects.map(
     ({ project, user, tags, media }) => {
       const { id, title, coverImageUrl } = project;

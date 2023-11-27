@@ -1,21 +1,10 @@
+import { getAllProjects } from '@/server/actions/projects';
 import Image from 'next/image';
 
 type ProjectCardProps = {
   projectName: string;
   creator: string;
-  media: {
-    id: number;
-    createdAt: Date;
-    updatedAt: Date;
-    projectId: number;
-    type: string;
-    url: string;
-  }[];
-  tags: {
-    projectId: number;
-    tagId: number;
-  }[];
-};
+} & Pick<Awaited<ReturnType<typeof getAllProjects>>[number], 'tags' | 'media'>;
 
 const ProjectCard: React.FC<ProjectCardProps> = ({
   projectName,
@@ -41,15 +30,15 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       </div>
       <div className="flex items-center justify-between px-4 py-2">
         <span className="text-center text-sm font-medium">{creator}</span>
-        <span className="text-center text-xs font-medium text-gray-700">
-          {tags.map((tag, index) => {
-            return index === tags.length - 1 ? (
-              <span className="ml-1">#{tag.tagId}</span>
-            ) : (
-              <span className="ml-1">#{tag.tagId},</span>
+        <section className="flex gap-1 text-center text-xs font-medium text-white">
+          {tags.map((tag) => {
+            return (
+              <span key={tag.id} className="rounded-lg bg-brand/95 px-2 py-1">
+                #{tag.name}
+              </span>
             );
           })}
-        </span>
+        </section>
       </div>
     </div>
   );

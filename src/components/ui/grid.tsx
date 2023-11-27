@@ -1,4 +1,5 @@
 import ProjectCard from '@/components/ui/project-card';
+import { getAllProjects } from '@/server/actions/projects';
 import Link from 'next/link';
 
 const projectsList = [
@@ -64,25 +65,15 @@ const projectsList = [
   },
 ];
 
+type ProjectData = {
+  id: number;
+  title: string;
+  coverImageUrl: string;
+  displayName: string;
+} & Pick<Awaited<ReturnType<typeof getAllProjects>>[number], 'tags' | 'media'>;
+
 type GridProps = {
-  data: {
-    id: number;
-    title: string;
-    coverImageUrl: string;
-    media: {
-      id: number;
-      createdAt: Date;
-      updatedAt: Date;
-      projectId: number;
-      type: string;
-      url: string;
-    }[];
-    tags: {
-      projectId: number;
-      tagId: number;
-    }[];
-    displayName: string;
-  }[];
+  data: ProjectData[];
 };
 
 function Grid({ data }: GridProps) {

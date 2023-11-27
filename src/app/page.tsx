@@ -1,8 +1,10 @@
 import { Button } from '@/components/ui/button';
 import Footer from '@/components/ui/footer';
+import Grid from '@/components/ui/grid';
 import Navbar from '@/components/ui/navbar';
 import SignUpModal from '@/components/ui/sign-up-modal';
 import { URLs } from '@/lib/constants';
+import { getAllProjects } from '@/server/actions/projects';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import Link from 'next/link';
@@ -14,6 +16,23 @@ export default async function Page() {
     data: { session },
   } = await supabase.auth.getSession();
   const userId = session?.user?.id;
+
+  const allProjects = await getAllProjects({ limit: 12 });
+  const filteredProjectsData = allProjects.map(
+    ({ project, user, tags, media }) => {
+      const { id, title, coverImageUrl } = project;
+      const displayName = user?.displayName ?? ' ';
+
+      return {
+        id,
+        title,
+        coverImageUrl,
+        media,
+        tags,
+        displayName,
+      };
+    },
+  );
 
   return (
     <div>
@@ -62,7 +81,7 @@ export default async function Page() {
         <h2 className="mb-12 text-center text-2xl font-medium sm:text-5xl">
           Explore Trending Projects
         </h2>
-        {/* <Grid /> */}
+        <Grid data={filteredProjectsData} />
       </section>
 
       <section className="relative flex w-full flex-col items-center justify-center px-5 py-36 sm:px-18">

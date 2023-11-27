@@ -48,7 +48,7 @@ async function Page({ params }: PageProps) {
     <>
       <NavBar />
       <section className="flex min-h-feed items-start justify-center">
-        <main className="mt-8 flex w-8/12 flex-col justify-center">
+        <main className="mt-8 flex w-full flex-col justify-center px-4 md:w-3/4">
           <h1 className="mb-4 w-full text-left text-2xl font-semibold">
             {title}
           </h1>
@@ -99,7 +99,8 @@ async function Page({ params }: PageProps) {
           </div>
 
           {primaryMedia?.type === 'video' && (
-            <div className="mb-8 h-500 w-900 overflow-hidden rounded-sm">
+            // h-500 w-900
+            <div className="mb-8 aspect-video w-full max-w-lg overflow-hidden rounded-sm md:max-w-full">
               <video
                 className="h-full w-full object-cover"
                 src={primaryMedia.url}
@@ -110,10 +111,8 @@ async function Page({ params }: PageProps) {
           )}
 
           {images.map((image, index) => (
-            <div
-              className="mb-8 h-500 w-900 overflow-hidden rounded-sm"
-              key={image.id}
-            >
+            // h-500 w-900
+            <div className="mb-8 overflow-hidden rounded-sm" key={image.id}>
               <img
                 className="h-full w-full object-cover"
                 src={image.url}
