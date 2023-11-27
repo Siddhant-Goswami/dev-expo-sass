@@ -4,7 +4,15 @@ import NavBar from '@/components/ui/navbar';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import GetInTouchModal from '@/components/ui/get-in-touch-modal';
+import SignUp from '@/components/ui/sign-up';
 import SignUpModal from '@/components/ui/sign-up-modal';
 import { getProjectById } from '@/server/actions/projects';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
@@ -47,6 +55,19 @@ async function Page({ params }: PageProps) {
   return (
     <>
       <NavBar />
+
+      <Dialog open={!userId}>
+        <DialogContent className="h-screen w-full overflow-scroll md:h-max md:max-w-xl">
+          <DialogHeader>
+            <DialogTitle>Get Started</DialogTitle>
+            <DialogDescription>
+              Sign in with your Github or Google account.
+            </DialogDescription>
+          </DialogHeader>
+          <SignUp />
+        </DialogContent>
+      </Dialog>
+
       <section className="flex min-h-feed items-start justify-center">
         <main className="mt-8 flex w-full flex-col justify-center px-4 md:w-3/4">
           <h1 className="mb-4 w-full text-left text-2xl font-semibold">
@@ -104,7 +125,7 @@ async function Page({ params }: PageProps) {
               <video
                 className="h-full w-full object-cover"
                 src={primaryMedia.url}
-                autoPlay
+                autoPlay={!!userId}
                 controls
               />
             </div>
