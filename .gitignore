@@ -41,3 +41,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 src/app/db-test/page.tsx
+
+# Sentry Config File
+.sentryclirc
