@@ -33,7 +33,11 @@ const ScrollableChips = () => {
     <div className="flex space-x-3 overflow-x-auto py-2">
       {categories.map((item) => (
         <Link href={`?filter=${item.id}`} key={item.id}>
-          <Chip key={item.id} label={item.label} active={item.id === filter} />
+          <Chip
+            key={item.id}
+            label={item.label}
+            active={item.id === filter || (item.id === 'all' && !filter)}
+          />
         </Link>
       ))}
     </div>

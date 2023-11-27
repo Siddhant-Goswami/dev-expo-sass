@@ -8,7 +8,7 @@ import { getAllProjects } from '@/server/actions/projects';
 import Link from 'next/link';
 
 export default async function Page() {
-  const allProjects = await getAllProjects({ limit: 12 });
+  const allProjects = await getAllProjects({ limit: 8 });
   const filteredProjectsData = allProjects.map(
     ({ project, user, tags, media }) => {
       const { id, title, coverImageUrl } = project;
