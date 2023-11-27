@@ -1,7 +1,7 @@
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
-import { InferInsertModel, InferSelectModel, eq, relations } from 'drizzle-orm';
+import { InferInsertModel, InferSelectModel, relations } from 'drizzle-orm';
 import {
   bigserial,
   boolean,
@@ -12,7 +12,6 @@ import {
   timestamp,
   varchar,
 } from 'drizzle-orm/pg-core';
-import { db } from '.';
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -165,6 +164,9 @@ export const projectMedia = pgTable(
     };
   },
 );
+
+export type ProjectMediaSelect = InferSelectModel<typeof projectMedia>;
+export type ProjectMediaInsert = InferInsertModel<typeof projectMedia>;
 
 export const comments = pgTable(
   'comment',
