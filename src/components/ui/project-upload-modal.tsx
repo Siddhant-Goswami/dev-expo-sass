@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+'use client';
 import {
   Dialog,
   DialogContent,
@@ -10,16 +10,16 @@ import {
 import { ProjectUpload } from '@/components/ui/project-upload';
 import { useState } from 'react';
 
-function ProjectUploadModal() {
+type ProjectUploadModalProps = {
+  children: React.ReactNode;
+};
+
+function ProjectUploadModal({ children }: ProjectUploadModalProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline" className="rounded-sm">
-          Upload Project
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="h-screen min-w-full overflow-scroll md:h-screen-3/4 md:min-w-50">
         <DialogHeader>
           <DialogTitle>Upload Project</DialogTitle>

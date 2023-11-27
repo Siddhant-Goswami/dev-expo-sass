@@ -1,22 +1,13 @@
+import GetStartedButton from '@/components/get-started-button';
 import { Button } from '@/components/ui/button';
 import Footer from '@/components/ui/footer';
 import Grid from '@/components/ui/grid';
 import Navbar from '@/components/ui/navbar';
-import SignUpModal from '@/components/ui/sign-up-modal';
 import { URLs } from '@/lib/constants';
 import { getAllProjects } from '@/server/actions/projects';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
 import Link from 'next/link';
 
 export default async function Page() {
-  const supabase = createServerComponentClient({ cookies });
-
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  const userId = session?.user?.id;
-
   const allProjects = await getAllProjects({ limit: 12 });
   const filteredProjectsData = allProjects.map(
     ({ project, user, tags, media }) => {
@@ -50,7 +41,7 @@ export default async function Page() {
             }}
           />
         </div>
-        <h3 className="mt-18 rounded-full bg-accent/90 px-4 py-2 font-semibold backdrop-blur-md dark:bg-accent/60 sm:mt-0">
+        <h3 className="mt-18 rounded-full border-2 border-brand/40 bg-brand/10 px-4 py-2 font-semibold backdrop-blur-md dark:bg-accent/60 sm:mt-0">
           Unleash Your Generative AI Mastery
         </h3>
         <h2 className="mt-12 text-center text-3xl font-semibold sm:w-2/3 sm:text-5xl sm:font-bold">
@@ -64,17 +55,15 @@ export default async function Page() {
           expertise.
         </p>
 
-        {userId ? (
-          <Link href={URLs.feed}>
-            <Button className="mt-10 p-6">Explore Projects</Button>
-          </Link>
-        ) : (
-          <SignUpModal>
-            <Button variant="brand" className="mt-10 p-6">
-              Get Started Now
-            </Button>
-          </SignUpModal>
-        )}
+        <GetStartedButton
+          fallback={
+            <Link href={URLs.feed}>
+              <Button variant="brand" className="mt-10 p-6">
+                Explore Projects
+              </Button>
+            </Link>
+          }
+        />
       </section>
 
       <section className="min-h-screen w-full px-5 sm:px-18">
@@ -105,22 +94,18 @@ export default async function Page() {
           in the world of Generative AI.
         </p>
 
-        {userId ? (
-          <Link href={URLs.feed}>
-            <Button
-              variant="link"
-              className="mt-10 py-8 text-lg underline sm:text-xl"
-            >
-              Explore Projects
-            </Button>
-          </Link>
-        ) : (
-          <SignUpModal>
-            <Button variant="brand" className="mt-10 p-6">
-              Get Started Now
-            </Button>
-          </SignUpModal>
-        )}
+        <GetStartedButton
+          fallback={
+            <Link href={URLs.feed}>
+              <Button
+                variant="link"
+                className="mt-10 py-8 text-lg underline sm:text-xl"
+              >
+                Explore Projects
+              </Button>
+            </Link>
+          }
+        />
       </section>
       <Footer />
     </div>
