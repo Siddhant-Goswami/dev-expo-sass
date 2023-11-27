@@ -1,3 +1,5 @@
+import { Analytics } from '@vercel/analytics/react';
+
 import { ReactQueryProvider } from '@/components/ReactQueryProvider';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import { Toaster } from '@/components/ui/toaster';
@@ -55,6 +57,7 @@ export default function RootLayout({
           >
             {children}
             <Toaster />
+            <Analytics />
           </ThemeProvider>
         </ReactQueryProvider>
       </body>
