@@ -78,7 +78,7 @@ type GridProps = {
 
 function Grid({ data }: GridProps) {
   return (
-    <div className="grid h-max w-full grid-cols-1 gap-6 sm:grid-cols-2 tablet:grid-cols-3 xl:grid-cols-4">
+    <div className="[nth-child(7)]:hidden grid h-max w-full grid-cols-1 gap-6 sm:grid-cols-2 tablet:grid-cols-3 xl:grid-cols-4">
       {data.map((project) => (
         <Link href={`/feed/${project.id}`} key={project.id}>
           <ProjectCard

@@ -20,7 +20,7 @@ export async function getOrCreateUserProfile() {
     } = await supabase.auth.getSession();
 
     if (!session) {
-      throw new Error('Unauthorized - 401');
+      return null;
     }
 
     const loggedInUser = session.user;
@@ -53,6 +53,8 @@ export async function getOrCreateUserProfile() {
       //   ]);
 
       user = newUserInDb;
+
+      return user;
     }
   } catch (err) {}
 }
