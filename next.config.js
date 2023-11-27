@@ -3,7 +3,7 @@
  * for Docker builds.
  */
 await import('./src/env.js');
-import { withSentryConfig } from "@sentry/nextjs";
+import { withSentryConfig } from '@sentry/nextjs';
 
 /** @type {import("next").NextConfig} */
 const config = {
@@ -45,8 +45,8 @@ const sentryConfig = withSentryConfig(
     // Suppresses source map uploading logs during build
     // @ts-expect-error sentry default setup
     silent: true,
-    org: "100xengineers",
-    project: "javascript-nextjs",
+    org: '100xengineers',
+    project: 'javascript-nextjs',
   },
   {
     // For all available options, see:
@@ -59,14 +59,14 @@ const sentryConfig = withSentryConfig(
     transpileClientSDK: true,
 
     // Routes browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers (increases server load)
-    tunnelRoute: "/monitoring",
+    tunnelRoute: '/monitoring',
 
     // Hides source maps from generated client bundles
     hideSourceMaps: true,
 
     // Automatically tree-shake Sentry logger statements to reduce bundle size
     disableLogger: true,
-  }
+  },
 );
 
 export { sentryConfig };
