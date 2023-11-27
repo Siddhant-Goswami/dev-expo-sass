@@ -146,7 +146,7 @@ async function Page({ params }: PageProps) {
                   </Button>
                 </SignUpModal>
               ) : (
-                <GetInTouchModal username="Rishabh" text="Get in Touch" />
+                <GetInTouchModal username={displayName} text="Get in Touch" />
               )}
             </div>
           )}

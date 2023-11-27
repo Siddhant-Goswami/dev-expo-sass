@@ -1,11 +1,14 @@
 'use client';
 import { Button } from '@/components/ui/button';
-import React, { useState } from 'react';
+import { categories } from '@/lib/constants';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import React from 'react';
 
 interface ChipProps {
   label: string;
   active: boolean;
-  onClick: () => void;
+  onClick?: () => void;
 }
 
 const Chip: React.FC<ChipProps> = ({ label, active, onClick }) => {
@@ -20,26 +23,18 @@ const Chip: React.FC<ChipProps> = ({ label, active, onClick }) => {
   );
 };
 
-interface ScrollableChipsProps {
-  items: string[];
-}
+const ScrollableChips = () => {
+  const searchParams = useSearchParams();
+  const filter = searchParams.get('filter');
 
-const ScrollableChips: React.FC<ScrollableChipsProps> = ({ items }) => {
-  const [activeChip, setActiveChip] = useState<string | null>(null);
-
-  const handleChipClick = (label: string) => {
-    setActiveChip(label);
-  };
+  console.log('filter', filter);
 
   return (
     <div className="flex space-x-3 overflow-x-auto py-2">
-      {items.map((item) => (
-        <Chip
-          key={item}
-          label={item}
-          active={item === activeChip}
-          onClick={() => handleChipClick(item)}
-        />
+      {categories.map((item) => (
+        <Link href={`?filter=${item.id}`} key={item.id}>
+          <Chip key={item.id} label={item.label} active={item.id === filter} />
+        </Link>
       ))}
     </div>
   );
