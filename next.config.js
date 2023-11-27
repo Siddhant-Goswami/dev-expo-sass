@@ -43,6 +43,7 @@ const sentryConfig = withSentryConfig(
     // https://github.com/getsentry/sentry-webpack-plugin#options
 
     // Suppresses source map uploading logs during build
+    // @ts-expect-error sentry default setup
     silent: true,
     org: "100xengineers",
     project: "javascript-nextjs",
