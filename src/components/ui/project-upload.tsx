@@ -275,7 +275,11 @@ export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
 
         <div className="flex justify-end">
           <Button type="submit" className="ml-auto w-36" disabled={isPending}>
-            {isPending ? <LucideLoader size={20} className='animate-spin'/> :"Submit Project"}
+            {isPending ? (
+              <LucideLoader size={20} className="animate-spin" />
+            ) : (
+              'Submit Project'
+            )}
           </Button>
         </div>
       </form>
