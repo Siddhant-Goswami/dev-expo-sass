@@ -7,7 +7,7 @@ function Footer() {
         © 2023{' '}
         <Link
           href="https://100xengineers.com/"
-          className="text-brand font-semibold"
+          className="font-semibold text-brand"
         >
           100xTalent
         </Link>{' '}
