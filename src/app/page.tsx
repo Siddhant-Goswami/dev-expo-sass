@@ -1,3 +1,4 @@
+import GetStartedButton from '@/components/get-started-button';
 import { Button } from '@/components/ui/button';
 import Footer from '@/components/ui/footer';
 import Grid from '@/components/ui/grid';
@@ -64,17 +65,11 @@ export default async function Page() {
           expertise.
         </p>
 
-        {userId ? (
+        <GetStartedButton fallback={
           <Link href={URLs.feed}>
-            <Button className="mt-10 p-6">Explore Projects</Button>
+            <Button variant="brand" className="mt-10 p-6">Explore Projects</Button>
           </Link>
-        ) : (
-          <SignUpModal>
-            <Button variant="brand" className="mt-10 p-6">
-              Get Started Now
-            </Button>
-          </SignUpModal>
-        )}
+        }/>
       </section>
 
       <section className="min-h-screen w-full px-5 sm:px-18">
@@ -105,7 +100,7 @@ export default async function Page() {
           in the world of Generative AI.
         </p>
 
-        {userId ? (
+        <GetStartedButton fallback={
           <Link href={URLs.feed}>
             <Button
               variant="link"
@@ -114,13 +109,7 @@ export default async function Page() {
               Explore Projects
             </Button>
           </Link>
-        ) : (
-          <SignUpModal>
-            <Button variant="brand" className="mt-10 p-6">
-              Get Started Now
-            </Button>
-          </SignUpModal>
-        )}
+        }/>
       </section>
       <Footer />
     </div>

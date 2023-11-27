@@ -33,7 +33,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         <section className="flex gap-1 text-center text-xs font-medium text-white">
           {tags.map((tag) => {
             return (
-              <span key={tag.id} className="rounded-lg bg-brand/95 px-2 py-1">
+              <span key={tag.id} className="rounded-sm bg-[rgba(0,0,0,0.85)] px-2 py-1">
                 #{tag.name}
               </span>
             );
