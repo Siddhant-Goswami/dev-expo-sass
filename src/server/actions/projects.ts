@@ -19,35 +19,41 @@ import {
 
 // get all projects ordered by date
 // for home feed
-export const getAllProjects = async () => {
-  const allProjects = await db
-    .select()
-    .from(projects)
-    .orderBy(desc(projects.publishedAt));
-  const result = allProjects.map(async (project) => {
-    const devId = project.userId;
-    const userPromise = db.query.userProfiles.findFirst({
-      where: eq(userProfiles.id, devId),
-    });
-    const tagsPromise = db.query.projectTags.findMany({
-      where: eq(projectTags.projectId, project.id),
-    });
-    const mediaPromise = db.query.projectMedia.findMany({
-      where: eq(projectMedia.projectId, project.id),
-    });
-    const [user, tags, media] = await Promise.all([
-      userPromise,
-      tagsPromise,
-      mediaPromise,
-    ]);
+export const getAllProjects = async ({
+  limit,
+  offset,
+}: {
+  limit?: number;
+  offset?: number;
+}) => {
+  const allProjects = await db.query.projects.findMany({
+    where: (p, { isNotNull }) => isNotNull(p.publishedAt),
+    with: {
+      userProfile: true,
+      projectMedia: true,
+      projectTags: {
+        with: {
+          tag: true,
+        },
+      },
+    },
+    orderBy: [desc(projects.publishedAt)],
+    limit: limit ? limit : undefined,
+  });
+
+  const result = allProjects.map((data) => {
+    const { projectTags, projectMedia, userProfile, ...project } = data;
     return {
       project,
-      user,
-      tags,
-      media,
+      user: userProfile,
+      tags: projectTags
+        .filter((pt) => pt.tag.name !== 'ignore_this_tag')
+        .map((pt) => pt.tag),
+      media: projectMedia,
     };
   });
-  return await Promise.all(result);
+
+  return result;
 };
 
 // get all projects of a user
@@ -121,8 +127,7 @@ export const createProject = async ({
 }: ProjectInsert & {
   tagsList: string[];
 }) => {
-  // TODO: slug handling and image handling
-
+  tagsList.push('ignore_this_tag');
   const coverImageUrl = '';
 
   const [result] = await db

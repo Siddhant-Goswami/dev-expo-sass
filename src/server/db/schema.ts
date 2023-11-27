@@ -1,7 +1,7 @@
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
-import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
+import { InferInsertModel, InferSelectModel, eq, relations } from 'drizzle-orm';
 import {
   bigserial,
   boolean,
@@ -12,6 +12,7 @@ import {
   timestamp,
   varchar,
 } from 'drizzle-orm/pg-core';
+import { db } from '.';
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -261,3 +262,56 @@ export type RecruiterReachoutSelect = InferSelectModel<
 export type RecruiterReachoutInsert = InferInsertModel<
   typeof recruiterReachouts
 >;
+
+export const userProfileRelations = relations(userProfiles, ({ one, many }) => {
+  return {
+    projects: many(projects),
+    devProfiles: one(devProfiles, {
+      fields: [userProfiles.id],
+      references: [devProfiles.userId],
+    }),
+    recruiterProfiles: one(recruiterProfiles, {
+      fields: [userProfiles.id],
+      references: [recruiterProfiles.userId],
+    }),
+  };
+});
+
+export const projectsRelation = relations(projects, ({ one, many }) => {
+  return {
+    userProfile: one(userProfiles, {
+      fields: [projects.userId],
+      references: [userProfiles.id],
+    }),
+    projectTags: many(projectTags),
+    projectMedia: many(projectMedia),
+    comments: many(comments),
+    likes: many(likes),
+    projectBookmarks: many(projectBookmarks),
+  };
+});
+
+export const tagsRelation = relations(tags, ({ many }) => {
+  return {
+    projectTags: many(projectTags),
+  };
+});
+
+export const projectTagsRelation = relations(projectTags, ({ one }) => {
+  return {
+    project: one(projects, {
+      fields: [projectTags.projectId],
+      references: [projects.id],
+    }),
+    tag: one(tags, { fields: [projectTags.tagId], references: [tags.id] }),
+  };
+});
+
+export const projectMediaRelation = relations(projectMedia, ({ one }) => {
+  return {
+    project: one(projects, {
+      fields: [projectMedia.projectId],
+      references: [projects.id],
+    }),
+  };
+});
