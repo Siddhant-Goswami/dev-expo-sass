@@ -4,8 +4,8 @@ export const URLs = {
   feed: '/feed',
   signIn: '/sign-in',
   signUp: '/sign-up',
-  termsOfService: '/terms',
-  privacyPolicy: '/privacy',
+  termsOfService: 'https://100xengineers.com/terms-and-conditions',
+  privacyPolicy: 'https://100xengineers.com/privacy-policy',
 } as const;
 
 export const MAX_NUMBER_OF_IMAGES = 3;
