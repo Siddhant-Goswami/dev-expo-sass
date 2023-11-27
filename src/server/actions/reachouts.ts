@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 'use server';
 
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 import { db } from '../db';
 import { RecruiterReachoutInsert, recruiterReachouts } from '../db/schema';
-import { cookies } from 'next/headers';
 
 const createRecruiterReachout = async ({
   devId,
@@ -26,15 +27,21 @@ const createRecruiterReachout = async ({
     throw new Error('Unauthenticated');
   }
 
-  const recruiterId = session.user.id;
-  await db.insert(recruiterReachouts).values({
-    recruiterId,
-    devId,
-    workType: workType as 'freelance' | 'full-time',
-    quotePrice,
-    message,
-    timestamp: new Date(),
-  });
+  try {
+    const recruiterId = session.user.id;
+    await db.insert(recruiterReachouts).values({
+      recruiterId,
+      devId,
+      workType: workType as 'freelance' | 'full-time',
+      quotePrice,
+      message,
+      timestamp: new Date(),
+    });
+
+    return { success: true, message: 'Reachout sent' };
+  } catch (error) {
+    return { success: false, message: 'Something went wrong' };
+  }
 };
 
 // const getIncomingReachouts = async ({ userId }: { userId: number }) => {

@@ -1,3 +1,4 @@
+'use client';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -6,6 +7,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { useState } from 'react';
 import { GetInTouch } from './get-in-touch';
 
 type GetInTouchModalProps = {
@@ -19,10 +21,12 @@ function GetInTouchModal({
   text,
   roundedFull,
 }: GetInTouchModalProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
-    <Dialog>
+    <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
       <DialogTrigger asChild>
-        <Button variant="default" className={roundedFull ? '' : 'rounded-xl'}>
+        <Button variant="brand" className={roundedFull ? '' : 'rounded-xl'}>
           {text}
         </Button>
       </DialogTrigger>
@@ -30,7 +34,7 @@ function GetInTouchModal({
         <DialogHeader>
           <DialogTitle>Message {username}</DialogTitle>
         </DialogHeader>
-        <GetInTouch />
+        <GetInTouch setIsModalOpen={setIsModalOpen} />
       </DialogContent>
     </Dialog>
   );

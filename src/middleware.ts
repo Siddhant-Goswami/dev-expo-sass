@@ -10,6 +10,7 @@ const publicRoutes: string[] = [
   URLs.privacyPolicy,
   URLs.signIn,
   URLs.signUp,
+  URLs.feed,
 ];
 
 export async function middleware(req: NextRequest) {
@@ -26,10 +27,10 @@ export async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
 
   // Redirect to sign in page if not logged in && not public route
-  if (!publicRoutes.includes(pathname) && !session) {
-    // TODO: redirect to original page after sign in
-    return NextResponse.redirect(new URL(URLs.signIn, req.nextUrl));
-  }
+  // if (!publicRoutes.includes(pathname) && !session) {
+  //   // TODO: redirect to original page after sign in
+  //   return NextResponse.redirect(new URL(URLs.signIn, req.nextUrl));
+  // }
 
   return res;
 }

@@ -25,13 +25,16 @@ module.exports = {
         18: '4.5rem',
         500: '31.25rem',
         900: '56.25rem',
-        hero: 'calc(100vh - 4.5rem)',
+        hero: 'calc(100svh - 4.5rem)',
       },
       height: {
         'screen-3/4': '75vh',
       },
       minWidth: {
         '50': '50rem',
+      },
+      minHeight: {
+        feed: 'calc(100vh - 9.75rem)',
       },
       fontSize: {
         '3xl': ['36px', '40px'],
@@ -47,6 +50,12 @@ module.exports = {
         ring: 'hsl(var(--ring))',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
+        brand: {
+          DEFAULT: '#ef5a3c',
+          background: '#f5f5f4',
+          foreground: '#ffffff',
+          dark: '#242424',
+        },
         primary: {
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',

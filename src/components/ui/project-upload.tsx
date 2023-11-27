@@ -17,14 +17,19 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { useAuth } from '@/hooks/user/auth';
+import { useToast } from '@/components/ui/use-toast';
+import { MAX_IMAGE_SIZE, MAX_VIDEO_SIZE } from '@/lib/constants';
 import { projectFormSchema } from '@/lib/validations/project';
+import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
-import { Label } from './label';
 
 type ProjectUploadValues = z.infer<typeof projectFormSchema>;
-export function ProjectUpload() {
-  const { userId } = useAuth();
+type ProjectUploadProps = {
+  setIsModalOpen: (isOpen: boolean) => void;
+};
+
+export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
+  const { toast } = useToast();
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [selectedVideos, setSelectedVideos] = useState<File[]>([]);
 
@@ -39,70 +44,55 @@ export function ProjectUpload() {
     },
   });
 
-  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+  const { mutate, isPending } = useMutation({
+    mutationFn: async () => {
+      const formValues = form.getValues();
 
-    if (!userId) {
-      return alert('Oops! You must be logged in to upload a project.');
-    }
-    const formValues = form.getValues();
+      const formData = new FormData();
+      formData.append('projectData', JSON.stringify(formValues));
 
-    console.log('fields:', formValues);
-    console.log('files:', {
-      images: selectedImages,
-      videos: selectedVideos,
-    });
-    const images = selectedImages;
+      if (selectedImages[0]) formData.append('image1', selectedImages[0]);
+      if (selectedImages[1]) formData.append('image2', selectedImages[1]);
+      if (selectedImages[2]) formData.append('image3', selectedImages[2]);
 
-    const {
-      title,
-      description,
-      hostedUrl,
-      sourceCodeUrl,
-      tags: tagsList,
-    } = formValues;
+      if (selectedVideos[0]) formData.append('video', selectedVideos[0]);
 
-    const requestObject = {
-      userId,
-      title,
-      description,
-      hostedUrl,
-      sourceCodeUrl,
-      tagsList,
-      images,
-    };
+      const res = await fetch(`/api/project`, {
+        method: 'POST',
+        body: formData,
+      });
 
-    console.log('requestObject', requestObject);
+      if (res.ok) {
+        const result = (await res.json()) as { projectId: string };
+        return result;
+      } else {
+        throw new Error('Something went wrong');
+      }
+    },
 
-    const formData = new FormData();
-    formData.append('projectData', JSON.stringify(formValues));
-
-    if (selectedImages[0]) formData.append('image0', selectedImages[0]);
-    if (selectedImages[1]) formData.append('image1', selectedImages[1]);
-    if (selectedImages[2]) formData.append('image2', selectedImages[2]);
-
-    if (selectedVideos[0]) formData.append('video', selectedVideos[0]);
-
-    const res = await fetch(`/api/project`, {
-      method: 'POST',
-      body: formData,
-    });
-
-    if (res.ok) {
-      alert('Project uploaded successfully!');
-      const { projectId } = (await res.json()) as { projectId: string };
-
+    onSuccess: (data) => {
+      toast({
+        title: 'Project uploaded successfully!',
+      });
+      setIsModalOpen(false);
       // Redirect user to their new project page
-      window.location.href = `/feed/${projectId}`;
-    } else {
-      alert('Oops! Something went wrong. Please try again. ' + res.statusText);
-    }
-  }
+      window.location.href = `/feed/${data?.projectId}`;
+    },
+
+    onError: (err) => {
+      toast({
+        variant: 'destructive',
+        title:
+          'Oops! Something went wrong. Please try again.' + err?.message ??
+          'Unknown error',
+      });
+    },
+  });
 
   return (
     <Form {...form}>
       <form
-        onSubmit={onSubmit}
+        onSubmit={form.handleSubmit(() => mutate())}
         method="post"
         // onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-8"
@@ -191,71 +181,99 @@ export function ProjectUpload() {
           )}
         />
 
-        <Label>Files</Label>
-
-        <Input
-          multiple
-          id="images"
-          type="file"
-          onChange={(e) => {
-            console.log('images:', e.target.files);
-
-            const images = e.target.files;
-
-            if (!images) return;
-
-            const imagesArray = Array.from(images);
-            setSelectedImages(imagesArray);
-
-            // alert("You've selected " + imagesArray.length + ' images.');
-          }}
-        />
-
-        <Input
-          multiple
-          id="video"
-          type="file"
-          onChange={(e) => {
-            console.log('Videos:', e.target.files);
-
-            const videos = e.target.files;
-
-            if (!videos) return;
-
-            const VideosArray = Array.from(videos);
-            setSelectedVideos(VideosArray);
-
-            // alert("You've selected " + VideosArray.length + ' Videos.');
-          }}
-        />
-
-        {/* <FormField
-          control={form.control}
-          name="videos"
-          render={(
-            {
-              // field
-            },
-          ) => (
+        <FormField
+          // control={form.control}
+          name="tags"
+          render={() => (
             <FormItem>
-              <FormLabel>Files</FormLabel>
+              <FormLabel> Upload Images </FormLabel>
               <FormControl>
                 <Input
-                  id="videos"
+                  required
+                  multiple
+                  accept="image/*"
+                  id="imageFile"
                   type="file"
-                  // {...field}
+                  // value={selectedImages}
                   onChange={(e) => {
-                    console.log('videos:', e.target.files);
-                    form.setValue('videos', e.target.files);
+                    const images = e.target.files;
+                    if (!images) return;
+
+                    const imagesArray = Array.from(images);
+                    console.log(`Selected images:`, imagesArray);
+                    imagesArray.forEach((image) => {
+                      if (!image.type.startsWith('image/')) {
+                        return toast({
+                          variant: 'destructive',
+                          title: 'Image type should be png or jpeg',
+                        });
+                      }
+                      if (image.size > MAX_IMAGE_SIZE) {
+                        return toast({
+                          variant: 'destructive',
+                          title: 'Image size should be less than 5MB',
+                        });
+                      }
+                    });
+                    const filteredImages = imagesArray.filter(
+                      (image) => image.size < MAX_IMAGE_SIZE,
+                    );
+
+                    console.log(`Filtered images:`, filteredImages);
+                    setSelectedImages(filteredImages);
+
+                    // alert("You've selected " + imagesArray.length + ' images.');
                   }}
                 />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
-        /> */}
+        />
+
+        <FormField
+          // control={form.control}
+          name="tags"
+          render={() => (
+            <FormItem>
+              <FormLabel> Upload Video </FormLabel>
+              <FormControl>
+                <Input
+                  id="video"
+                  accept="video/*"
+                  type="file"
+                  onChange={(e) => {
+                    const videos = e.target.files;
+
+                    if (!videos?.[0]) return;
+
+                    if (!videos?.[0]?.type.startsWith('video/')) {
+                      return toast({
+                        variant: 'destructive',
+                        title: 'Please upload a video file',
+                      });
+                    }
+                    if (videos[0]?.size > MAX_VIDEO_SIZE) {
+                      return toast({
+                        variant: 'destructive',
+                        title: 'Video size should be less than 5MB',
+                      });
+                    } else {
+                      const VideosArray = Array.from(videos);
+                      setSelectedVideos(VideosArray);
+                    }
+
+                    // alert("You've selected " + VideosArray.length + ' Videos.');
+                  }}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <div className="flex justify-end">
-          <Button type="submit" className="ml-auto">
+          <Button type="submit" className="ml-auto" disabled={isPending}>
             Submit Project
           </Button>
         </div>

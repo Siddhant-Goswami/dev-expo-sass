@@ -1,6 +1,5 @@
 'use client';
 
-import NavBar from '@/components/ui/navbar';
 import { supabaseClientComponentClient } from '@/hooks/user/auth';
 import { URLs } from '@/lib/constants';
 import { Auth } from '@supabase/auth-ui-react';
@@ -10,41 +9,12 @@ import {
 } from '@supabase/auth-ui-shared';
 import Link from 'next/link';
 
-// async function handleGithubSignin() {
-//   'use server';
-
-//   const supabase = createClient(cookies());
-
-//   const sesh = await supabase.auth.getSession();
-//   console.log({ sesh });
-
-//   const githubResult = await supabase.auth.signInWithOAuth({
-//     provider: 'github',
-//   });
-
-//   const redirectUrl = githubResult.data.url;
-
-//   if (!redirectUrl) {
-//     throw new Error('No redirect URL');
-//   }
-
-//   redirect(redirectUrl);
-// }
-
 export default function SignUp() {
   return (
     <>
       <div className="">
         <div className="lg:p-8">
           <div className="mx-auto flex w-full flex-col items-center justify-center space-y-6 sm:w-80">
-            {/* <div className="flex flex-col space-y-2 text-center">
-              <h1 className="text-2xl font-semibold tracking-tight">
-                Create an account
-              </h1>
-              <p className="text-muted-foreground text-sm">
-                Enter your email below to create your account
-              </p>
-            </div> */}
             <UserAuthForm />
             <p className="px-8 text-center text-sm text-muted-foreground">
               By clicking continue, you agree to our{' '}

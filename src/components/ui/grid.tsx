@@ -1,4 +1,5 @@
 import ProjectCard from '@/components/ui/project-card';
+import Link from 'next/link';
 
 const projectsList = [
   {
@@ -63,15 +64,39 @@ const projectsList = [
   },
 ];
 
-function Grid() {
+type GridProps = {
+  data: {
+    id: number;
+    title: string;
+    coverImageUrl: string;
+    media: {
+      id: number;
+      createdAt: Date;
+      updatedAt: Date;
+      projectId: number;
+      type: string;
+      url: string;
+    }[];
+    tags: {
+      projectId: number;
+      tagId: number;
+    }[];
+    displayName: string;
+  }[];
+};
+
+function Grid({ data }: GridProps) {
   return (
     <div className="grid h-max w-full grid-cols-1 gap-6 sm:grid-cols-2 tablet:grid-cols-3 xl:grid-cols-4">
-      {projectsList.map((project) => (
-        <ProjectCard
-          projectName={project.projectName}
-          creator={project.creator}
-          tags={project.tags}
-        />
+      {data.map((project) => (
+        <Link href={`/feed/${project.id}`} key={project.id}>
+          <ProjectCard
+            projectName={project.title}
+            creator={project.displayName}
+            tags={project.tags}
+            media={project.media}
+          />
+        </Link>
       ))}
     </div>
   );

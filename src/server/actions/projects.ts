@@ -56,7 +56,7 @@ export const getProjectsByUserId = async (userId: UserProfileSelect['id']) => {
     where: eq(projects.userId, userId.toString()),
     orderBy: [desc(projects.publishedAt)],
   });
-  console.log(userProjects);
+
   return userProjects;
 };
 
@@ -116,13 +116,8 @@ export const getProjectById = async (projectId: ProjectSelect['id']) => {
 
 // create a new project
 export const createProject = async ({
-  userId,
-  title,
-  description,
-  // images,
-  hostedUrl,
-  sourceCodeUrl,
   tagsList,
+  ...project
 }: ProjectInsert & {
   tagsList: string[];
 }) => {
@@ -133,14 +128,8 @@ export const createProject = async ({
   const [result] = await db
     .insert(projects)
     .values({
-      userId: userId.toString(),
-      slug:
-        title.replace(/\s+/g, '-').toLowerCase() + '-' + Date.now().toString(),
-      title,
-      description,
+      ...project,
       coverImageUrl,
-      hostedUrl,
-      sourceCodeUrl,
       publishedAt: new Date(),
     })
     .returning({ projectId: projects.id });

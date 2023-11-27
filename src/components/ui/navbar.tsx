@@ -1,11 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 'use client';
 
 import { Button } from '@/components/ui/button';
+import Logo from '@/components/ui/logo';
 import ProjectUploadModal from '@/components/ui/project-upload-modal';
+import SignUpModal from '@/components/ui/sign-up-modal';
 import { ThemeToggle } from '@/components/ui/toggle';
 import { useAuth } from '@/hooks/user/auth';
 import { useUserProfile } from '@/hooks/user/profile';
-import { URLs } from '@/lib/constants';
 import Link from 'next/link';
 import UserAuthButton from '../UserAuthButton';
 
@@ -17,14 +19,12 @@ const NavBar = () => {
   // ! DO THIS IN A BETTER WAY, DO NOT DELETE FOR NOW
   useUserProfile();
 
-  console.log('session', session?.user);
-
   return (
-    <nav className="sticky top-0 z-50 flex w-screen items-center justify-between bg-background px-6 py-4">
+    <nav className="sticky top-0 z-50 flex w-screen items-center justify-between bg-background/30 px-6  py-4 backdrop-blur-md">
       <div className="flex w-full items-center justify-between space-x-4">
         <div className="flex items-center">
           <Link href="/" className="text-2xl font-semibold">
-            Innov<span className="font-bold text-blue-600">AI</span>te
+            <Logo />
           </Link>
         </div>
         <div className="flex h-10 items-center gap-6">
@@ -36,9 +36,9 @@ const NavBar = () => {
           )}
 
           {!userId && isLoaded && (
-            <Link href={URLs.signIn}>
+            <SignUpModal>
               <Button variant="secondary">Sign In</Button>
-            </Link>
+            </SignUpModal>
           )}
 
           {!isLoaded && !userId && (

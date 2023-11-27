@@ -87,8 +87,6 @@ export const getUserInfo = async (userId: UserProfileSelect['id']) => {
     })
   ).length;
 
-  console.log(userInfo, devInfo, recruiterInfo, projectsCount);
-
   return {
     info: {
       userInfo,

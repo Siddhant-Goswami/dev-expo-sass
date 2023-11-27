@@ -1,24 +1,18 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import { MAX_IMAGE_SIZE, MAX_VIDEO_SIZE } from '@/lib/constants';
 import { projectFormSchema } from '@/lib/validations/project';
+import { createProject } from '@/server/actions/projects';
 import { db } from '@/server/db';
-import { projectMedia, projects } from '@/server/db/schema';
+import { projectMedia } from '@/server/db/schema';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import cloudinary from 'cloudinary';
 import fs from 'fs';
 import { cookies } from 'next/headers';
 import { NextResponse, type NextRequest } from 'next/server';
 
-const MAX_NUMBER_OF_IMAGES = 3;
-const MAX_NUMBER_OF_VIDEOS = 1;
-const MAX_VIDEO_SIZE = 5 * 1024 * 1024; // 5MB
-const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 2MB
-
 // POST schema
 
 export async function POST(req: NextRequest) {
+  console.time('Project-upload');
   const supabase = createRouteHandlerClient({ cookies });
 
   const {
@@ -61,12 +55,16 @@ export async function POST(req: NextRequest) {
     //     throw new Error('🔴 You can only upload up to 1 video!');
     //   }
 
+    console.info(`All form data:`, formData.entries());
+
     const videoBlobFile = formData.get('video') as Blob;
 
     const image1BlobFile = formData.get('image1') as Blob;
     const image2BlobFile = formData.get('image2') as Blob;
     const image3BlobFile = formData.get('image3') as Blob;
     const imagesToUpload = [image1BlobFile, image2BlobFile, image3BlobFile];
+
+    console.log(`Images to upload:`, imagesToUpload);
 
     imagesToUpload.forEach((imageBlobFile) => {
       if (imageBlobFile) {
@@ -82,11 +80,16 @@ export async function POST(req: NextRequest) {
         throw new Error('🔴 Video file size must be less than 5MB!');
       }
 
-      console.log(`\n⭐ Video blob file:`, videoBlobFile.size);
+      console.log(
+        `\n⭐ Video blob file:`,
+        videoBlobFile.size / 1024 / 1024,
+        'MB',
+      );
       const url = await uploadVideo(videoBlobFile, session.user.id);
 
       if (url) {
         videoUrl = url;
+        console.log(`\n⭐ Uploaded Valid Video file:` + url);
         mediaUrlsToSet.push({ type: 'video', url });
       }
     }
@@ -101,14 +104,16 @@ export async function POST(req: NextRequest) {
       }
     });
 
-    await Promise.all(imagePromises);
+    const uploadedImages = await Promise.all(imagePromises);
+
+    console.log(`\n⭐ Uploaded Valid Images:`, uploadedImages.length);
 
     const projectSlug =
       sanitizedProjectData.title.replace(/\s+/g, '-').toLowerCase() +
       '-' +
       Date.now().toString();
 
-    await db.insert(projects).values({
+    await createProject({
       userId: session.user.id,
       slug: projectSlug,
       title: sanitizedProjectData.title,
@@ -116,7 +121,7 @@ export async function POST(req: NextRequest) {
       hostedUrl: sanitizedProjectData.hostedUrl,
       sourceCodeUrl: sanitizedProjectData.sourceCodeUrl,
 
-      // coverImageUrl
+      tagsList: sanitizedProjectData.tags,
     });
 
     // get created project id
@@ -138,10 +143,12 @@ export async function POST(req: NextRequest) {
         }),
     );
 
-    await Promise.all(mediaPromises);
+    const mediaUploaded = await Promise.all(mediaPromises);
+    console.log(`\n⭐ Uploaded total Media:`, mediaUploaded.length);
 
-    console.log(`\n⭐ New project:`, newProject.id);
+    console.log(`\n⭐ New project ID:`, newProject.id);
 
+    console.timeEnd('Project-upload');
     return NextResponse.json(
       {
         projectId: newProject.id,
@@ -150,14 +157,9 @@ export async function POST(req: NextRequest) {
       { status: 200 },
     );
   } catch (e) {
-    // Set status to failed in db
-
-    if (e instanceof Error) {
-      throw e;
-    }
-
-    throw new Error(
-      `🔴 Workflow failed: ${(e as Error)?.message ?? 'unknown error!'}`,
+    return new NextResponse(
+      'Failed to upload the video,' + (e as Error)?.message ?? 'Unknown err',
+      { status: 500 },
     );
   }
 }
