@@ -21,8 +21,8 @@ import { useToast } from '@/components/ui/use-toast';
 import { MAX_IMAGE_SIZE, MAX_VIDEO_SIZE } from '@/lib/constants';
 import { projectFormSchema } from '@/lib/validations/project';
 import { useMutation } from '@tanstack/react-query';
-import { useState } from 'react';
 import { LucideLoader } from 'lucide-react';
+import { useState } from 'react';
 
 type ProjectUploadValues = z.infer<typeof projectFormSchema>;
 type ProjectUploadProps = {
@@ -227,6 +227,10 @@ export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
                   }}
                 />
               </FormControl>
+              <FormDescription>
+                Upload up to 3 images to showcase your project. Max file size is
+                5MB.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -268,6 +272,9 @@ export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
                   }}
                 />
               </FormControl>
+              <FormDescription>
+                Upload a video to showcase your project. Max file size is 5MB.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
