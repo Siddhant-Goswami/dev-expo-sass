@@ -39,11 +39,10 @@ export default function UserAuthButton() {
         <Button
           onClick={async () => {
             const { error } = await supabase.auth.signOut();
-
             if (error) {
               alert(error.message);
             } else {
-              window.location.href = URLs.signIn;
+              window.location.href = URLs.home;
             }
           }}
         >

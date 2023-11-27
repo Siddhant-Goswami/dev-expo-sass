@@ -22,6 +22,7 @@ import { MAX_IMAGE_SIZE, MAX_VIDEO_SIZE } from '@/lib/constants';
 import { projectFormSchema } from '@/lib/validations/project';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
+import { LucideLoader } from 'lucide-react';
 
 type ProjectUploadValues = z.infer<typeof projectFormSchema>;
 type ProjectUploadProps = {
@@ -273,8 +274,12 @@ export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
         />
 
         <div className="flex justify-end">
-          <Button type="submit" className="ml-auto" disabled={isPending}>
-            Submit Project
+          <Button type="submit" className="ml-auto w-36" disabled={isPending}>
+            {isPending ? (
+              <LucideLoader size={20} className="animate-spin" />
+            ) : (
+              'Submit Project'
+            )}
           </Button>
         </div>
       </form>

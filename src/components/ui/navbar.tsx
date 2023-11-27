@@ -30,7 +30,11 @@ const NavBar = () => {
         <div className="flex h-10 items-center gap-6">
           {userId && isLoaded && (
             <div className="flex items-center gap-4">
-              <ProjectUploadModal />
+              <ProjectUploadModal>
+                <Button variant="outline" className="rounded-sm">
+                  Upload Project
+                </Button>
+              </ProjectUploadModal>
               <UserAuthButton />
             </div>
           )}

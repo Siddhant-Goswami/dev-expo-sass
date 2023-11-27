@@ -30,7 +30,7 @@ function GetInTouchModal({
           {text}
         </Button>
       </DialogTrigger>
-      <DialogContent className="p- h-screen min-w-full overflow-scroll md:h-screen-3/4 md:min-w-50">
+      <DialogContent className="h-screen min-w-full overflow-scroll md:h-max md:min-w-50">
         <DialogHeader>
           <DialogTitle>Message {username}</DialogTitle>
         </DialogHeader>
