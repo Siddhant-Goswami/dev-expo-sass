@@ -37,6 +37,7 @@ export default function UserAuthButton() {
       </PopoverTrigger>
       <PopoverContent className="">
         <Button
+          className="w-full"
           onClick={async () => {
             const { error } = await supabase.auth.signOut();
             if (error) {

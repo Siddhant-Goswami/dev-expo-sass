@@ -32,7 +32,7 @@ const getInTouchSchema = z.object({
     required_error: 'Employment type is required.',
   }),
   message: z.string().min(20, 'Message is should have atleast 20 characters.'),
-  pricing: z.number().min(50, 'Pricing must be a more than 50 Rupees.'),
+  pricing: z.number().min(1000, 'Pricing must be a more than 1000 Rupees.'),
 });
 
 type GetInTouchValues = z.infer<typeof getInTouchSchema>;
@@ -44,6 +44,11 @@ export function GetInTouch({ setIsModalOpen }: GetInTouchProps) {
   const { toast } = useToast();
   const form = useForm<GetInTouchValues>({
     resolver: zodResolver(getInTouchSchema),
+    defaultValues: {
+      employmentType: 'freelance',
+      message: '',
+      pricing: 1000,
+    },
   });
 
   const user = useAuth();
