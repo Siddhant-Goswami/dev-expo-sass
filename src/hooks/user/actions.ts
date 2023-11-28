@@ -20,7 +20,7 @@ export async function getOrCreateUserProfile() {
     } = await supabase.auth.getSession();
 
     if (!session) {
-      throw new Error('Unauthorized - 401');
+      return null;
     }
 
     const loggedInUser = session.user;
@@ -35,11 +35,9 @@ export async function getOrCreateUserProfile() {
         id: userId,
         displayName: loggedInUser.user_metadata.name as unknown as string,
         username:
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-          (loggedInUser.user_metadata?.email?.split(
+          (loggedInUser.user_metadata?.email as unknown as string)?.split(
             '@',
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-          )?.[0] as unknown as string) ??
+          )?.[0] ??
           (Math.random().toString(36).substring(7) + Date.now()).toString(),
         bio: `Hi, I'm ${loggedInUser.user_metadata.name}, one of the early users of this platform!`,
         displayPictureUrl: loggedInUser.user_metadata
@@ -53,6 +51,8 @@ export async function getOrCreateUserProfile() {
       //   ]);
 
       user = newUserInDb;
+
+      return user;
     }
   } catch (err) {}
 }

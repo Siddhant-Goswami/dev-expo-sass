@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import * as z from 'zod';
+import { type z } from 'zod';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -21,7 +20,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { MAX_IMAGE_SIZE, MAX_VIDEO_SIZE } from '@/lib/constants';
 import { projectFormSchema } from '@/lib/validations/project';
 import { useMutation } from '@tanstack/react-query';
-import { LucideLoader } from 'lucide-react';
+import { LucideImage, LucideLoader, LucideSave } from 'lucide-react';
 import { useState } from 'react';
 
 type ProjectUploadValues = z.infer<typeof projectFormSchema>;
@@ -34,12 +33,16 @@ export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [selectedVideos, setSelectedVideos] = useState<File[]>([]);
 
+  type Page = 'data-entry' | 'media-upload';
+  const [selectedPage, setSelectedPage] = useState<Page>('data-entry');
+
   const form = useForm<ProjectUploadValues>({
     resolver: zodResolver(projectFormSchema),
     defaultValues: {
       title: '',
       hostedUrl: '',
       sourceCodeUrl: '',
+      youtubeUrl: '',
       tags: [],
       description: '', // Default description value
     },
@@ -93,201 +96,277 @@ export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(() => mutate())}
+        onSubmit={form.handleSubmit(() => {
+          mutate();
+          setSelectedPage('media-upload');
+        })}
         method="post"
         // onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-8"
       >
-        <FormField
-          control={form.control}
-          name="title"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Title</FormLabel>
-              <FormControl>
-                <Input placeholder="Project Title" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="A short description about the project or yourself"
-                  {...field}
+        {
+          {
+            'data-entry': (
+              <>
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Title</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Project Title" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="hostedUrl"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Hosted URL</FormLabel>
-              <FormControl>
-                <Input placeholder="https://yourproject.com" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="sourceCodeUrl"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Source Code URL</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="https://github.com/yourproject"
-                  {...field}
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="A short description about the project or yourself"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="tags"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Tags</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Enter tags separated by commas"
-                  {...field}
-                  onChange={(e) =>
-                    field.onChange(
-                      e.target.value.split(',').map((tag) => tag.trim()),
-                    )
-                  }
+                <FormField
+                  control={form.control}
+                  name="hostedUrl"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Hosted URL</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="https://yourproject.com"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </FormControl>
-              <FormDescription>
-                Tags help users discover your project. Include keywords that
-                describe your project's technologies and topics.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          // control={form.control}
-          name="tags"
-          render={() => (
-            <FormItem>
-              <FormLabel> Upload Images </FormLabel>
-              <FormControl>
-                <Input
-                  required
-                  multiple
-                  accept="image/*"
-                  id="imageFile"
-                  type="file"
-                  // value={selectedImages}
-                  onChange={(e) => {
-                    const images = e.target.files;
-                    if (!images) return;
-
-                    const imagesArray = Array.from(images);
-                    console.log(`Selected images:`, imagesArray);
-                    imagesArray.forEach((image) => {
-                      if (!image.type.startsWith('image/')) {
-                        return toast({
-                          variant: 'destructive',
-                          title: 'Image type should be png or jpeg',
-                        });
-                      }
-                      if (image.size > MAX_IMAGE_SIZE) {
-                        return toast({
-                          variant: 'destructive',
-                          title: 'Image size should be less than 5MB',
-                        });
-                      }
-                    });
-                    const filteredImages = imagesArray.filter(
-                      (image) => image.size < MAX_IMAGE_SIZE,
-                    );
-
-                    console.log(`Filtered images:`, filteredImages);
-                    setSelectedImages(filteredImages);
-
-                    // alert("You've selected " + imagesArray.length + ' images.');
-                  }}
+                <FormField
+                  control={form.control}
+                  name="sourceCodeUrl"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Source Code URL</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="https://github.com/yourproject"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </FormControl>
-              <FormDescription>
-                Upload up to 3 images to showcase your project. Max file size is
-                5MB.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          // control={form.control}
-          name="tags"
-          render={() => (
-            <FormItem>
-              <FormLabel> Upload Video </FormLabel>
-              <FormControl>
-                <Input
-                  id="video"
-                  accept="video/*"
-                  type="file"
-                  onChange={(e) => {
-                    const videos = e.target.files;
-
-                    if (!videos?.[0]) return;
-
-                    if (!videos?.[0]?.type.startsWith('video/')) {
-                      return toast({
-                        variant: 'destructive',
-                        title: 'Please upload a video file',
-                      });
-                    }
-                    if (videos[0]?.size > MAX_VIDEO_SIZE) {
-                      return toast({
-                        variant: 'destructive',
-                        title: 'Video size should be less than 5MB',
-                      });
-                    } else {
-                      const VideosArray = Array.from(videos);
-                      setSelectedVideos(VideosArray);
-                    }
-
-                    // alert("You've selected " + VideosArray.length + ' Videos.');
-                  }}
+                <FormField
+                  control={form.control}
+                  name="youtubeUrl"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Youtube video URL</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="https://www.youtube.com/watch?v=t4mb0H4lBDQ"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </FormControl>
-              <FormDescription>
-                Upload a video to showcase your project. Max file size is 5MB.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                <FormField
+                  control={form.control}
+                  name="tags"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Tags</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter tags separated by commas"
+                          {...field}
+                          onChange={(e) =>
+                            field.onChange(
+                              e.target.value
+                                .split(',')
+                                .map((tag) => tag.trim()),
+                            )
+                          }
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Tags help users discover your project. Include keywords
+                        that describe your project's technologies and topics.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            ),
 
-        <div className="flex justify-end">
-          <Button type="submit" className="ml-auto w-36" disabled={isPending}>
-            {isPending ? (
-              <LucideLoader size={20} className="animate-spin" />
-            ) : (
-              'Submit Project'
-            )}
-          </Button>
+            'media-upload': (
+              <>
+                <FormField
+                  // control={form.control}
+                  name="images"
+                  render={() => (
+                    <FormItem>
+                      <FormLabel> Upload Images </FormLabel>
+                      <FormControl>
+                        <Input
+                          required
+                          multiple
+                          accept="image/*"
+                          id="imageFile"
+                          type="file"
+                          // value={selectedImages}
+                          onChange={(e) => {
+                            const images = e.target.files;
+                            if (!images) return;
+
+                            const imagesArray = Array.from(images);
+                            console.log(`Selected images:`, imagesArray);
+                            imagesArray.forEach((image) => {
+                              if (!image.type.startsWith('image/')) {
+                                return toast({
+                                  variant: 'destructive',
+                                  title: 'Image type should be png or jpeg',
+                                });
+                              }
+                              if (image.size > MAX_IMAGE_SIZE) {
+                                return toast({
+                                  variant: 'destructive',
+                                  title: 'Image size should be less than 5MB',
+                                });
+                              }
+                            });
+                            const filteredImages = imagesArray.filter(
+                              (image) => image.size < MAX_IMAGE_SIZE,
+                            );
+
+                            console.log(`Filtered images:`, filteredImages);
+                            setSelectedImages(filteredImages);
+
+                            // alert("You've selected " + imagesArray.length + ' images.');
+                          }}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Upload up to 3 images to showcase your project. Max file
+                        size is 5MB.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  // control={form.control}
+                  name="videos"
+                  render={() => (
+                    <FormItem>
+                      <FormLabel> Upload Video </FormLabel>
+                      <FormControl>
+                        <Input
+                          id="video"
+                          accept="video/*"
+                          type="file"
+                          onChange={(e) => {
+                            const videos = e.target.files;
+
+                            if (!videos?.[0]) return;
+
+                            if (!videos?.[0]?.type.startsWith('video/')) {
+                              return toast({
+                                variant: 'destructive',
+                                title: 'Please upload a video file',
+                              });
+                            }
+                            if (videos[0]?.size > MAX_VIDEO_SIZE) {
+                              return toast({
+                                variant: 'destructive',
+                                title: 'Video size should be less than 5MB',
+                              });
+                            } else {
+                              const VideosArray = Array.from(videos);
+                              setSelectedVideos(VideosArray);
+                            }
+
+                            // alert("You've selected " + VideosArray.length + ' Videos.');
+                          }}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Upload a video to showcase your project. Max file size
+                        is {MAX_VIDEO_SIZE / 1024 / 1024} MB.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            ),
+          }[selectedPage]
+        }
+
+        <div className="flex flex-wrap-reverse justify-between gap-3">
+          {selectedPage === 'media-upload' && (
+            <>
+              <Button
+                type="button"
+                onClick={() => {
+                  setSelectedPage('data-entry');
+                }}
+                variant={'secondary'}
+                className="w-full sm:w-36"
+              >
+                <span className="pr-[1ch]">&larr;</span>
+                Go back
+              </Button>
+
+              <Button
+                type="submit"
+                className="flex w-full items-center gap-2 sm:w-max"
+                disabled={isPending}
+              >
+                {isPending ? (
+                  <LucideLoader size={20} className="animate-spin" />
+                ) : (
+                  <>
+                    <LucideSave className="pr-1" size={18} />
+                    Save Project
+                  </>
+                )}
+              </Button>
+            </>
+          )}
+          {selectedPage === 'data-entry' && (
+            <Button
+              type="submit"
+              className="flex w-full items-center gap-2 sm:ml-auto sm:w-max"
+            >
+              {isPending ? (
+                <LucideLoader size={20} className="animate-spin" />
+              ) : (
+                <>
+                  <LucideImage size={18} />
+                  Next: Add media
+                  <span className="pl-[1ch]">&rarr;</span>
+                </>
+              )}
+            </Button>
+          )}
         </div>
       </form>
     </Form>

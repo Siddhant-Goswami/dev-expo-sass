@@ -1,10 +1,15 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 'use server';
 
+import { OpportunityEmail } from '@/components/resend-emails/recruiter-dev-enquiry';
+import { env } from '@/env';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
+import { Resend } from 'resend';
 import { db } from '../db';
 import { RecruiterReachoutInsert, recruiterReachouts } from '../db/schema';
+
+const resend = new Resend(env.RESEND_API_KEY);
 
 const createRecruiterReachout = async ({
   devId,
@@ -19,6 +24,16 @@ const createRecruiterReachout = async ({
     cookies,
   });
 
+  const supabaseAdmin = createClient(
+    env.NEXT_PUBLIC_SUPABASE_URL,
+    env.SUPABASE_SERVICE_ROLE_KEY,
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+    },
+  );
   const {
     data: { session },
   } = await supabase.auth.getSession();
@@ -32,15 +47,59 @@ const createRecruiterReachout = async ({
     await db.insert(recruiterReachouts).values({
       recruiterId,
       devId,
-      workType: workType as 'freelance' | 'full-time',
+      workType,
       quotePrice,
       message,
       timestamp: new Date(),
     });
 
-    return { success: true, message: 'Reachout sent' };
+    const { data, error } = await supabaseAdmin.auth.admin.getUserById(devId);
+
+    if (!data || error) {
+      throw new Error('Could not find dev! ' + devId + ' ' + error?.message);
+    }
+
+    const dev = data.user;
+
+    console.log(`Sending email to: `, dev.email);
+
+    if (!dev.email) {
+      throw new Error('Dev does not have an email!');
+    }
+
+    if (!session.user.email) {
+      throw new Error('Recruiter does not have an email!');
+    }
+
+    if (session.user.email === dev.email) {
+      throw new Error('You cannot send enquiry to yourself!');
+    }
+
+    const emailSendResponse = await resend.emails.send({
+      from: 'onboarding@resend.dev',
+      to: dev.email,
+      subject: 'hello world',
+      react: OpportunityEmail({
+        devName: dev.user_metadata.name as unknown as string,
+        message,
+        recruiterName: session.user.user_metadata.name as unknown as string,
+        quotePriceInRupees: quotePrice,
+        typeOfWork: workType,
+        recruiterEmail: session.user.email as unknown as string,
+      }),
+    });
+
+    if (emailSendResponse.error) {
+      throw new Error(
+        emailSendResponse?.error?.message ?? 'Could not send email to dev!',
+      );
+    }
+
+    console.log(`ID of email sent: `, emailSendResponse.data?.id);
+    return { success: true, message: 'Reachout sent!' };
   } catch (error) {
-    return { success: false, message: 'Something went wrong' };
+    console.error(error);
+    return { success: false, message: 'Something went wrong!' };
   }
 };
 
