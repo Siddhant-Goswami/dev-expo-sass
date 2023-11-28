@@ -20,7 +20,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { MAX_IMAGE_SIZE, MAX_VIDEO_SIZE } from '@/lib/constants';
 import { projectFormSchema } from '@/lib/validations/project';
 import { useMutation } from '@tanstack/react-query';
-import { LucideImage, LucideLoader } from 'lucide-react';
+import { LucideImage, LucideLoader, LucideSave } from 'lucide-react';
 import { useState } from 'react';
 
 type ProjectUploadValues = z.infer<typeof projectFormSchema>;
@@ -96,7 +96,10 @@ export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(() => mutate())}
+        onSubmit={form.handleSubmit(() => {
+          mutate();
+          setSelectedPage('media-upload');
+        })}
         method="post"
         // onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-8"
@@ -317,29 +320,41 @@ export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
           }[selectedPage]
         }
 
-        <div className="flex justify-between">
+        <div className="flex flex-wrap-reverse justify-between gap-3">
           {selectedPage === 'media-upload' && (
-            <Button
-              type="button"
-              onClick={() => {
-                setSelectedPage('data-entry');
-              }}
-              variant={'secondary'}
-              className="w-full sm:w-36"
-            >
-              <span className="pr-[1ch]">&larr;</span>
-              Go back
-            </Button>
+            <>
+              <Button
+                type="button"
+                onClick={() => {
+                  setSelectedPage('data-entry');
+                }}
+                variant={'secondary'}
+                className="w-full sm:w-36"
+              >
+                <span className="pr-[1ch]">&larr;</span>
+                Go back
+              </Button>
+
+              <Button
+                type="submit"
+                className="flex w-full items-center gap-2 sm:w-max"
+                disabled={isPending}
+              >
+                {isPending ? (
+                  <LucideLoader size={20} className="animate-spin" />
+                ) : (
+                  <>
+                    <LucideSave className="pr-1" size={18} />
+                    Save Project
+                  </>
+                )}
+              </Button>
+            </>
           )}
           {selectedPage === 'data-entry' && (
             <Button
-              // type="submit"
-              type="button"
-              onClick={() => {
-                setSelectedPage('media-upload');
-              }}
+              type="submit"
               className="flex w-full items-center gap-2 sm:ml-auto sm:w-max"
-              disabled={isPending}
             >
               {isPending ? (
                 <LucideLoader size={20} className="animate-spin" />
