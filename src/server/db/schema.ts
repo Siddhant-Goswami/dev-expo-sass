@@ -163,6 +163,9 @@ export const projectMedia = pgTable(
   },
 );
 
+export type ProjectMediaSelect = InferSelectModel<typeof projectMedia>;
+export type ProjectMediaInsert = InferInsertModel<typeof projectMedia>;
+
 export const comments = pgTable(
   'comment',
   {

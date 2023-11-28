@@ -168,7 +168,7 @@ export const createProject = async ({
     });
   }
 
-  return projectId;
+  return { projectId };
 };
 
 // add comment

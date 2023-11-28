@@ -1,8 +1,10 @@
+import { env } from '@/env';
 import { MAX_IMAGE_SIZE, MAX_VIDEO_SIZE } from '@/lib/constants';
 import { projectFormSchema } from '@/lib/validations/project';
 import { createProject } from '@/server/actions/projects';
 import { db } from '@/server/db';
 import { projectMedia } from '@/server/db/schema';
+import { sendLogToDiscord } from '@/utils/discord';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import cloudinary from 'cloudinary';
 import fs from 'fs';
@@ -24,14 +26,6 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    if (
-      !process.env.CLOUDINARY_API_KEY ||
-      !process.env.CLOUDINARY_API_SECRET ||
-      !process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
-    ) {
-      throw new Error('Missing Cloudinary Credentials');
-    }
-
     const formData = await req.formData();
 
     const sanitizedProjectData = projectFormSchema.parse(
@@ -39,81 +33,74 @@ export async function POST(req: NextRequest) {
     );
 
     cloudinary.v2.config({
-      api_key: process.env.CLOUDINARY_API_KEY,
-      api_secret: process.env.CLOUDINARY_API_SECRET,
-      cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+      api_key: env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
+      api_secret: env.CLOUDINARY_API_SECRET,
+      cloud_name: env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
       secure: true,
     });
 
-    const mediaUrlsToSet: {
-      type: 'image' | 'video';
-      url: string;
-    }[] = [];
+    // const mediaUrlsToSet: {
+    //   type: 'image' | 'video';
+    //   url: string;
+    // }[] = [];
 
     // TODO: Add this restriction to api properly!!
     //   if (videoFiles.length > MAX_NUMBER_OF_VIDEOS) {
     //     throw new Error('🔴 You can only upload up to 1 video!');
     //   }
 
-    console.info(`All form data:`, formData.entries());
+    const videoBlobFile = formData.get('video') as File;
 
-    const videoBlobFile = formData.get('video') as Blob;
+    const image1BlobFile = formData.get('image1') as File | null;
+    const image2BlobFile = formData.get('image2') as File | null;
+    const image3BlobFile = formData.get('image3') as File | null;
+    const imagesToUpload = [
+      image1BlobFile,
+      image2BlobFile,
+      image3BlobFile,
+    ].filter(
+      (imageBlobFile) =>
+        imageBlobFile instanceof File && imageBlobFile.size < MAX_IMAGE_SIZE,
+    );
 
-    const image1BlobFile = formData.get('image1') as Blob;
-    const image2BlobFile = formData.get('image2') as Blob;
-    const image3BlobFile = formData.get('image3') as Blob;
-    const imagesToUpload = [image1BlobFile, image2BlobFile, image3BlobFile];
+    console.log(`Images to upload:`, imagesToUpload.length);
 
-    console.log(`Images to upload:`, imagesToUpload);
+    // let videoUrl: string | null = null;
 
-    imagesToUpload.forEach((imageBlobFile) => {
-      if (imageBlobFile) {
-        if (imageBlobFile.size > MAX_IMAGE_SIZE) {
-          throw new Error('🔴 Image file size must be less than 5MB!');
-        }
-      }
-    });
+    const uploadPromises: Promise<{
+      type: 'image' | 'video';
+      url: string;
+    }>[] = [];
 
-    let videoUrl: string | null = null;
     if (videoBlobFile) {
       if (videoBlobFile.size > MAX_VIDEO_SIZE) {
         throw new Error('🔴 Video file size must be less than 5MB!');
       }
 
-      console.log(
-        `\n⭐ Video blob file:`,
-        videoBlobFile.size / 1024 / 1024,
-        'MB',
+      console.log(`\n⭐ Uploading Video:`, videoBlobFile.type);
+      const videoUrlPromise = uploadVideoToCloudinary(
+        videoBlobFile,
+        session.user.id,
       );
-      const url = await uploadVideo(videoBlobFile, session.user.id);
-
-      if (url) {
-        videoUrl = url;
-        console.log(`\n⭐ Uploaded Valid Video file:` + url);
-        mediaUrlsToSet.push({ type: 'video', url });
-      }
+      // 1 in uploadPromises is video
+      uploadPromises.push(videoUrlPromise);
     }
 
-    const imagePromises = imagesToUpload.map(async (imageBlobFile) => {
-      if (imageBlobFile) {
-        const url = await uploadImage(imageBlobFile, session.user.id);
-        mediaUrlsToSet.push({
-          type: 'image',
-          url,
-        });
-      }
+    imagesToUpload.forEach((imageBlobFile) => {
+      const imageUrlPromise = uploadImageToCloudinary(
+        imageBlobFile!,
+        session.user.id,
+      );
+      // Rest in uploadPromises are images
+      uploadPromises.push(imageUrlPromise);
     });
-
-    const uploadedImages = await Promise.all(imagePromises);
-
-    console.log(`\n⭐ Uploaded Valid Images:`, uploadedImages.length);
 
     const projectSlug =
       sanitizedProjectData.title.replace(/\s+/g, '-').toLowerCase() +
       '-' +
       Date.now().toString();
 
-    await createProject({
+    const newProjectInDbPromise = createProject({
       userId: session.user.id,
       slug: projectSlug,
       title: sanitizedProjectData.title,
@@ -124,51 +111,70 @@ export async function POST(req: NextRequest) {
       tagsList: sanitizedProjectData.tags,
     });
 
-    // get created project id
-    const newProject = await db.query.projects.findFirst({
-      where: (p, { eq }) => eq(p.slug, projectSlug),
-    });
+    const uploadedMediaToCloudinary = await Promise.all([
+      newProjectInDbPromise,
+      ...uploadPromises,
+    ]);
 
-    if (!newProject) {
-      throw new Error('🔴 Could not find newly created project!');
+    const [newProjectInDb, ...uploadedMediaResults] = uploadedMediaToCloudinary;
+
+    if (!newProjectInDb.projectId) {
+      throw new Error('🔴 Could not get id of newly created project!');
     }
 
+    // const uploadedImages = await Promise.all(imagePromises);
+
+    const totalImagesUploaded = uploadedMediaResults.filter(
+      (media) => media.type === 'image',
+    ).length;
+
+    const totalVideosUploaded = uploadedMediaResults.filter(
+      (media) => media.type === 'video',
+    ).length;
+
+    console.log(`\n1️⃣ Uploaded Media to Cloudinary: `, {
+      images: totalImagesUploaded,
+      videos: totalVideosUploaded,
+    });
+
     // Upload media to table
-    const mediaPromises = mediaUrlsToSet.map(
+    const mediaPromises = uploadedMediaResults.map(
       async (mediaUrlToSet) =>
         await db.insert(projectMedia).values({
-          projectId: newProject.id,
+          projectId: newProjectInDb.projectId,
           type: mediaUrlToSet.type,
           url: mediaUrlToSet.url,
         }),
     );
 
     const mediaUploaded = await Promise.all(mediaPromises);
-    console.log(`\n⭐ Uploaded total Media:`, mediaUploaded.length);
 
-    console.log(`\n⭐ New project ID:`, newProject.id);
+    console.log(`\n2️⃣ Uploaded total Media to DB:`, mediaUploaded.length);
+
+    console.log(`\n3️⃣ New project ID:`, newProjectInDb.projectId);
 
     console.timeEnd('Project-upload');
     return NextResponse.json(
       {
-        projectId: newProject.id,
+        projectId: newProjectInDb.projectId,
         success: true,
       },
       { status: 200 },
     );
   } catch (e) {
-    return new NextResponse(
-      'Failed to upload the video,' + (e as Error)?.message ?? 'Unknown err',
-      { status: 500 },
-    );
+    const errorMessage =
+      'Failed to create the project:' + (e as Error)?.message ?? 'Unknown err';
+
+    await sendLogToDiscord(`@everyone ${errorMessage}`);
+    return new NextResponse(errorMessage, { status: 500 });
   }
 }
 
-async function uploadVideo(videoBlobFile: Blob, userId: string) {
+async function uploadVideoToCloudinary(videoBlobFile: Blob, userId: string) {
   const publicId = Math.random().toString() + Date.now();
 
   //   WRITE BLOB TO DISK
-  const blobFilePath = '/tmp/' + publicId + '-' + videoBlobFile.size;
+  const blobFilePath = '/tmp/' + publicId + '-' + userId;
   const blobFileStream = fs.createWriteStream(blobFilePath);
 
   const videoBlobFileArrayBuffer = await videoBlobFile.arrayBuffer();
@@ -176,7 +182,7 @@ async function uploadVideo(videoBlobFile: Blob, userId: string) {
   blobFileStream.write(videoBlobFileBuffer);
 
   //   wait 4 seconds
-  await new Promise((resolve) => setTimeout(resolve, 4000));
+  // await new Promise((resolve) => setTimeout(resolve, 4000));
 
   const cldResult = await cloudinary.v2.uploader.upload(blobFilePath, {
     resource_type: 'video',
@@ -185,14 +191,17 @@ async function uploadVideo(videoBlobFile: Blob, userId: string) {
     // notification_url: "https://mysite.example.com/notify_endpoint",
   });
 
-  return cldResult.secure_url;
+  return {
+    type: 'video' as const,
+    url: cldResult.secure_url,
+  };
 }
 
-async function uploadImage(imageBlobFile: Blob, userId: string) {
+async function uploadImageToCloudinary(imageBlobFile: Blob, userId: string) {
   const publicId = Math.random().toString() + Date.now();
 
   //   WRITE BLOB TO DISK
-  const blobFilePath = '/tmp/' + publicId + '-' + imageBlobFile.size;
+  const blobFilePath = '/tmp/' + publicId + '-' + userId;
   const blobFileStream = fs.createWriteStream(blobFilePath);
 
   const imageBlobFileArrayBuffer = await imageBlobFile.arrayBuffer();
@@ -200,7 +209,7 @@ async function uploadImage(imageBlobFile: Blob, userId: string) {
   blobFileStream.write(imageBlobFileBuffer);
 
   //   wait 4 seconds
-  await new Promise((resolve) => setTimeout(resolve, 4000));
+  // await new Promise((resolve) => setTimeout(resolve, 4000));
 
   const cldResult = await cloudinary.v2.uploader.upload(blobFilePath, {
     resource_type: 'image',
@@ -210,5 +219,8 @@ async function uploadImage(imageBlobFile: Blob, userId: string) {
   });
 
   //   console.log(`🔴 Maybe we have a secure image url? ${cldResult.secure_url}`);
-  return cldResult.secure_url;
+  return {
+    type: 'image' as const,
+    url: cldResult.secure_url,
+  };
 }

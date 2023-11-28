@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import React from 'react';
@@ -30,8 +26,13 @@ type OnboardingStepProps = {
   defaultSkillLevel: string;
 };
 
+type TEMPSKILLLEVELID = 'BRO_FIX_THIS_TYPE';
+
 const createSkillLevelSchema = (skillLevels: OnboardingStepsOptions) => {
-  const skillLevelIds = skillLevels.map((skillLevel) => skillLevel.id) as any;
+  const skillLevelIds = skillLevels.map((skillLevel) => skillLevel.id) as [
+    TEMPSKILLLEVELID,
+    ...TEMPSKILLLEVELID[],
+  ];
   return z.object({
     skillLevel: z.enum(skillLevelIds, {
       required_error: 'Please select your skill level.',
@@ -49,7 +50,7 @@ export const OnboardingSteps: React.FC<OnboardingStepProps> = ({
   const form = useForm<OnboardingStepValues>({
     resolver: zodResolver(skillLevelSchema),
     defaultValues: {
-      skillLevel: defaultSkillLevel,
+      skillLevel: defaultSkillLevel as TEMPSKILLLEVELID,
     },
   });
 

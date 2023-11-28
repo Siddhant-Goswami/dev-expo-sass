@@ -57,6 +57,9 @@ const UserAuthForm = () => {
     <>
       <Auth
         onlyThirdPartyProviders
+        dark={false}
+        socialLayout="horizontal"
+        // providerScopes={{google: }}
         supabaseClient={supabase}
         providers={['github', 'google']}
         appearance={{ theme: ThemeSupa }}
