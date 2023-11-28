@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 import Footer from '@/components/ui/footer';
 import NavBar from '@/components/ui/navbar';
 
