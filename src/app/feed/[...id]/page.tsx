@@ -18,6 +18,7 @@ import { getProjectById } from '@/server/actions/projects';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
+import HoverableVideo from './HoverableVideoComp';
 
 type PageProps = {
   params: { id: string[] };
@@ -121,14 +122,11 @@ async function Page({ params }: PageProps) {
 
           {primaryMedia?.type === 'video' && (
             // h-500 w-900
-            <div className="mb-8 aspect-video w-full max-w-lg overflow-hidden rounded-sm md:max-w-full">
-              <video
-                className="h-full w-full object-cover"
-                src={primaryMedia.url}
-                autoPlay={!!userId}
-                controls
-              />
-            </div>
+            <HoverableVideo
+              thumbnailSrc={images[0]?.url}
+              autoplay={!!userId}
+              videoSrc={primaryMedia.url}
+            />
           )}
 
           {images.map((image, index) => (
