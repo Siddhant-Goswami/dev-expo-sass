@@ -40,18 +40,12 @@ export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
   const form = useForm<ProjectUploadValues>({
     resolver: zodResolver(projectFormSchema),
     defaultValues: {
-      // title: '',
-      // hostedUrl: '',
-      // sourceCodeUrl: '',
-      // youtubeUrl: '',
-      // tags: [],
-      // description: '', // Default description value
-      title: 'Cloudinary test',
-      hostedUrl: 'https://cloudinary.com/',
-      sourceCodeUrl: 'https://cloudinary.com/',
-      youtubeUrl: 'https://youtu.be/uFcZhH_wFbs',
-      tags: ['cloudinary', 'test'],
-      description: 'This is a test project for Cloudinary',
+      title: '',
+      hostedUrl: '',
+      sourceCodeUrl: '',
+      youtubeUrl: '',
+      tags: [],
+      description: '', // Default description value
     },
   });
 
@@ -118,7 +112,7 @@ export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(() => {
-          // mutate();
+          mutate();
           setSelectedPage('media-upload');
         })}
         method="post"
@@ -337,7 +331,7 @@ export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
                   )}
                 />
 
-                <h2 className="text-2xl font-semibold tracking-tight">
+                {/* <h2 className="text-2xl font-semibold tracking-tight">
                   Upload status: {status}
                 </h2>
 
@@ -358,7 +352,7 @@ export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
                   }}
                 >
                   {status === 'idle' ? 'Upload' : 'Uploading...'}
-                </Button>
+                </Button> */}
               </>
             ),
           }[selectedPage]
