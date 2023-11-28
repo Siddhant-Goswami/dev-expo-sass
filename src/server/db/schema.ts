@@ -1,7 +1,7 @@
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
-import { InferInsertModel, InferSelectModel, eq, relations } from 'drizzle-orm';
+import { InferInsertModel, InferSelectModel, relations } from 'drizzle-orm';
 import {
   bigserial,
   boolean,
@@ -12,7 +12,6 @@ import {
   timestamp,
   varchar,
 } from 'drizzle-orm/pg-core';
-import { db } from '.';
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -88,12 +87,10 @@ export const projects = pgTable(
     coverImageUrl: varchar('coverImageUrl', { length: 1024 })
       .notNull()
       .default(''),
-    hostedUrl: varchar('hostedUrl', { length: 1024 }).notNull().default(''),
-    youtubeUrl: varchar('youtubeUrl', { length: 1024 }).notNull().default(''),
+    hostedUrl: varchar('hostedUrl', { length: 1024 }),
+    youtubeUrl: varchar('youtubeUrl', { length: 1024 }),
     // ! TODO: This should be either specific to the git provider (github) or a generic URL
-    sourceCodeUrl: varchar('sourceCodeUrl', { length: 1024 })
-      .notNull()
-      .default(''),
+    sourceCodeUrl: varchar('sourceCodeUrl', { length: 1024 }),
     createdAt: timestamp('createdAt', { withTimezone: true })
       .defaultNow()
       .notNull(),
