@@ -120,7 +120,7 @@ export async function POST(req: NextRequest) {
       description: sanitizedProjectData.description,
       hostedUrl: sanitizedProjectData.hostedUrl,
       sourceCodeUrl: sanitizedProjectData.sourceCodeUrl,
-
+      youtubeUrl: sanitizedProjectData.youtubeUrl,
       tagsList: sanitizedProjectData.tags,
     });
 

@@ -18,7 +18,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
-import { MAX_IMAGE_SIZE, MAX_VIDEO_SIZE } from '@/lib/constants';
+import { MAX_IMAGE_SIZE } from '@/lib/constants';
 import { projectFormSchema } from '@/lib/validations/project';
 import { useMutation } from '@tanstack/react-query';
 import { LucideLoader } from 'lucide-react';
@@ -40,6 +40,7 @@ export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
       title: '',
       hostedUrl: '',
       sourceCodeUrl: '',
+      youtubeUrl: '',
       tags: [],
       description: '', // Default description value
     },
@@ -158,6 +159,22 @@ export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
         />
         <FormField
           control={form.control}
+          name="youtubeUrl"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Youtube video URL</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="https://www.youtube.com/watch?v=t4mb0H4lBDQ"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
           name="tags"
           render={({ field }) => (
             <FormItem>
@@ -236,7 +253,7 @@ export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
           )}
         />
 
-        <FormField
+        {/* <FormField
           // control={form.control}
           name="tags"
           render={() => (
@@ -278,7 +295,7 @@ export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
               <FormMessage />
             </FormItem>
           )}
-        />
+        /> */}
 
         <div className="flex justify-end">
           <Button type="submit" className="ml-auto w-36" disabled={isPending}>
