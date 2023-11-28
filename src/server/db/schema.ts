@@ -87,12 +87,10 @@ export const projects = pgTable(
     coverImageUrl: varchar('coverImageUrl', { length: 1024 })
       .notNull()
       .default(''),
-    hostedUrl: varchar('hostedUrl', { length: 1024 }).notNull().default(''),
-    youtubeUrl: varchar('youtubeUrl', { length: 1024 }).notNull().default(''),
+    hostedUrl: varchar('hostedUrl', { length: 1024 }),
+    youtubeUrl: varchar('youtubeUrl', { length: 1024 }),
     // ! TODO: This should be either specific to the git provider (github) or a generic URL
-    sourceCodeUrl: varchar('sourceCodeUrl', { length: 1024 })
-      .notNull()
-      .default(''),
+    sourceCodeUrl: varchar('sourceCodeUrl', { length: 1024 }),
     createdAt: timestamp('createdAt', { withTimezone: true })
       .defaultNow()
       .notNull(),

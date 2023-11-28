@@ -14,7 +14,9 @@ import {
 import GetInTouchModal from '@/components/ui/get-in-touch-modal';
 import SignUp from '@/components/ui/sign-up';
 import SignUpModal from '@/components/ui/sign-up-modal';
+import { projectFormSchema } from '@/lib/validations/project';
 import { getProjectById } from '@/server/actions/projects';
+import { extractIDfromYtURL } from '@/utils';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
@@ -40,12 +42,14 @@ async function Page({ params }: PageProps) {
   if (!projectDetails) return notFound();
 
   const { project, dev, media } = projectDetails;
-  const { title, description } = project;
+  const { title, description, youtubeUrl } = project;
   const { displayName, displayPictureUrl } = dev!;
   const video = media.find((m) => m.type === 'video');
   const images = media.filter((m) => m.type === 'image');
   const primaryMedia = video ? video : images[0];
 
+  const validYoutubeUrlResult =
+    projectFormSchema.shape.youtubeUrl.safeParse(youtubeUrl);
   const initialLetter = displayName.charAt(0).toUpperCase();
 
   const userId = session?.user?.id;
@@ -127,6 +131,20 @@ async function Page({ params }: PageProps) {
               autoplay={!!userId}
               videoSrc={primaryMedia.url}
             />
+          )}
+          {validYoutubeUrlResult.success ? (
+            <iframe
+              className="aspect-video w-full max-w-2xl overflow-hidden rounded-lg"
+              src={
+                'https://www.youtube.com/embed/' +
+                extractIDfromYtURL(validYoutubeUrlResult.data)
+              }
+              title="YouTube video player"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            />
+          ) : (
+            `Invalid youtube video URL: ${youtubeUrl}`
           )}
 
           {images.map((image, index) => (
