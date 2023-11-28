@@ -1,5 +1,5 @@
 import GetStartedButton from '@/components/get-started-button';
-import { Button } from '@/components/ui/button';
+import ShimmerButton from '@/components/magicui/shimmer-button';
 import Footer from '@/components/ui/footer';
 import Grid from '@/components/ui/grid';
 import Navbar from '@/components/ui/navbar';
@@ -44,10 +44,11 @@ export default async function Page() {
         <h3 className="mt-18 rounded-full border-2 border-brand/40 bg-brand/10 px-4 py-2 font-semibold backdrop-blur-md dark:bg-accent/60 sm:mt-0">
           Unleash Your Generative AI Mastery
         </h3>
-        <h2 className="mt-12 text-center text-3xl font-semibold sm:w-2/3 sm:text-5xl sm:font-bold">
+        <h2 className="mt-12 text-center text-3xl font-semibold leading-10 sm:w-2/3 sm:text-5xl sm:font-bold">
           Join the elite circle of{' '}
-          <span className="bg-orange-200 dark:bg-orange-300"> GenAI</span>{' '}
-          innovators. Showcase your projects, inspire, and be discovered.
+          <span className="p-1 text-brand dark:text-brand "> GenAI</span>{' '}
+          innovators.
+          {/* Showcase your projects, inspire, and be discovered. */}
         </h2>
         <p className="mt-10 text-center text-lg font-normal sm:w-3/4 sm:text-xl sm:font-medium">
           Your creations deserve the spotlight. Showcase your most innovative
@@ -58,9 +59,9 @@ export default async function Page() {
         <GetStartedButton
           fallback={
             <Link href={URLs.feed}>
-              <Button variant="brand" className="mt-10 p-6">
+              <ShimmerButton className="mt-10 px-6 font-medium">
                 Explore Projects
-              </Button>
+              </ShimmerButton>
             </Link>
           }
         />
@@ -97,12 +98,9 @@ export default async function Page() {
         <GetStartedButton
           fallback={
             <Link href={URLs.feed}>
-              <Button
-                variant="link"
-                className="mt-10 py-8 text-lg underline sm:text-xl"
-              >
+              <ShimmerButton className="mt-10 px-6 font-medium">
                 Explore Projects
-              </Button>
+              </ShimmerButton>
             </Link>
           }
         />
