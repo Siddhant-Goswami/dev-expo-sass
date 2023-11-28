@@ -28,6 +28,33 @@ export const env = createEnv({
     NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string(),
     NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: z.string(),
     NEXT_PUBLIC_CLOUDINARY_API_KEY: z.string(),
+
+    NEXT_PUBLIC_APP_URL: z.string().url(),
+
+    NEXT_PUBLIC_VERCEL_URL: z
+      .preprocess((str) => process.env.VERCEL_URL ?? str, z.string().optional())
+      .transform((val) => {
+        if (val?.includes('vercel') && !val?.startsWith('https://')) {
+          val = 'https://' + val;
+        }
+        return val;
+      })
+      .pipe(z.string().url().optional()),
+
+    NEXT_PUBLIC_NODE_ENV: z
+      .string().optional()
+      .transform((val) => val ?? process.env.NODE_ENV)
+      .pipe(z.enum(['development', 'test', 'production']).optional()),
+
+    NEXT_PUBLIC_SHOW_DEBUG_CONTROLS: z
+      .string()
+      .optional()
+      .transform((val) => val === 'true')
+      .pipe(z.boolean()),
+
+    NEXT_PUBLIC_VERCEL_ENV: z
+      .enum(['development', 'preview', 'production'])
+      .optional(),
   },
 
   /**
@@ -35,8 +62,11 @@ export const env = createEnv({
    * middlewares) or client-side so we need to destruct manually.
    */
   runtimeEnv: {
-    DATABASE_URL: process.env.DATABASE_URL,
+    // Server
+    NEXT_PUBLIC_NODE_ENV: process.env.NODE_ENV, // make it available on the client too
     NODE_ENV: process.env.NODE_ENV,
+
+    DATABASE_URL: process.env.DATABASE_URL,
     RESEND_API_KEY: process.env.RESEND_API_KEY,
     SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
     CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
@@ -47,6 +77,12 @@ export const env = createEnv({
     NEXT_PUBLIC_CLOUDINARY_API_KEY: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
     NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME:
       process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+
+    NEXT_PUBLIC_VERCEL_ENV: process.env.NEXT_PUBLIC_VERCEL_ENV,
+    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+    NEXT_PUBLIC_VERCEL_URL: process.env.NEXT_PUBLIC_VERCEL_URL,
+    NEXT_PUBLIC_SHOW_DEBUG_CONTROLS:
+      process.env.NEXT_PUBLIC_SHOW_DEBUG_CONTROLS,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

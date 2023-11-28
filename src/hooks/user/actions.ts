@@ -35,9 +35,7 @@ export async function getOrCreateUserProfile() {
         id: userId,
         displayName: loggedInUser.user_metadata.name as unknown as string,
         username:
-          (loggedInUser.user_metadata?.email as unknown as string)?.split(
-            '@',
-          )?.[0] ??
+          loggedInUser.email?.split('@')?.[0] ??
           (Math.random().toString(36).substring(7) + Date.now()).toString(),
         bio: `Hi, I'm ${loggedInUser.user_metadata.name}, one of the early users of this platform!`,
         displayPictureUrl: loggedInUser.user_metadata

@@ -49,18 +49,18 @@ export async function POST(req: NextRequest) {
     //     throw new Error('🔴 You can only upload up to 1 video!');
     //   }
 
-    const videoBlobFile = formData.get('video') as File;
+    const videoBlobFile = formData.get('video') as Blob;
 
-    const image1BlobFile = formData.get('image1') as File | null;
-    const image2BlobFile = formData.get('image2') as File | null;
-    const image3BlobFile = formData.get('image3') as File | null;
+    const image1BlobFile = formData.get('image1') as Blob | null;
+    const image2BlobFile = formData.get('image2') as Blob | null;
+    const image3BlobFile = formData.get('image3') as Blob | null;
     const imagesToUpload = [
       image1BlobFile,
       image2BlobFile,
       image3BlobFile,
     ].filter(
       (imageBlobFile) =>
-        imageBlobFile instanceof File && imageBlobFile.size < MAX_IMAGE_SIZE,
+        imageBlobFile instanceof Blob && imageBlobFile.size < MAX_IMAGE_SIZE,
     );
 
     console.log(`Images to upload:`, imagesToUpload.length);
@@ -143,6 +143,7 @@ export async function POST(req: NextRequest) {
         await db.insert(projectMedia).values({
           projectId: newProjectInDb.projectId,
           type: mediaUrlToSet.type,
+          userId: session.user.id,
           url: mediaUrlToSet.url,
         }),
     );
