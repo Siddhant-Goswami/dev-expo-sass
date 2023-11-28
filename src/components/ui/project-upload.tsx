@@ -17,6 +17,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
+import useCloudinaryUpload from '@/hooks/useCloudinaryUpload';
 import { MAX_IMAGE_SIZE, MAX_VIDEO_SIZE } from '@/lib/constants';
 import { projectFormSchema } from '@/lib/validations/project';
 import { useMutation } from '@tanstack/react-query';
@@ -39,13 +40,33 @@ export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
   const form = useForm<ProjectUploadValues>({
     resolver: zodResolver(projectFormSchema),
     defaultValues: {
-      title: '',
-      hostedUrl: '',
-      sourceCodeUrl: '',
-      youtubeUrl: '',
-      tags: [],
-      description: '', // Default description value
+      // title: '',
+      // hostedUrl: '',
+      // sourceCodeUrl: '',
+      // youtubeUrl: '',
+      // tags: [],
+      // description: '', // Default description value
+      title: 'Cloudinary test',
+      hostedUrl: 'https://cloudinary.com/',
+      sourceCodeUrl: 'https://cloudinary.com/',
+      youtubeUrl: 'https://youtu.be/uFcZhH_wFbs',
+      tags: ['cloudinary', 'test'],
+      description: 'This is a test project for Cloudinary',
     },
+  });
+
+  const { status, upload } = useCloudinaryUpload({
+    onSuccess: (url) => {
+      console.log(`Uploaded file to cloudinary: ${url}`);
+      alert('Uploaded file to cloudinary: ' + url);
+      return toast({ title: ' uploaded successfully!' });
+    },
+    onError: (err) =>
+      toast({
+        title:
+          'Oops! Something went wrong. ' + (err as Error)?.message ??
+          'Unknown error',
+      }),
   });
 
   const { mutate, isPending } = useMutation({
@@ -97,7 +118,7 @@ export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(() => {
-          mutate();
+          // mutate();
           setSelectedPage('media-upload');
         })}
         method="post"
@@ -315,6 +336,29 @@ export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
                     </FormItem>
                   )}
                 />
+
+                <h2 className="text-2xl font-semibold tracking-tight">
+                  Upload status: {status}
+                </h2>
+
+                <Button
+                  type="button"
+                  onClick={async () => {
+                    if (!selectedVideos[0]) {
+                      return alert('BRO No actual video selected');
+                    }
+
+                    const videoBlobUrl = URL.createObjectURL(selectedVideos[0]);
+
+                    await upload({
+                      type: 'video',
+                      blobUrl: videoBlobUrl,
+                      isWebcam: false,
+                    });
+                  }}
+                >
+                  {status === 'idle' ? 'Upload' : 'Uploading...'}
+                </Button>
               </>
             ),
           }[selectedPage]
