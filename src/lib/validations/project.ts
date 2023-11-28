@@ -13,5 +13,5 @@ export const projectFormSchema = z.object({
   description: z
     .string()
     .min(20, 'Please provide a description for your project.')
-    .max(500, 'Description must not exceed 500 characters.'),
+    .max(4000, 'Description must not exceed 4000 characters.'),
 });
