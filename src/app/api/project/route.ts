@@ -1,3 +1,4 @@
+import { env } from '@/env';
 import { MAX_IMAGE_SIZE, MAX_VIDEO_SIZE } from '@/lib/constants';
 import { projectFormSchema } from '@/lib/validations/project';
 import { createProject } from '@/server/actions/projects';
@@ -25,14 +26,6 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    if (
-      !process.env.CLOUDINARY_API_KEY ||
-      !process.env.CLOUDINARY_API_SECRET ||
-      !process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
-    ) {
-      throw new Error('Missing Cloudinary Credentials');
-    }
-
     const formData = await req.formData();
 
     const sanitizedProjectData = projectFormSchema.parse(
@@ -40,9 +33,9 @@ export async function POST(req: NextRequest) {
     );
 
     cloudinary.v2.config({
-      api_key: process.env.CLOUDINARY_API_KEY,
-      api_secret: process.env.CLOUDINARY_API_SECRET,
-      cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+      api_key: env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
+      api_secret: env.CLOUDINARY_API_SECRET,
+      cloud_name: env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
       secure: true,
     });
 
@@ -56,18 +49,18 @@ export async function POST(req: NextRequest) {
     //     throw new Error('🔴 You can only upload up to 1 video!');
     //   }
 
-    const videoBlobFile = formData.get('video') as Blob;
+    const videoBlobFile = formData.get('video') as File;
 
-    const image1BlobFile = formData.get('image1') as Blob | null;
-    const image2BlobFile = formData.get('image2') as Blob | null;
-    const image3BlobFile = formData.get('image3') as Blob | null;
+    const image1BlobFile = formData.get('image1') as File | null;
+    const image2BlobFile = formData.get('image2') as File | null;
+    const image3BlobFile = formData.get('image3') as File | null;
     const imagesToUpload = [
       image1BlobFile,
       image2BlobFile,
       image3BlobFile,
     ].filter(
       (imageBlobFile) =>
-        imageBlobFile instanceof Blob && imageBlobFile.size < MAX_IMAGE_SIZE,
+        imageBlobFile instanceof File && imageBlobFile.size < MAX_IMAGE_SIZE,
     );
 
     console.log(`Images to upload:`, imagesToUpload.length);
@@ -189,7 +182,7 @@ async function uploadVideoToCloudinary(videoBlobFile: Blob, userId: string) {
   blobFileStream.write(videoBlobFileBuffer);
 
   //   wait 4 seconds
-  await new Promise((resolve) => setTimeout(resolve, 4000));
+  // await new Promise((resolve) => setTimeout(resolve, 4000));
 
   const cldResult = await cloudinary.v2.uploader.upload(blobFilePath, {
     resource_type: 'video',
@@ -216,7 +209,7 @@ async function uploadImageToCloudinary(imageBlobFile: Blob, userId: string) {
   blobFileStream.write(imageBlobFileBuffer);
 
   //   wait 4 seconds
-  await new Promise((resolve) => setTimeout(resolve, 4000));
+  // await new Promise((resolve) => setTimeout(resolve, 4000));
 
   const cldResult = await cloudinary.v2.uploader.upload(blobFilePath, {
     resource_type: 'image',
