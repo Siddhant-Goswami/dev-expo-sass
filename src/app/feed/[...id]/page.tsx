@@ -19,6 +19,7 @@ import { extractIDfromYtURL } from '@/utils';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
+import MarkdownComponent from '@/components/mark-down';
 import HoverableVideo from './HoverableVideoComp';
 
 type PageProps = {
@@ -158,11 +159,7 @@ async function Page({ params }: PageProps) {
           ))}
 
           <div className="mt-8">
-            {description.split('\n').map((line, index) => (
-              <p key={index} className="my-2 text-base">
-                {line}
-              </p>
-            ))}
+            <MarkdownComponent content={description} />
           </div>
 
           {!isSameUser && (
