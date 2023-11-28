@@ -1,7 +1,6 @@
 import Footer from '@/components/ui/footer';
 import NavBar from '@/components/ui/navbar';
 
-
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -160,7 +159,7 @@ async function Page({ params }: PageProps) {
           ))}
 
           <div className="mt-8">
-            <MarkdownComponent content={description}/>
+            <MarkdownComponent content={description} />
           </div>
 
           {!isSameUser && (
