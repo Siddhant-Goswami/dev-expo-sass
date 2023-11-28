@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react';
 
 export default function HoverableVideo(props: {
-  thumbnailSrc?: string;
+  thumbnailSrc?: string | null;
   videoSrc: string;
   autoplay: boolean;
 }) {
