@@ -47,7 +47,7 @@ const useCloudinaryUpload = ({
     setStatus('uploading');
     if (
       blobUrl.startsWith('blob:') &&
-      generatePresignedUrlMutation.status !== 'pending'
+      generatePresignedUrlMutation.status !== 'loading'
     ) {
       // Get signature
       const { success, public_id, error, signature, timestamp, uploadUrl } =

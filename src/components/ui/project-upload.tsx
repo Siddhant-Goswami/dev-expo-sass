@@ -62,7 +62,7 @@ export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
     },
   });
 
-  const { mutateAsync: submitProjectData, isPending } = useMutation({
+  const { mutateAsync: submitProjectData, isLoading } = useMutation({
     mutationFn: async () => {
       const formValues = form.getValues();
       return await uploadNewProject(formValues);
@@ -82,8 +82,8 @@ export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
       toast({
         variant: 'destructive',
         title:
-          'Oops! Something went wrong. Please try again.' + err?.message ??
-          'Unknown error',
+          'Oops! Something went wrong. Please try again.' +
+            (err as Error)?.message ?? 'Unknown error',
       });
     },
   });
@@ -441,7 +441,7 @@ export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
               type="submit"
               className="flex w-full items-center gap-2 sm:ml-auto sm:w-max"
             >
-              {isPending ? (
+              {isLoading ? (
                 <LucideLoader size={20} className="animate-spin" />
               ) : (
                 <>
