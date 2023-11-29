@@ -4,7 +4,6 @@ import { useAuth } from './auth';
 
 export const useUserProfile = () => {
   const { session, isLoaded } = useAuth();
-
   return useQuery({
     queryKey: ['user_profile'],
     queryFn: () => getOrCreateUserProfile(),
