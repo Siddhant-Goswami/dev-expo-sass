@@ -26,6 +26,7 @@ module.exports = {
         500: '31.25rem',
         900: '56.25rem',
         hero: 'calc(100svh - 4.5rem)',
+        '3/4': '75%',
       },
       height: {
         'screen-3/4': '75vh',

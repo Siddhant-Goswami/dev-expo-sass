@@ -7,14 +7,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { ProjectUpload } from '@/components/ui/project-upload';
+import { OnboardingSteps } from '@/components/ui/onboarding-steps';
 import { useState } from 'react';
 
-type ProjectUploadModalProps = {
+type OnboardUserProps = {
   children: React.ReactNode;
 };
 
-function ProjectUploadModal({ children }: ProjectUploadModalProps) {
+function OnboardUser({ children }: OnboardUserProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -22,15 +22,16 @@ function ProjectUploadModal({ children }: ProjectUploadModalProps) {
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="md:max-h-3/4 h-screen min-w-full overflow-scroll md:h-max md:min-w-50">
         <DialogHeader>
-          <DialogTitle>Upload Project</DialogTitle>
+          <DialogTitle>Get Verified</DialogTitle>
           <DialogDescription>
-            Add and showcase your project to the community.
+            Get verified to upload projects and showcase your work to the
+            community.
           </DialogDescription>
         </DialogHeader>
-        <ProjectUpload setIsModalOpen={setIsModalOpen} />
+        <OnboardingSteps />
       </DialogContent>
     </Dialog>
   );
 }
 
-export default ProjectUploadModal;
+export default OnboardUser;

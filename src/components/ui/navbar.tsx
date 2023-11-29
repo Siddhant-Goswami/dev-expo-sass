@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import Logo from '@/components/ui/logo';
+import OnboardUser from '@/components/ui/onboarding-modal';
 import ProjectUploadModal from '@/components/ui/project-upload-modal';
 import SignUpModal from '@/components/ui/sign-up-modal';
 import { ThemeToggle } from '@/components/ui/toggle';
@@ -27,6 +28,12 @@ const NavBar = () => {
           </Link>
         </div>
         <div className="flex h-10 items-center gap-6">
+          <OnboardUser>
+            <Button variant="outline" className="rounded-sm">
+              Get Verified
+            </Button>
+          </OnboardUser>
+
           {userId && isLoaded && (
             <div className="flex items-center gap-4">
               <ProjectUploadModal>

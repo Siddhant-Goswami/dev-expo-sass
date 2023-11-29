@@ -28,13 +28,12 @@ type ProjectUploadValues = z.infer<typeof projectFormSchema>;
 type ProjectUploadProps = {
   setIsModalOpen: (isOpen: boolean) => void;
 };
+type Page = 'data-entry' | 'media-upload';
 
 export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
   const { toast } = useToast();
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [selectedVideos, setSelectedVideos] = useState<File[]>([]);
-
-  type Page = 'data-entry' | 'media-upload';
   const [selectedPage, setSelectedPage] = useState<Page>('data-entry');
 
   const form = useForm<ProjectUploadValues>({
