@@ -42,7 +42,8 @@ export const env = createEnv({
       .pipe(z.string().url().optional()),
 
     NEXT_PUBLIC_NODE_ENV: z
-      .string().optional()
+      .string()
+      .optional()
       .transform((val) => val ?? process.env.NODE_ENV)
       .pipe(z.enum(['development', 'test', 'production']).optional()),
 
