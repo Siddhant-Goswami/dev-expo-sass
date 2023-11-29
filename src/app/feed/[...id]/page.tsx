@@ -29,12 +29,12 @@ async function Page({ params }: PageProps) {
 
   const projectDetails = await getProjectById(Number(projectId));
 
-  if (!projectDetails) return notFound();
+  if (!projectDetails?.dev) return notFound();
 
   const { project, dev } = projectDetails;
   const { title, description, youtubeUrl, projectMedia: media } = project;
 
-  const { displayName, displayPictureUrl } = dev!;
+  const { displayName, displayPictureUrl } = dev;
   const images = media.filter((m) => m.type === 'image');
 
   const validYoutubeUrlResult =

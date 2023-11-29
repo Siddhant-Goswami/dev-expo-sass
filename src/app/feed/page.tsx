@@ -63,13 +63,13 @@ async function Feed({ searchParams }: FeedProps) {
               No {validFilter.label} projects found
             </h3>
 
-            {(
+            {
               <ProjectUploadModal>
                 <ShimmerButton>
                   Be the first one to upload {validFilter.label} project
                 </ShimmerButton>
               </ProjectUploadModal>
-            )}
+            }
           </div>
         )}
       </section>

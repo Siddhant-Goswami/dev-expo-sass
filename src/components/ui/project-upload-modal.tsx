@@ -18,8 +18,7 @@ type ProjectUploadModalProps = {
 function ProjectUploadModal({ children }: ProjectUploadModalProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const {userId} = useAuth();
-  
+  const { userId } = useAuth();
 
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>

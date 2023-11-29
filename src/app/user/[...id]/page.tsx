@@ -60,7 +60,7 @@ async function Page({ params }: PageProps) {
     <>
       <NavBar />
       <section className="flex min-h-feed items-start justify-center">
-        <main className="mt-8 flex w-full flex-col justify-center px-4 md:w-3/4 gap-6">
+        <main className="mt-8 flex w-full flex-col justify-center gap-6 px-4 md:w-3/4">
           <div className="flex w-full flex-col items-center justify-center gap-4">
             <img
               className="h-auto w-32 rounded-full md:w-36"
@@ -68,7 +68,7 @@ async function Page({ params }: PageProps) {
               alt="Profile Picture"
             />
             <div>
-              <h1 className="grow-1 text-2xl text-center font-medium tracking-tight lg:text-3xl ">
+              <h1 className="grow-1 text-center text-2xl font-medium tracking-tight lg:text-3xl ">
                 {userInfo.displayName}
               </h1>
               <p className="text-lg lg:text-xl">

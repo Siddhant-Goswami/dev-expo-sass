@@ -98,7 +98,7 @@ export const getProjectById = async (projectId: ProjectSelect['id']) => {
   });
 
   if (!projectWithMedia) {
-    return [];
+    return null;
   }
 
   const tagsPromise = db.query.projectTags.findMany({
@@ -109,13 +109,7 @@ export const getProjectById = async (projectId: ProjectSelect['id']) => {
     where: eq(userProfiles.id, projectWithMedia?.userId),
   });
 
-  const [
-    tags,
-    user,
-  ] = await Promise.all([
-    tagsPromise,
-    userPromise,
-  ]);
+  const [tags, user] = await Promise.all([tagsPromise, userPromise]);
 
   // const likeCount = (
   //   await db.query.likes.findMany({
