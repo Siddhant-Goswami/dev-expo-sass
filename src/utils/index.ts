@@ -28,3 +28,37 @@ export function extractIDfromYtURL(videoUrl: string) {
 export function absoluteUrl(path: string) {
   return `${env.NEXT_PUBLIC_APP_URL ?? env.NEXT_PUBLIC_VERCEL_URL}${path}`;
 }
+
+export async function isGithubUserValid(username: string) {
+  try {
+    const response = await fetch(`https://api.github.com/users/${username}`);
+
+    if (response.ok) {
+      console.log(`The GitHub user '${username}' exists.`);
+      return username;
+    } else {
+      console.log(`The GitHub user '${username}' does not exist.`);
+      return '';
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
+export async function getUserRepos(username: string, perPage = 30, page = 1) {
+  try {
+    const response = await fetch(
+      `https://api.github.com/users/${username}/repos?per_page=${perPage}&page=${page}&sort=created&direction=desc`,
+    );
+
+    if (!response.ok) {
+      throw new Error(`Error: ${response.status}`);
+    }
+
+    const repos = response.json();
+    console.log('Repositories:', repos);
+    return repos;
+  } catch (error) {
+    console.error('Error fetching repos:', error);
+  }
+}
