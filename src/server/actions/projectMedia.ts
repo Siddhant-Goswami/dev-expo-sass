@@ -133,6 +133,7 @@ export const validateAndPersistUpload = async (
   if (!session) {
     throw new Error('Unauthorized');
   }
+  console.log(`Validating and persisting upload:`, publicId);
 
   const userId = session.user.id;
 
@@ -175,9 +176,6 @@ export const validateAndPersistUpload = async (
   });
 
   const assetUrl = cloudinary.v2.utils.url(publicId);
-  console.log(`Validating and persisting upload:`, publicId);
-
-  console.log(`Maybe this url: ${assetUrl}`);
 
   const [updatedRecord] = await db
     .update(projectMedia)
