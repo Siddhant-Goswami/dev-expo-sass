@@ -198,6 +198,7 @@ export default function VideoRecorder() {
                         videoConstraints={videoConstraints}
                         onUserMedia={handleUserMedia}
                         onUserMediaError={(error) => {
+                          console.error(`Error while recording:`, error);
                           setRecordingPermission(false);
                         }}
                         className="absolute z-10 h-full min-h-[100%] w-auto min-w-[100%] object-cover"
