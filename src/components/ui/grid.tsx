@@ -5,7 +5,6 @@ import Link from 'next/link';
 type ProjectData = {
   id: number;
   title: string;
-  coverImageUrl: string;
   displayName: string;
 } & Pick<Awaited<ReturnType<typeof getAllProjects>>[number], 'tags' | 'media'>;
 

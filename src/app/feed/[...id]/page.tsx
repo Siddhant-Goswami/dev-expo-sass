@@ -20,7 +20,6 @@ import { extractIDfromYtURL } from '@/utils';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
-import HoverableVideo from './HoverableVideoComp';
 
 type PageProps = {
   params: { id: string[] };
@@ -41,8 +40,14 @@ async function Page({ params }: PageProps) {
 
   if (!projectDetails) return notFound();
 
-  const { project, dev, media } = projectDetails;
-  const { title, description, youtubeUrl } = project;
+  const { project, dev } = projectDetails;
+  const { title, description, youtubeUrl, projectMedia: media } = project;
+
+  console.log(
+    `Definitely getting media for projectId: ${projectId}...`,
+    media.map((m) => m.url),
+  );
+
   const { displayName, displayPictureUrl } = dev!;
   const video = media.find((m) => m.type === 'video');
   const images = media.filter((m) => m.type === 'image');
@@ -50,12 +55,13 @@ async function Page({ params }: PageProps) {
 
   const validYoutubeUrlResult =
     projectFormSchema.shape.youtubeUrl.safeParse(youtubeUrl);
+
+  const toShowYTVideo = validYoutubeUrlResult.success;
+
   const initialLetter = displayName.charAt(0).toUpperCase();
 
   const userId = session?.user?.id;
   const isSameUser = project.userId === userId;
-
-  console.log('userId', userId);
 
   return (
     <>
@@ -124,27 +130,25 @@ async function Page({ params }: PageProps) {
             )}
           </div>
 
-          {primaryMedia?.type === 'video' && primaryMedia.url && (
+          {/* {primaryMedia?.type === 'video' && primaryMedia.url && (
             // h-500 w-900
             <HoverableVideo
               thumbnailSrc={images[0]?.url}
               autoplay={!!userId}
               videoSrc={primaryMedia.url}
             />
-          )}
-          {validYoutubeUrlResult.success ? (
+          )} */}
+          {youtubeUrl && toShowYTVideo && (
             <iframe
               className="aspect-video w-full max-w-2xl overflow-hidden rounded-lg"
               src={
                 'https://www.youtube.com/embed/' +
-                extractIDfromYtURL(validYoutubeUrlResult.data)
+                extractIDfromYtURL(validYoutubeUrlResult.data!)
               }
               title="YouTube video player"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowFullScreen
             />
-          ) : (
-            `Invalid youtube video URL: ${youtubeUrl}`
           )}
 
           {images.map(

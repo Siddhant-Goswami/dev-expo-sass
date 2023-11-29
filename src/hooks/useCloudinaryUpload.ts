@@ -2,7 +2,7 @@ import { env } from '@/env.js';
 import React from 'react';
 
 import { type CloudinaryUploadResponse } from '@/lib/types/cloudinary';
-import { initiateNewImageUpload } from '@/server/actions/projectMedia';
+import { initiateNewUpload } from '@/server/actions/projectMedia';
 import { useMutation } from '@tanstack/react-query';
 import { useAuth } from './user/auth';
 
@@ -11,10 +11,14 @@ const useCloudinaryUpload = ({
   onSuccess,
 }: {
   onError?: (error: unknown) => void;
-  onSuccess?: (url: string) => void;
+  onSuccess?: (props: {
+    public_id: string;
+    projectId: number;
+    url: string;
+  }) => void;
 }) => {
-  const generateSignatureMutation = useMutation({
-    mutationFn: initiateNewImageUpload,
+  const generatePresignedUrlMutation = useMutation({
+    mutationFn: initiateNewUpload,
   });
   const [status, setStatus] = React.useState<
     'idle' | 'uploading' | 'succeeded' | 'failed' | 'cancelled'
@@ -26,12 +30,15 @@ const useCloudinaryUpload = ({
     type = 'video',
     blobUrl,
     isWebcam = false,
+    projectId,
     overridenOnSuccess,
   }: {
-    type?: 'video' | 'audio' | 'screen' | 'image';
+    type?: 'video' | 'image';
+    // | 'audio' | 'screen'
     blobUrl: string;
     isWebcam?: boolean;
     overridenOnSuccess?: (url: string) => void;
+    projectId: number;
   }) => {
     if (!userId) {
       return alert('You must be logged in to upload media');
@@ -40,11 +47,11 @@ const useCloudinaryUpload = ({
     setStatus('uploading');
     if (
       blobUrl.startsWith('blob:') &&
-      generateSignatureMutation.status !== 'pending'
+      generatePresignedUrlMutation.status !== 'pending'
     ) {
       // Get signature
-      const { success, error, signature, timestamp, uploadUrl } =
-        await generateSignatureMutation.mutateAsync({ type });
+      const { success, public_id, error, signature, timestamp, uploadUrl } =
+        await generatePresignedUrlMutation.mutateAsync({ type, projectId });
 
       if (error ?? !success) {
         throw new Error(
@@ -53,6 +60,11 @@ const useCloudinaryUpload = ({
         );
       }
 
+      console.log(`Uploading the blob:`, {
+        uploadUrl,
+        blobUrl,
+      });
+
       // Get file
       const file = await fetch(blobUrl)
         .then((r) => r.blob())
@@ -60,11 +72,12 @@ const useCloudinaryUpload = ({
           (blobFile) =>
             new File([blobFile], 'fileNameGoesHere', {
               type:
-                type === 'video' || type === 'screen'
-                  ? 'video/mp4'
-                  : type === 'audio'
-                    ? 'audio/mp3'
-                    : 'image/png',
+                type === 'video'
+                  ? // || type === 'screen'
+                    'video/mp4'
+                  : // : type === 'audio'
+                    //   ? 'audio/mp3'
+                    'image/png',
             }),
         )
         .catch((error) => {
@@ -81,9 +94,12 @@ const useCloudinaryUpload = ({
       const formData = new FormData();
       formData.append('file', file);
       formData.append('api_key', env.NEXT_PUBLIC_CLOUDINARY_API_KEY);
-
-      formData.append('timestamp', timestamp.toString());
       formData.append('signature', signature);
+
+      // * Make sure to append everything that was included during the signing process
+      formData.append('timestamp', timestamp.toString());
+      formData.append('public_id', public_id);
+
       // formData.append('userId', userId);
 
       try {
@@ -110,7 +126,11 @@ const useCloudinaryUpload = ({
 
         overridenOnSuccess
           ? overridenOnSuccess(usableUrl)
-          : onSuccess?.(usableUrl);
+          : onSuccess?.({
+              public_id,
+              projectId,
+              url: usableUrl,
+            });
         setStatus('succeeded');
       } catch (e) {
         setStatus('failed');

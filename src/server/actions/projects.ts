@@ -1,18 +1,20 @@
 'use server';
+import { projectFormSchema } from '@/lib/validations/project';
+import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
 import { desc, eq } from 'drizzle-orm';
+import { cookies } from 'next/headers';
+import { z } from 'zod';
 import { db } from '../db';
 import {
-  ProjectInsert,
-  ProjectSelect,
-  UserProfileSelect,
   comments,
   likes,
   projectBookmarks,
-  projectMedia,
   projectTags,
   projects,
-  tags,
+  tags as tagsTable,
   userProfiles,
+  type ProjectSelect,
+  type UserProfileSelect,
 } from '../db/schema';
 
 // TODO: filter categories
@@ -68,29 +70,36 @@ export const getProjectsByUserId = async (userId: UserProfileSelect['id']) => {
 
 // get project by Id
 export const getProjectById = async (projectId: ProjectSelect['id']) => {
-  const project = await db.query.projects.findFirst({
+  const projectWithMedia = await db.query.projects.findFirst({
     where: eq(projects.id, projectId),
+    with: {
+      projectMedia: true,
+    },
   });
 
-  if (!project) {
+  if (!projectWithMedia) {
     return null;
   }
 
   const tagsPromise = db.query.projectTags.findMany({
-    where: eq(projectTags.projectId, project.id),
+    where: eq(projectTags.projectId, projectWithMedia.id),
   });
 
-  const mediaPromise = db.query.projectMedia.findMany({
-    where: eq(projectMedia.projectId, project.id),
-  });
+  // const mediaPromise = db.query.projectMedia.findMany({
+  //   where: eq(projectMedia.projectId, projectWithMedia.id),
+  // });
 
   const userPromise = db.query.userProfiles.findFirst({
-    where: eq(userProfiles.id, project?.userId),
+    where: eq(userProfiles.id, projectWithMedia?.userId),
   });
 
-  const [tags, media, user] = await Promise.all([
+  const [
+    tags,
+    //  media,
+    user,
+  ] = await Promise.all([
     tagsPromise,
-    mediaPromise,
+    // mediaPromise,
     userPromise,
   ]);
 
@@ -113,52 +122,70 @@ export const getProjectById = async (projectId: ProjectSelect['id']) => {
   // ).length;
 
   return {
-    project,
+    project: projectWithMedia,
     dev: user,
     tags,
-    media,
+    // media,
   };
 };
 
-// create a new project
-export const createProject = async ({
-  tagsList,
-  ...project
-}: ProjectInsert & {
-  tagsList: string[];
-}) => {
-  tagsList.push('ignore_this_tag');
-  const coverImageUrl = '';
+type ProjectData = z.infer<typeof projectFormSchema>;
+export const uploadNewProject = async (_project: ProjectData) => {
+  const supabase = createServerActionClient({ cookies });
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session?.user.id) {
+    throw new Error('Unauthorized');
+  }
+
+  const userId = session.user.id;
+
+  const project = projectFormSchema.parse(_project);
+
+  const projectSlug =
+    project.title.replace(/\s+/g, '-').toLowerCase() +
+    '-' +
+    Date.now().toString();
+
+  project.tags.push('ignore_this_tag');
 
   const [result] = await db
     .insert(projects)
     .values({
       ...project,
-      coverImageUrl,
+      userId,
+      slug: projectSlug,
       publishedAt: new Date(),
     })
     .returning({ projectId: projects.id });
 
   const projectId = result?.projectId;
 
-  for (const currentTag of tagsList) {
+  if (!projectId) {
+    throw new Error('Could not get id of newly created project!');
+  }
+
+  for (const currentTag of project.tags) {
     let [tagResult] = await db
-      .select({ tagId: tags.id })
-      .from(tags)
-      .where(eq(tags.name, currentTag));
+      .select({ tagId: tagsTable.id })
+      .from(tagsTable)
+      .where(eq(tagsTable.name, currentTag));
     let tagId = tagResult?.tagId;
 
     await db.query.tags.findFirst({
-      where: eq(tags.name, currentTag),
+      where: eq(tagsTable.name, currentTag),
     });
 
     if (!tagId) {
       [tagResult] = await db
-        .insert(tags)
+        .insert(tagsTable)
         .values({
           name: currentTag,
         })
-        .returning({ tagId: tags.id });
+        .returning({ tagId: tagsTable.id });
       tagId = tagResult!.tagId;
     }
 
