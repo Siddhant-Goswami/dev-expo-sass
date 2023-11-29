@@ -49,9 +49,9 @@ async function Page({ params }: PageProps) {
   );
 
   const { displayName, displayPictureUrl } = dev!;
-  const video = media.find((m) => m.type === 'video');
+  // const video = media.find((m) => m.type === 'video');
   const images = media.filter((m) => m.type === 'image');
-  const primaryMedia = video ? video : images[0];
+  // const primaryMedia = video ? video : images[0];
 
   const validYoutubeUrlResult =
     projectFormSchema.shape.youtubeUrl.safeParse(youtubeUrl);
