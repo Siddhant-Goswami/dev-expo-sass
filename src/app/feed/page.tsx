@@ -28,13 +28,12 @@ async function Feed({ searchParams }: FeedProps) {
   const allProjects = await getAllProjects({});
   const filteredProjectsData = allProjects.map(
     ({ project, user, tags, media }) => {
-      const { id, title, coverImageUrl } = project;
+      const { id, title } = project;
       const displayName = user?.displayName ?? ' ';
 
       return {
         id,
         title,
-        coverImageUrl,
         media,
         tags,
         displayName,
