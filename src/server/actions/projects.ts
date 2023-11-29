@@ -16,6 +16,7 @@ import {
   type ProjectSelect,
   type UserProfileSelect,
 } from '../db/schema';
+import { getUserInfo } from './users';
 
 // TODO: filter categories
 
@@ -60,12 +61,31 @@ export const getAllProjects = async ({
 
 // get all projects of a user
 export const getProjectsByUserId = async (userId: UserProfileSelect['id']) => {
-  const userProjects = await db.query.projects.findMany({
+  const allProjects = await db.query.projects.findMany({
     where: eq(projects.userId, userId.toString()),
+    with: {
+      userProfile: true,
+      projectMedia: true,
+      projectTags: {
+        with: {
+          tag: true,
+        },
+      },
+    },
     orderBy: [desc(projects.publishedAt)],
   });
-
-  return userProjects;
+  const result = allProjects.map((data) => {
+    const { projectTags, projectMedia, userProfile, ...project } = data;
+    return {
+      project,
+      user: userProfile,
+      tags: projectTags
+        .filter((pt) => pt.tag.name !== 'ignore_this_tag')
+        .map((pt) => pt.tag),
+      media: projectMedia,
+    };
+  });
+  return result;
 };
 
 // get project by Id
@@ -78,16 +98,12 @@ export const getProjectById = async (projectId: ProjectSelect['id']) => {
   });
 
   if (!projectWithMedia) {
-    return null;
+    return [];
   }
 
   const tagsPromise = db.query.projectTags.findMany({
     where: eq(projectTags.projectId, projectWithMedia.id),
   });
-
-  // const mediaPromise = db.query.projectMedia.findMany({
-  //   where: eq(projectMedia.projectId, projectWithMedia.id),
-  // });
 
   const userPromise = db.query.userProfiles.findFirst({
     where: eq(userProfiles.id, projectWithMedia?.userId),
@@ -95,11 +111,9 @@ export const getProjectById = async (projectId: ProjectSelect['id']) => {
 
   const [
     tags,
-    //  media,
     user,
   ] = await Promise.all([
     tagsPromise,
-    // mediaPromise,
     userPromise,
   ]);
 

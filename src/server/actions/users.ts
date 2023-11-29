@@ -88,11 +88,9 @@ export const getUserInfo = async (userId: UserProfileSelect['id']) => {
   ).length;
 
   return {
-    info: {
-      userInfo,
-      devInfo,
-      recruiterInfo,
-    },
+    userInfo,
+    devInfo,
+    recruiterInfo,
     projectsCount,
   };
 };
