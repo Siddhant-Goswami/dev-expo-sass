@@ -8,6 +8,9 @@ dependencies:
   '@hookform/resolvers':
     specifier: ^3.3.2
     version: 3.3.2(react-hook-form@7.48.2)
+  '@neondatabase/serverless':
+    specifier: ^0.6.0
+    version: 0.6.0
   '@radix-ui/react-avatar':
     specifier: ^1.0.4
     version: 1.0.4(@types/react-dom@18.2.17)(@types/react@18.2.38)(react-dom@18.2.0)(react@18.2.0)
@@ -76,7 +79,7 @@ dependencies:
     version: 2.0.0
   drizzle-orm:
     specifier: ^0.29.0
-    version: 0.29.0(pg@8.11.3)(postgres@3.4.3)
+    version: 0.29.0(@neondatabase/serverless@0.6.0)(pg@8.11.3)(postgres@3.4.3)
   encoding:
     specifier: ^0.1.13
     version: 0.1.13
@@ -1345,6 +1348,15 @@ packages:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.1
       '@jridgewell/sourcemap-codec': 1.4.15
+
+  /@neondatabase/serverless@0.6.0:
+    resolution:
+      {
+        integrity: sha512-qXxBRYN0m2v8kVQBfMxbzNGn2xFAhTXFibzQlE++NfJ56Shz3m7+MyBBtXDlEH+3Wfa6lToDXf1MElocY4sJ3w==,
+      }
+    dependencies:
+      '@types/pg': 8.6.6
+    dev: false
 
   /@next/env@14.0.3:
     resolution:
@@ -2902,6 +2914,17 @@ packages:
     dependencies:
       undici-types: 5.26.5
 
+  /@types/pg@8.6.6:
+    resolution:
+      {
+        integrity: sha512-O2xNmXebtwVekJDD+02udOncjVcMZQuTEQEMpKJ0ZRf5E7/9JJX3izhKUcUifBkyKpljyUM6BTgy2trmviKlpw==,
+      }
+    dependencies:
+      '@types/node': 20.9.4
+      pg-protocol: 1.6.0
+      pg-types: 2.2.0
+    dev: false
+
   /@types/phoenix@1.6.4:
     resolution:
       {
@@ -3940,7 +3963,7 @@ packages:
       - utf-8-validate
     dev: true
 
-  /drizzle-orm@0.29.0(pg@8.11.3)(postgres@3.4.3):
+  /drizzle-orm@0.29.0(@neondatabase/serverless@0.6.0)(pg@8.11.3)(postgres@3.4.3):
     resolution:
       {
         integrity: sha512-AC+CuW4GezVjsZDGU9u9B4HyikudOyYVhjm6he3Xn1D6Kky7bHGKob97MMX2piO+t9b6UuajLzlii/T/lu1qwA==,
@@ -4005,6 +4028,7 @@ packages:
       sqlite3:
         optional: true
     dependencies:
+      '@neondatabase/serverless': 0.6.0
       pg: 8.11.3
       postgres: 3.4.3
     dev: false
