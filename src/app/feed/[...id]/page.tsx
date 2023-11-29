@@ -43,11 +43,6 @@ async function Page({ params }: PageProps) {
   const { project, dev } = projectDetails;
   const { title, description, youtubeUrl, projectMedia: media } = project;
 
-  console.log(
-    `Definitely getting media for projectId: ${projectId}...`,
-    media.map((m) => m.url),
-  );
-
   const { displayName, displayPictureUrl } = dev!;
   const video = media.find((m) => m.type === 'video');
   const images = media.filter((m) => m.type === 'image');
