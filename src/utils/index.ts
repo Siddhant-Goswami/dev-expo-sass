@@ -1,12 +1,30 @@
-export function extractIDfromYtURL(inputUrl: string) {
-  // The YouTube URL provided by the user
+import { env } from '@/env';
+
+/**
+ * Extracts the YouTube video ID from a YouTube URL
+ * @param inputUrl The YouTube URL to extract the ID from
+ * @returns The YouTube video ID
+ * @example `https://www.youtube.com/watch?v=t4mb0H4lBDQ` -> `t4mb0H4lBDQ`
+ * @example `https://youtu.be/t4mb0H4lBDQ` -> `t4mb0H4lBDQ`
+ * @description This function is based on the following Stack Overflow answer: https://stackoverflow.com/a/8260383/3015595
+ *  */
+export function extractIDfromYtURL(videoUrl: string) {
   // const inputUrl = 'https://www.youtube.com/watch?v=t4mb0H4lBDQ';
+  let video_id = videoUrl.split('v=')[1];
 
-  // Use a regular expression to extract the video ID
-  const video_id_match = inputUrl.match(
-    /(?:\?v=|\/embed\/|\.be\/|\/videos\/|\/\d{2,}\/|\/(?:[a-z]{2,4}\.)?[a-z]{2,4}\/(?!videoseries|embed|shorts|c|channel)(?:[^"\/\s]*\/\S+\/|(?!partner\/)))([a-zA-Z0-9_-]{11})/,
-  );
+  if (!video_id) {
+    return;
+  }
 
-  // Check if a match is found
-  return video_id_match?.[video_id_match.length - 1] ?? null;
+  const ampersandPosition = video_id.indexOf('&');
+
+  if (ampersandPosition != -1) {
+    video_id = video_id.substring(0, ampersandPosition);
+  }
+
+  return video_id;
+}
+
+export function absoluteUrl(path: string) {
+  return `${env.NEXT_PUBLIC_APP_URL ?? env.NEXT_PUBLIC_VERCEL_URL}${path}`;
 }

@@ -140,6 +140,8 @@ export const projectTags = pgTable(
   },
 );
 
+type ProjectMediaType = 'image' | 'video' | 'gif';
+
 export const projectMedia = pgTable(
   'projectMedia',
   {
@@ -147,8 +149,21 @@ export const projectMedia = pgTable(
     projectId: bigserial('projectId', { mode: 'number' })
       .references(() => projects.id)
       .notNull(),
-    type: varchar('type', { length: 50 }).notNull(),
-    url: varchar('url', { length: 1024 }).notNull(),
+    type: varchar('type', { length: 50 }).$type<ProjectMediaType>().notNull(),
+    url: varchar('url', { length: 1024 }),
+
+    uploadInitiatedAt: timestamp('uploadInitiatedAt', { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+
+    expiresAt: timestamp('expiresAt', { withTimezone: true }),
+
+    userId: commonUserIdSchema('userId')
+      .notNull()
+      .references(() => userProfiles.id),
+
+    // TODO: Add data specific to different upload providers, like S3 keys and cloudinary public ids...
+
     createdAt: timestamp('createdAt', { withTimezone: true })
       .defaultNow()
       .notNull(),

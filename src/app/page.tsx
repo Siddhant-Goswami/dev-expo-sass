@@ -44,7 +44,7 @@ export default async function Page() {
         <h3 className="mt-18 rounded-full border-2 border-brand/40 bg-brand/10 px-4 py-2 font-semibold backdrop-blur-md dark:bg-accent/60 sm:mt-0">
           Unleash Your Generative AI Mastery
         </h3>
-        <h2 className="mt-12 text-center text-3xl font-semibold leading-10 sm:w-2/3 sm:text-5xl sm:font-bold">
+        <h2 className="mt-12 text-center text-3xl font-semibold leading-10 [text-wrap:balance] sm:w-2/3 sm:text-5xl sm:font-bold">
           Join the elite circle of{' '}
           <span className="p-1 text-brand dark:text-brand "> GenAI</span>{' '}
           innovators.

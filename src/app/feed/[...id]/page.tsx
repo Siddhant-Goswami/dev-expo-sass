@@ -1,6 +1,7 @@
 import Footer from '@/components/ui/footer';
 import NavBar from '@/components/ui/navbar';
 
+import MarkdownComponent from '@/components/mark-down';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -123,7 +124,7 @@ async function Page({ params }: PageProps) {
             )}
           </div>
 
-          {primaryMedia?.type === 'video' && (
+          {primaryMedia?.type === 'video' && primaryMedia.url && (
             // h-500 w-900
             <HoverableVideo
               thumbnailSrc={images[0]?.url}
@@ -146,23 +147,22 @@ async function Page({ params }: PageProps) {
             `Invalid youtube video URL: ${youtubeUrl}`
           )}
 
-          {images.map((image, index) => (
-            // h-500 w-900
-            <div className="mb-8 overflow-hidden rounded-sm" key={image.id}>
-              <img
-                className="h-full w-full object-cover"
-                src={image.url}
-                alt={`${project.title} image ${index + 1} `}
-              />
-            </div>
-          ))}
+          {images.map(
+            (image, index) =>
+              // h-500 w-900
+              image.url && (
+                <div className="mb-8 overflow-hidden rounded-sm" key={image.id}>
+                  <img
+                    className="h-full w-full object-cover"
+                    src={image.url}
+                    alt={`${project.title} image ${index + 1} `}
+                  />
+                </div>
+              ),
+          )}
 
           <div className="mt-8">
-            {description.split('\n').map((line, index) => (
-              <p key={index} className="my-2 text-base">
-                {line}
-              </p>
-            ))}
+            <MarkdownComponent content={description} />
           </div>
 
           {!isSameUser && (

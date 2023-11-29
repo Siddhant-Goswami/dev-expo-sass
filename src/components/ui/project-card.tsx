@@ -20,9 +20,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
           width={1000}
           height={1000}
           src={
-            media?.[0]?.type === 'image'
-              ? media?.[0]?.url
-              : 'https://images.unsplash.com/photo-1597484661973-ee6cd0b6482c?q=80&w=2874&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+            (media?.[0]?.type === 'image' ? media?.[0]?.url : null) ??
+            'https://images.unsplash.com/photo-1597484661973-ee6cd0b6482c?q=80&w=2874&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
           }
           alt="demo"
           className="h-full w-full object-cover object-center transition-all duration-200 group-hover:brightness-105"
