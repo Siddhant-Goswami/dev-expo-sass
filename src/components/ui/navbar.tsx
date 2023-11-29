@@ -7,6 +7,7 @@ import SignUpModal from '@/components/ui/sign-up-modal';
 import { ThemeToggle } from '@/components/ui/toggle';
 import { useAuth } from '@/hooks/user/auth';
 import { useUserProfile } from '@/hooks/user/profile';
+import { LucideUpload } from 'lucide-react';
 import Link from 'next/link';
 import UserAuthButton from '../UserAuthButton';
 
@@ -30,7 +31,8 @@ const NavBar = () => {
           {userId && isLoaded && (
             <div className="flex items-center gap-4">
               <ProjectUploadModal>
-                <Button variant="outline" className="rounded-sm">
+                <Button variant="default" className="rounded-sm">
+                  <LucideUpload className="mr-2 w-4" />
                   Upload Project
                 </Button>
               </ProjectUploadModal>

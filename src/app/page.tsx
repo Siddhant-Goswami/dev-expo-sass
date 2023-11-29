@@ -11,13 +11,12 @@ export default async function Page() {
   const allProjects = await getAllProjects({ limit: 8 });
   const filteredProjectsData = allProjects.map(
     ({ project, user, tags, media }) => {
-      const { id, title, coverImageUrl } = project;
+      const { id, title } = project;
       const displayName = user?.displayName ?? ' ';
 
       return {
         id,
         title,
-        coverImageUrl,
         media,
         tags,
         displayName,

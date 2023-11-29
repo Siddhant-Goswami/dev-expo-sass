@@ -84,9 +84,6 @@ export const projects = pgTable(
     title: varchar('title', { length: 50 }).notNull(),
     slug: varchar('slug', { length: 50 }).notNull().unique(),
     description: varchar('description', { length: 6000 }).notNull().default(''),
-    coverImageUrl: varchar('coverImageUrl', { length: 1024 })
-      .notNull()
-      .default(''),
     hostedUrl: varchar('hostedUrl', { length: 1024 }),
     youtubeUrl: varchar('youtubeUrl', { length: 1024 }),
     // ! TODO: This should be either specific to the git provider (github) or a generic URL
@@ -140,8 +137,7 @@ export const projectTags = pgTable(
   },
 );
 
-type ProjectMediaType = 'image' | 'video' | 'gif';
-
+type ProjectMediaType = 'image' | 'video';
 export const projectMedia = pgTable(
   'projectMedia',
   {
@@ -163,6 +159,7 @@ export const projectMedia = pgTable(
       .references(() => userProfiles.id),
 
     // TODO: Add data specific to different upload providers, like S3 keys and cloudinary public ids...
+    publicId: varchar('publicId', { length: 2048 }).notNull().unique(), // Cloudinary public id
 
     createdAt: timestamp('createdAt', { withTimezone: true })
       .defaultNow()
@@ -174,6 +171,10 @@ export const projectMedia = pgTable(
   (table) => {
     return {
       typeIndex: index('type_idx').on(table.type),
+      projectIdIndex: index('project_id_idx').on(table.projectId),
+      userIdIndex: index('user_id_idx').on(table.userId),
+      publicIdIndex: index('public_id_idx').on(table.publicId),
+      expiresAtIndex: index('expires_at_idx').on(table.expiresAt),
     };
   },
 );
