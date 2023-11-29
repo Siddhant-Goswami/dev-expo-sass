@@ -11,10 +11,6 @@ export const env = createEnv({
     RESEND_API_KEY: z.string(),
     SUPABASE_SERVICE_ROLE_KEY: z.string(),
     CLOUDINARY_API_SECRET: z.string(),
-
-    // Posthog
-    POSTHOG_API_KEY: z.string(),
-
     NODE_ENV: z
       .enum(['development', 'test', 'production'])
       .default('development'),
@@ -79,7 +75,6 @@ export const env = createEnv({
     RESEND_API_KEY: process.env.RESEND_API_KEY,
     SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
     CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
-    POSTHOG_API_KEY: process.env.POSTHOG_API_KEY,
 
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
