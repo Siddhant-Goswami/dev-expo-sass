@@ -20,7 +20,7 @@ function OnboardUser({ children }: OnboardUserProps) {
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="md:max-h-3/4 h-screen min-w-full overflow-scroll md:h-max md:min-w-50">
+      <DialogContent className="h-screen min-w-full overflow-scroll md:h-max md:max-h-3/4 md:min-w-50">
         <DialogHeader>
           <DialogTitle>Get Verified</DialogTitle>
           <DialogDescription>
