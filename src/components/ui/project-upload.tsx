@@ -18,11 +18,14 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
 import useCloudinaryUpload from '@/hooks/useCloudinaryUpload';
-import { MAX_IMAGE_SIZE, MAX_VIDEO_SIZE } from '@/lib/constants';
+import { MAX_IMAGE_SIZE, MAX_NUMBER_OF_IMAGES } from '@/lib/constants';
 import { projectFormSchema } from '@/lib/validations/project';
+import { validateAndPersistUpload } from '@/server/actions/projectMedia';
+import { uploadNewProject } from '@/server/actions/projects';
 import { useMutation } from '@tanstack/react-query';
 import { LucideImage, LucideLoader, LucideSave } from 'lucide-react';
 import { useState } from 'react';
+import { Label } from './label';
 
 type ProjectUploadValues = z.infer<typeof projectFormSchema>;
 type ProjectUploadProps = {
@@ -33,68 +36,45 @@ type Page = 'data-entry' | 'media-upload';
 export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
   const { toast } = useToast();
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
-  const [selectedVideos, setSelectedVideos] = useState<File[]>([]);
+  // const [selectedVideos, setSelectedVideos] = useState<File[]>([]);
+  const [isActuallyLoading, setIsActuallyLoading] = useState(false);
+  const [actualStatus, setActualStatus] = useState<
+    'uploading-images' | 'uploading-data' | 'success' | 'idle' | 'error'
+  >('idle');
   const [selectedPage, setSelectedPage] = useState<Page>('data-entry');
 
   const form = useForm<ProjectUploadValues>({
     resolver: zodResolver(projectFormSchema),
     defaultValues: {
       title: '',
+      description: '', // Default description value
       hostedUrl: '',
       sourceCodeUrl: '',
       youtubeUrl: '',
       tags: [],
-      description: '', // Default description value
+      // title: 'TEST PROJECT',
+      // hostedUrl: 'http://localhost:3000',
+      // sourceCodeUrl: 'http://localhost:3000',
+      // youtubeUrl: 'https://www.youtube.com/watch?v=EeHJUijhszw',
+      // tags: ['1', '2'],
+      // description: 'TEST PROJECTTEST PROJECT', // Default description value
     },
   });
 
-  const { status, upload } = useCloudinaryUpload({
-    onSuccess: (url) => {
-      console.log(`Uploaded file to cloudinary: ${url}`);
-      alert('Uploaded file to cloudinary: ' + url);
-      return toast({ title: ' uploaded successfully!' });
-    },
-    onError: (err) =>
-      toast({
-        title:
-          'Oops! Something went wrong. ' + (err as Error)?.message ??
-          'Unknown error',
-      }),
-  });
-
-  const { mutate, isPending } = useMutation({
+  const { mutateAsync: submitProjectData, isPending } = useMutation({
     mutationFn: async () => {
       const formValues = form.getValues();
-
-      const formData = new FormData();
-      formData.append('projectData', JSON.stringify(formValues));
-
-      if (selectedImages[0]) formData.append('image1', selectedImages[0]);
-      if (selectedImages[1]) formData.append('image2', selectedImages[1]);
-      if (selectedImages[2]) formData.append('image3', selectedImages[2]);
-
-      if (selectedVideos[0]) formData.append('video', selectedVideos[0]);
-
-      const res = await fetch(`/api/project`, {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (res.ok) {
-        const result = (await res.json()) as { projectId: string };
-        return result;
-      } else {
-        throw new Error('Something went wrong');
-      }
+      return await uploadNewProject(formValues);
     },
 
     onSuccess: (data) => {
-      toast({
-        title: 'Project uploaded successfully!',
-      });
-      setIsModalOpen(false);
-      // Redirect user to their new project page
-      window.location.href = `/feed/${data?.projectId}`;
+      void uploadAllSelectedImages(data.projectId);
+      // toast({
+      //   title: 'Project uploaded successfully!',
+      // });
+      // setIsModalOpen(false);
+      // // Redirect user to their new project page
+      // window.location.href = `/feed/${data?.projectId}`;
     },
 
     onError: (err) => {
@@ -107,11 +87,53 @@ export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
     },
   });
 
+  const { upload } = useCloudinaryUpload({
+    onSuccess: ({ public_id, projectId }) => {
+      void validateAndPersistUpload({
+        projectId,
+        publicId: public_id,
+      }).then(() => {
+        toast({ title: 'Project uploaded successfully!' });
+
+        setIsModalOpen(false);
+        // Redirect user to their new project page
+        window.location.href = `/feed/${projectId}`;
+      });
+    },
+    onError: (err) =>
+      toast({
+        title:
+          'Oops! Something went wrong. ' + (err as Error)?.message ??
+          'Unknown error',
+      }),
+  });
+
+  const uploadAllSelectedImages = async (projectId: number) => {
+    if (selectedImages.length === 0) {
+      return alert('No images selected!');
+    }
+
+    const imageUploadPromises = selectedImages.map((img, index) => {
+      const blobUrl = URL.createObjectURL(img);
+
+      return upload({
+        type: 'image',
+        blobUrl,
+        isWebcam: false,
+        projectId,
+      }).then(() => console.log(`Uploaded image: ${index}`));
+    });
+
+    await Promise.all(imageUploadPromises);
+  };
+
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(() => {
-          mutate();
+        onSubmit={form.handleSubmit(async () => {
+          // WORKAROUND TO AN ANNOYING BUG: Youtube url get populated automatically from the hostedUrl????
+          form.setValue('youtubeUrl', '');
+
           setSelectedPage('media-upload');
         })}
         method="post"
@@ -161,6 +183,7 @@ export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
                         <Input
                           placeholder="https://yourproject.com"
                           {...field}
+                          value={field.value ?? ''}
                         />
                       </FormControl>
                       <FormMessage />
@@ -177,28 +200,14 @@ export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
                         <Input
                           placeholder="https://github.com/yourproject"
                           {...field}
+                          value={field.value ?? ''}
                         />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="youtubeUrl"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Youtube video URL</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="https://www.youtube.com/watch?v=t4mb0H4lBDQ"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+
                 <FormField
                   control={form.control}
                   name="tags"
@@ -266,7 +275,9 @@ export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
                               }
                             });
                             const filteredImages = imagesArray.filter(
-                              (image) => image.size < MAX_IMAGE_SIZE,
+                              (image, index) =>
+                                image.size < MAX_IMAGE_SIZE &&
+                                index < MAX_NUMBER_OF_IMAGES,
                             );
 
                             console.log(`Filtered images:`, filteredImages);
@@ -284,8 +295,19 @@ export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
                     </FormItem>
                   )}
                 />
-
-                <FormField
+                {selectedImages.length > 0 && (
+                  <div className="flex w-full flex-wrap items-start gap-1">
+                    {selectedImages.map((image, index) => (
+                      <img
+                        key={index}
+                        className="h-auto w-auto max-w-[10rem] rounded-sm"
+                        src={URL.createObjectURL(image)}
+                        alt="image"
+                      />
+                    ))}
+                  </div>
+                )}
+                {/* <FormField
                   // control={form.control}
                   name="videos"
                   render={() => (
@@ -328,26 +350,41 @@ export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
                       <FormMessage />
                     </FormItem>
                   )}
-                />
+                /> */}
+                {/* <FormField
+                  control={form.control}
+                  name="youtubeUrl"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Youtube video URL</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="https://www.youtube.com/watch?v=t4mb0H4lBDQ"
+                          {...field}
+                          value={field.value ?? ''}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                /> */}
 
-                {/* <h2 className="text-2xl font-semibold tracking-tight">
-                  Upload status: {status}
-                </h2>
+                <div className="flex flex-col gap-3">
+                  <Label className="">Youtube video URL</Label>
 
-                <Button
+                  <Input
+                    className=""
+                    placeholder="https://www.youtube.com/watch?v=t4mb0H4lBDQ"
+                    onChange={(e) =>
+                      form.setValue('youtubeUrl', e.target.value)
+                    }
+                    value={form.watch('youtubeUrl') ?? ''}
+                  />
+                </div>
+                {/* <Button
                   type="button"
                   onClick={async () => {
-                    if (!selectedVideos[0]) {
-                      return alert('BRO No actual video selected');
-                    }
-
-                    const videoBlobUrl = URL.createObjectURL(selectedVideos[0]);
-
-                    await upload({
-                      type: 'video',
-                      blobUrl: videoBlobUrl,
-                      isWebcam: false,
-                    });
+                   
                   }}
                 >
                   {status === 'idle' ? 'Upload' : 'Uploading...'}
@@ -361,6 +398,7 @@ export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
           {selectedPage === 'media-upload' && (
             <>
               <Button
+                disabled={isActuallyLoading}
                 type="button"
                 onClick={() => {
                   setSelectedPage('data-entry');
@@ -373,11 +411,20 @@ export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
               </Button>
 
               <Button
-                type="submit"
+                type="button"
                 className="flex w-full items-center gap-2 sm:w-max"
-                disabled={isPending}
+                disabled={isActuallyLoading}
+                onClick={async () => {
+                  try {
+                    setIsActuallyLoading(true);
+                    await submitProjectData();
+                  } catch (err) {
+                  } finally {
+                    setIsActuallyLoading(false);
+                  }
+                }}
               >
-                {isPending ? (
+                {isActuallyLoading ? (
                   <LucideLoader size={20} className="animate-spin" />
                 ) : (
                   <>
@@ -398,7 +445,7 @@ export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
               ) : (
                 <>
                   <LucideImage size={18} />
-                  Next: Add media
+                  Next: Media
                   <span className="pl-[1ch]">&rarr;</span>
                 </>
               )}

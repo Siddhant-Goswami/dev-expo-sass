@@ -1,23 +1,27 @@
 'use server';
 
+import { env } from '@/env';
 import { MAX_PENDING_UPLOAD_REQUESTS_PER_DAY } from '@/lib/constants/cloudinary';
 import { sendLogToDiscord } from '@/utils/discord';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
+import cloudinary from 'cloudinary';
+import { createHash } from 'crypto';
+import { eq } from 'drizzle-orm';
 import { cookies } from 'next/headers';
 import { z } from 'zod';
 import { presign } from '../../utils/cloudinary';
 import { db } from '../db';
+import { projectMedia } from '../db/schema';
 
 const initiateNewUploadPropsSchema = z.object({
-  type: z.enum(['video', 'audio', 'screen', 'image']),
+  type: z.enum(['video', 'image']),
+  projectId: z.number(),
 });
 
 type InitiateNewUploadProps = z.infer<typeof initiateNewUploadPropsSchema>;
 
-export const initiateNewImageUpload = async (
-  _props: InitiateNewUploadProps,
-) => {
-  const { type } = initiateNewUploadPropsSchema.parse(_props);
+export const initiateNewUpload = async (_props: InitiateNewUploadProps) => {
+  const { projectId, type } = initiateNewUploadPropsSchema.parse(_props);
 
   const supabase = createServerActionClient({ cookies });
 
@@ -49,7 +53,38 @@ export const initiateNewImageUpload = async (
       );
     }
 
-    const { cloudName, signature, timestamp } = await presign();
+    const uploadInitiatedAt = new Date();
+
+    const filePublicId = createHash('sha256')
+      .update(
+        JSON.stringify({
+          userId,
+          userEmail,
+          uploadInitiatedAt,
+          projectId,
+          type,
+        }),
+      )
+      .digest('hex'); // TODO: More programatically generate inputHash, with more params
+
+    const { cloudName, signature, timestamp } = await presign({
+      // userId,
+      public_id: filePublicId,
+    });
+    const [projectMediaId] = await db
+      .insert(projectMedia)
+      .values({
+        userId,
+        type,
+        projectId,
+        publicId: filePublicId,
+        // "Expires" in 24 hours
+        expiresAt: new Date(uploadInitiatedAt.getTime() + 24 * 60 * 60 * 1000),
+        uploadInitiatedAt: uploadInitiatedAt,
+      })
+      .returning({
+        id: projectMedia.id,
+      });
 
     const uploadUrl = `https://api.cloudinary.com/v1_1/${cloudName}/${
       type === 'image' ? 'image' : 'video'
@@ -58,8 +93,10 @@ export const initiateNewImageUpload = async (
     return {
       success: true,
       uploadUrl,
+      public_id: filePublicId,
       signature,
       timestamp,
+      projectMediaId,
     };
   } catch (err) {
     console.error(err);
@@ -75,4 +112,88 @@ export const initiateNewImageUpload = async (
       error: (err as Error)?.message ?? 'Could not get upload URL!',
     };
   }
+};
+
+const validateAndPersistUploadPropsSchema = z.object({
+  projectId: z.number(),
+  publicId: z.string(),
+});
+export const validateAndPersistUpload = async (
+  _props: z.infer<typeof validateAndPersistUploadPropsSchema>,
+) => {
+  const { projectId, publicId } =
+    validateAndPersistUploadPropsSchema.parse(_props);
+
+  const supabase = createServerActionClient({ cookies });
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session) {
+    throw new Error('Unauthorized');
+  }
+
+  const userId = session.user.id;
+
+  const existingMediaInDb = await db.query.projectMedia.findFirst({
+    where: (pm, { eq, and }) =>
+      and(
+        eq(pm.publicId, publicId),
+        eq(pm.projectId, projectId),
+        eq(pm.userId, userId),
+      ),
+  });
+
+  if (!existingMediaInDb?.id) {
+    throw new Error('Could not find project media record');
+  }
+
+  if (!existingMediaInDb?.expiresAt) {
+    return {
+      message: 'This upload has already been validated and persisted.',
+      success: true,
+    };
+  }
+
+  if (existingMediaInDb?.expiresAt.getTime() < new Date().getTime()) {
+    await db
+      .delete(projectMedia)
+      .where(eq(projectMedia.id, existingMediaInDb.id));
+
+    return {
+      message: 'This upload has expired.',
+      success: false,
+    };
+  }
+
+  cloudinary.v2.config({
+    api_key: env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
+    api_secret: env.CLOUDINARY_API_SECRET,
+    cloud_name: env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+    secure: true,
+  });
+
+  const assetUrl = cloudinary.v2.utils.url(publicId);
+  console.log(`Validating and persisting upload:`, publicId);
+
+  console.log(`Maybe this url: ${assetUrl}`);
+
+  const [updatedRecord] = await db
+    .update(projectMedia)
+    .set({
+      expiresAt: null,
+      updatedAt: new Date(),
+      url: assetUrl,
+    })
+    .where(eq(projectMedia.id, existingMediaInDb.id))
+    .returning({ id: projectMedia.id });
+
+  const updatedMediaId = updatedRecord?.id;
+
+  if (!updatedMediaId) {
+    throw new Error('Could not update project media record');
+  }
+
+  console.log(`💚 Updated media id: ${updatedMediaId}`);
 };

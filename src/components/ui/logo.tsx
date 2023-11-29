@@ -3,7 +3,7 @@ function Logo() {
     <svg
       // width="109"
       // height="17"
-      className="w-40"
+      className="w-28"
       viewBox="0 0 109 17"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

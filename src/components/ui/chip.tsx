@@ -27,8 +27,6 @@ const ScrollableChips = () => {
   const searchParams = useSearchParams();
   const filter = searchParams.get('filter');
 
-  console.log('filter', filter);
-
   return (
     <div className="flex space-x-3 overflow-x-auto py-2">
       {categories.map((item) => (
