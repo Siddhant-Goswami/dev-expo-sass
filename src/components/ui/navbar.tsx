@@ -19,7 +19,7 @@ const NavBar = () => {
   useUserProfile();
 
   return (
-    <nav className="sticky top-0 z-50 flex w-screen items-center justify-between bg-background/30 px-6  py-4 backdrop-blur-md">
+    <nav className="sticky top-0 z-50 flex w-screen items-center justify-between bg-background/30 px-6 py-4 backdrop-blur-md md:px-10">
       <div className="flex w-full items-center justify-between space-x-4">
         <div className="flex items-center">
           <Link href="/" className="text-2xl font-semibold">
