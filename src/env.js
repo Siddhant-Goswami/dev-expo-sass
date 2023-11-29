@@ -11,6 +11,10 @@ export const env = createEnv({
     RESEND_API_KEY: z.string(),
     SUPABASE_SERVICE_ROLE_KEY: z.string(),
     CLOUDINARY_API_SECRET: z.string(),
+
+    // Posthog
+    POSTHOG_API_KEY: z.string(),
+
     NODE_ENV: z
       .enum(['development', 'test', 'production'])
       .default('development'),
@@ -30,6 +34,8 @@ export const env = createEnv({
     NEXT_PUBLIC_CLOUDINARY_API_KEY: z.string(),
 
     NEXT_PUBLIC_APP_URL: z.string().url(),
+
+    NEXT_PUBLIC_POSTHOG_PUBLIC_KEY: z.string(),
 
     NEXT_PUBLIC_VERCEL_URL: z
       .preprocess((str) => process.env.VERCEL_URL ?? str, z.string().optional())
@@ -53,6 +59,8 @@ export const env = createEnv({
       .transform((val) => val === 'true')
       .pipe(z.boolean()),
 
+    NEXT_PUBLIC_TAWK_TO_SRC_URL: z.string().url(),
+
     NEXT_PUBLIC_VERCEL_ENV: z
       .enum(['development', 'preview', 'production'])
       .optional(),
@@ -71,6 +79,7 @@ export const env = createEnv({
     RESEND_API_KEY: process.env.RESEND_API_KEY,
     SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
     CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
+    POSTHOG_API_KEY: process.env.POSTHOG_API_KEY,
 
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
@@ -84,6 +93,9 @@ export const env = createEnv({
     NEXT_PUBLIC_VERCEL_URL: process.env.NEXT_PUBLIC_VERCEL_URL,
     NEXT_PUBLIC_SHOW_DEBUG_CONTROLS:
       process.env.NEXT_PUBLIC_SHOW_DEBUG_CONTROLS,
+    NEXT_PUBLIC_POSTHOG_PUBLIC_KEY: process.env.NEXT_PUBLIC_POSTHOG_PUBLIC_KEY,
+
+    NEXT_PUBLIC_TAWK_TO_SRC_URL: process.env.NEXT_PUBLIC_TAWK_TO_SRC_URL,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

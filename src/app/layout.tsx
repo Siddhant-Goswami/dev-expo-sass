@@ -4,8 +4,11 @@ import { ReactQueryProvider } from '@/components/ReactQueryProvider';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import { Toaster } from '@/components/ui/toaster';
 import '@/styles/globals.css';
+import NextTopLoader from 'nextjs-toploader';
 
+import { env } from '@/env';
 import localFont from 'next/font/local';
+import Script from 'next/script';
 
 const NeueMont = localFont({
   src: [
@@ -47,6 +50,27 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <NextTopLoader
+        showSpinner={false}
+        color="#39AD44"
+        shadow={false}
+        easing="ease-in-out"
+      />
+
+      <Script id="tawkto" strategy="afterInteractive">
+        {`
+         var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
+         (function () {
+             var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
+             s1.async = true;
+             s1.src = '${env.NEXT_PUBLIC_TAWK_TO_SRC_URL}';
+             s1.charset = 'UTF-8';
+             s1.setAttribute('crossorigin', '*');
+             s0.parentNode.insertBefore(s1, s0);
+         })();
+        `}
+      </Script>
+
       <body className={NeueMont.className}>
         <ReactQueryProvider>
           <ThemeProvider
