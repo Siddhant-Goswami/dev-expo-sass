@@ -7,6 +7,7 @@ import SignUpModal from '@/components/ui/sign-up-modal';
 import { ThemeToggle } from '@/components/ui/toggle';
 import { useAuth } from '@/hooks/user/auth';
 import { useUserProfile } from '@/hooks/user/profile';
+import { api } from '@/trpc/react';
 import { LucideUpload } from 'lucide-react';
 import Link from 'next/link';
 import UserAuthButton from '../UserAuthButton';
@@ -18,6 +19,12 @@ const NavBar = () => {
 
   // ! DO THIS IN A BETTER WAY, DO NOT DELETE FOR NOW
   useUserProfile();
+
+  const { data } = api.user.hello.useQuery(undefined, {
+    onSuccess: (data) => {
+      console.log(`Protected query came in:`, data);
+    },
+  });
 
   return (
     <nav className="sticky top-0 z-50 flex w-screen items-center justify-between bg-background/30 px-6 py-4 backdrop-blur-md md:px-10">

@@ -15,14 +15,8 @@ type FeedProps = {
   };
 };
 
+export const revalidate = 30;
 async function Feed({ searchParams }: FeedProps) {
-  const supabase = createServerComponentClient({ cookies });
-
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  const userId = session?.user?.id;
-
   const filter = searchParams?.filter ?? '';
 
   const allProjects = await getAllProjects({});
@@ -69,13 +63,13 @@ async function Feed({ searchParams }: FeedProps) {
               No {validFilter.label} projects found
             </h3>
 
-            {userId && (
+            {
               <ProjectUploadModal>
                 <ShimmerButton>
                   Be the first one to upload {validFilter.label} project
                 </ShimmerButton>
               </ProjectUploadModal>
-            )}
+            }
           </div>
         )}
       </section>

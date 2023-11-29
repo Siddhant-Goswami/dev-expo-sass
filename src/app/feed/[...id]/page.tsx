@@ -3,33 +3,24 @@ import NavBar from '@/components/ui/navbar';
 
 import MarkdownComponent from '@/components/mark-down';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import GetInTouchModal from '@/components/ui/get-in-touch-modal';
-import SignUp from '@/components/ui/sign-up';
-import SignUpModal from '@/components/ui/sign-up-modal';
 import { projectFormSchema } from '@/lib/validations/project';
 import { getProjectById } from '@/server/actions/projects';
 import { extractIDfromYtURL } from '@/utils';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
+import {
+  GetInTouchButton,
+  GetInTouchSection,
+  IsSameUserWrapper,
+} from './GetInTouchSections';
 
 type PageProps = {
   params: { id: string[] };
 };
+
+export const revalidate = false;
 async function Page({ params }: PageProps) {
   const availableForWork = true;
-  const supabase = createServerComponentClient({ cookies });
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+
   const projectId = params.id[0];
 
   if (!projectId) {
@@ -38,15 +29,13 @@ async function Page({ params }: PageProps) {
 
   const projectDetails = await getProjectById(Number(projectId));
 
-  if (!projectDetails) return notFound();
+  if (!projectDetails?.dev) return notFound();
 
   const { project, dev } = projectDetails;
   const { title, description, youtubeUrl, projectMedia: media } = project;
 
-  const { displayName, displayPictureUrl } = dev!;
-  const video = media.find((m) => m.type === 'video');
+  const { displayName, displayPictureUrl } = dev;
   const images = media.filter((m) => m.type === 'image');
-  const primaryMedia = video ? video : images[0];
 
   const validYoutubeUrlResult =
     projectFormSchema.shape.youtubeUrl.safeParse(youtubeUrl);
@@ -55,14 +44,11 @@ async function Page({ params }: PageProps) {
 
   const initialLetter = displayName.charAt(0).toUpperCase();
 
-  const userId = session?.user?.id;
-  const isSameUser = project.userId === userId;
-
   return (
     <>
       <NavBar />
 
-      <Dialog open={!userId}>
+      {/* <Dialog defaultOpen>
         <DialogContent className="h-screen w-full overflow-scroll md:h-max md:max-w-xl">
           <DialogHeader>
             <DialogTitle>Get Started</DialogTitle>
@@ -72,7 +58,7 @@ async function Page({ params }: PageProps) {
           </DialogHeader>
           <SignUp />
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
 
       <section className="flex min-h-feed items-start justify-center">
         <main className="mt-8 flex w-full flex-col justify-center px-4 md:w-3/4">
@@ -110,29 +96,11 @@ async function Page({ params }: PageProps) {
               </div>
             </div>
 
-            {!isSameUser && (
-              <>
-                {!userId ? null : (
-                  <div className="flex gap-2">
-                    <GetInTouchModal
-                      username={displayName}
-                      text="Get in Touch"
-                      roundedFull={false}
-                    />
-                  </div>
-                )}
-              </>
-            )}
+            <IsSameUserWrapper projectUserId={project.userId}>
+              <GetInTouchButton displayName={displayName} />
+            </IsSameUserWrapper>
           </div>
 
-          {/* {primaryMedia?.type === 'video' && primaryMedia.url && (
-            // h-500 w-900
-            <HoverableVideo
-              thumbnailSrc={images[0]?.url}
-              autoplay={!!userId}
-              videoSrc={primaryMedia.url}
-            />
-          )} */}
           {youtubeUrl && toShowYTVideo && (
             <iframe
               className="aspect-video w-full max-w-2xl overflow-hidden rounded-lg"
@@ -164,27 +132,10 @@ async function Page({ params }: PageProps) {
             <MarkdownComponent content={description} />
           </div>
 
-          {!isSameUser && (
-            <div className="mt-6 flex w-full flex-col items-center justify-center border-t border-gray-500 py-8">
-              <h3 className="text-xl font-medium">
-                {' '}
-                Liked {displayName}'s work??{' '}
-              </h3>
-              <p className="mb-4 mt-2 text-sm">
-                Get in touch with {displayName} to discuss your project.
-              </p>
-
-              {!userId ? (
-                <SignUpModal>
-                  <Button variant="brand" className="mt-10 p-6">
-                    Login in To Get in Touch
-                  </Button>
-                </SignUpModal>
-              ) : (
-                <GetInTouchModal username={displayName} text="Get in Touch" />
-              )}
-            </div>
-          )}
+          <GetInTouchSection
+            projectUserId={project.userId}
+            userDisplayName={displayName}
+          />
         </main>
       </section>
       <Footer />

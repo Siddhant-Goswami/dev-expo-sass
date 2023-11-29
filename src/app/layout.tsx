@@ -1,13 +1,14 @@
 import { Analytics } from '@vercel/analytics/react';
 
-import { ReactQueryProvider } from '@/components/ReactQueryProvider';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import { Toaster } from '@/components/ui/toaster';
 import '@/styles/globals.css';
 import NextTopLoader from 'nextjs-toploader';
 
 import { env } from '@/env';
+import { TRPCReactProvider } from '@/trpc/react';
 import localFont from 'next/font/local';
+import { headers } from 'next/headers';
 import Script from 'next/script';
 
 const NeueMont = localFont({
@@ -72,7 +73,7 @@ export default function RootLayout({
       </Script>
 
       <body className={NeueMont.className}>
-        <ReactQueryProvider>
+        <TRPCReactProvider headers={headers()}>
           <ThemeProvider
             enableSystem
             attribute="class"
@@ -83,7 +84,7 @@ export default function RootLayout({
             <Toaster />
             <Analytics />
           </ThemeProvider>
-        </ReactQueryProvider>
+        </TRPCReactProvider>
       </body>
     </html>
   );
