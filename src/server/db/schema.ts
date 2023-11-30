@@ -7,7 +7,6 @@ import {
   boolean,
   index,
   integer,
-  json,
   pgTableCreator,
   primaryKey,
   timestamp,

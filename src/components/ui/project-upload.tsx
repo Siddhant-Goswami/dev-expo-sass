@@ -24,6 +24,7 @@ import { validateAndPersistUpload } from '@/server/actions/projectMedia';
 import { uploadNewProject } from '@/server/actions/projects';
 import { useMutation } from '@tanstack/react-query';
 import { LucideImage, LucideLoader, LucideSave } from 'lucide-react';
+import Image from 'next/image';
 import { useState } from 'react';
 import { Label } from './label';
 
@@ -298,7 +299,9 @@ export function ProjectUpload({ setIsModalOpen }: ProjectUploadProps) {
                 {selectedImages.length > 0 && (
                   <div className="flex w-full flex-wrap items-start gap-1">
                     {selectedImages.map((image, index) => (
-                      <img
+                      <Image
+                        width={250}
+                        height={250}
                         key={index}
                         className="h-auto w-auto max-w-[10rem] rounded-sm"
                         src={URL.createObjectURL(image)}
