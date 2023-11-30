@@ -13,7 +13,6 @@ type FeedProps = {
   };
 };
 
-
 async function Feed({ searchParams }: FeedProps) {
   const filter = searchParams?.filter ?? '';
 
