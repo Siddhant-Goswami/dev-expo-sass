@@ -3,7 +3,7 @@ import Grid from '@/components/ui/grid';
 import NavBar from '@/components/ui/navbar';
 import { getProjectsByUserId } from '@/server/actions/projects';
 import { getUserFromUsername } from '@/server/actions/users';
-import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { z } from 'zod';
 
@@ -70,7 +70,9 @@ async function Page({ params }: PageProps) {
               <AvatarImage src={userInfo.displayPictureUrl} alt={userInfo.displayName} />
               <AvatarFallback> {userInfo.displayName.charAt(0).toUpperCase()} </AvatarFallback>
             </Avatar> */}
-            <img
+            <Image
+              width={250}
+              height={250}
               className="w-30 h-auto rounded-full md:w-32"
               src={userInfo.displayPictureUrl}
               alt="Profile Picture"

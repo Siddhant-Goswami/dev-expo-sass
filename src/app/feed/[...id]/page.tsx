@@ -9,6 +9,7 @@ import { projectFormSchema } from '@/lib/validations/project';
 import { getProjectById } from '@/server/actions/projects';
 import { extractIDfromYtURL } from '@/utils';
 import { ChevronLeft, LucideArrowUpRight, LucideGithub } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import {
@@ -137,7 +138,9 @@ async function Page({ params }: PageProps) {
               // h-500 w-900
               image.url && (
                 <div className="mb-8 overflow-hidden rounded-sm" key={image.id}>
-                  <img
+                  <Image
+                    width={250}
+                    height={250}
                     className="h-full w-full object-cover"
                     src={image.url}
                     alt={`${project.title} image ${index + 1} `}
