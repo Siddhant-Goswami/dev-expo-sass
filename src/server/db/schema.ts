@@ -70,7 +70,9 @@ export type DevProfileInsert = InferInsertModel<typeof devProfiles>;
 
 export const devApplications = pgTable('devApplication', {
   id: bigserial('id', { mode: 'number' }).primaryKey(),
-  userId: commonUserIdSchema('userId').references(() => userProfiles.id).notNull(),
+  userId: commonUserIdSchema('userId')
+    .references(() => userProfiles.id)
+    .notNull(),
   displayName: varchar('displayName', { length: 256 }).notNull(),
   bio: varchar('bio', { length: 500 }).notNull(),
   applicationVideoLink: varchar('applicationVideoLink', {

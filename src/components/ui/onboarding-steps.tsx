@@ -222,7 +222,7 @@ export function OnboardingSteps() {
       {verificationStep === 'video' && (
         <>
           {/* <p className="text-center text-2xl font-bold text-white"> </p> */}
-          <div className='mr-auto flex w-full items-center gap-3 justify-start'>
+          <div className="mr-auto flex w-full items-center justify-start gap-3">
             <button
               onClick={() => setVerificationStep('fields')}
               className="flex items-center self-start"
@@ -230,7 +230,7 @@ export function OnboardingSteps() {
               <ChevronLeft />
               <span>Edit Form</span>
             </button>
-            <p className="text-center text-sm font-medium mx-auto">
+            <p className="mx-auto text-center text-sm font-medium">
               Please record a short video introducing yourself and your work.
             </p>
           </div>

@@ -3,7 +3,6 @@ import { Analytics } from '@vercel/analytics/react';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import { Toaster } from '@/components/ui/toaster';
 import '@/styles/globals.css';
-import NextTopLoader from 'nextjs-toploader';
 
 import { env } from '@/env';
 import { TRPCReactProvider } from '@/trpc/react';
@@ -51,13 +50,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <NextTopLoader
-        showSpinner={false}
-        color="#39AD44"
-        shadow={false}
-        easing="ease-in-out"
-      />
-
       <Script id="tawkto" strategy="afterInteractive">
         {`
          var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();

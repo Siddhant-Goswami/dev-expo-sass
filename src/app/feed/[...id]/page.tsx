@@ -71,8 +71,8 @@ async function Page({ params }: PageProps) {
       <section className="flex items-start justify-center">
         <main className="mt-8 flex w-full flex-col justify-center px-4 md:w-3/4">
           <Link href={URLs.feed} className="mb-4">
-            <Button className='p-0' variant="link">
-              <ChevronLeft className='mr-2'/>
+            <Button className="p-0" variant="link">
+              <ChevronLeft className="mr-2" />
               Go back
             </Button>
           </Link>

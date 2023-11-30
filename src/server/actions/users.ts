@@ -183,10 +183,10 @@ export const getUserFromUsername = async (username: string) => {
     where: (u, { eq }) => eq(u.username, username),
   });
 
-  if(!user) {
+  if (!user) {
     return {
       success: false,
-      error: 'User not found'
+      error: 'User not found',
     };
   }
 
