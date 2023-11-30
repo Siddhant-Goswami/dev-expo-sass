@@ -2,15 +2,16 @@
 
 import { Button } from '@/components/ui/button';
 import Logo from '@/components/ui/logo';
-import ProjectUploadModal from '@/components/ui/project-upload-modal';
+import OnboardUser from '@/components/ui/onboarding-modal';
 import SignUpModal from '@/components/ui/sign-up-modal';
 import { ThemeToggle } from '@/components/ui/toggle';
 import { useAuth } from '@/hooks/user/auth';
 import { useUserProfile } from '@/hooks/user/profile';
 import { api } from '@/trpc/react';
-import { LucideUpload } from 'lucide-react';
+import { LucidePlus } from 'lucide-react';
 import Link from 'next/link';
 import UserAuthButton from '../UserAuthButton';
+import { URLs } from '@/lib/constants';
 
 const NavBar = () => {
   const { session, isLoaded } = useAuth();
@@ -37,12 +38,15 @@ const NavBar = () => {
         <div className="flex h-10 items-center gap-6">
           {userId && isLoaded && (
             <div className="flex items-center gap-4">
-              <ProjectUploadModal>
-                <Button variant="default" className="rounded-sm">
-                  <LucideUpload className="mr-2 w-4" />
-                  Upload Project
+              <Link href={URLs.create}>
+                <Button
+                  variant="outline"
+                  className="rounded-sm border-brand text-brand hover:bg-brand hover:text-white hover:shadow-sm hover:shadow-brand"
+                >
+                  <LucidePlus className="mr-2 w-4" />
+                  Create Project
                 </Button>
-              </ProjectUploadModal>
+              </Link>
               <UserAuthButton />
             </div>
           )}

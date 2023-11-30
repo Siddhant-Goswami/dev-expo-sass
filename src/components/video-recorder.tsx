@@ -1,5 +1,6 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Webcam from 'react-webcam';
@@ -10,7 +11,7 @@ export default function VideoRecorder() {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const [capturing, setCapturing] = useState(false);
   const [recordedChunks, setRecordedChunks] = useState<Blob[]>([]);
-  const [seconds, setSeconds] = useState(150);
+  const [seconds, setSeconds] = useState(60);
   const [recordingPermission, setRecordingPermission] = useState(true);
   const [cameraLoaded, setCameraLoaded] = useState(false);
   const [isSubmitting, setSubmitting] = useState(false);
@@ -93,6 +94,10 @@ export default function VideoRecorder() {
     restartVideo();
   }
 
+  function uploadApplicationVideo() {
+    const videoBlob = new Blob(recordedChunks, { type: 'video/mp4' });
+  }
+
   const videoConstraints = isDesktop
     ? { width: 1280, height: 720, facingMode: 'user' }
     : { width: 480, height: 640, facingMode: 'user' };
@@ -107,10 +112,10 @@ export default function VideoRecorder() {
   return (
     <AnimatePresence>
       {
-        <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden bg-[#FCFCFC] px-4 pb-8 pt-2 md:px-8 md:py-2">
+        <div className="relative flex w-full flex-col overflow-x-hidden bg-[#FCFCFC] px-4 pb-8 pt-2 md:px-8 md:py-2">
           <p className="absolute top-0 -ml-4 flex h-[60px] w-full flex-row justify-between md:-ml-8"></p>
           {completed ? (
-            <div className="mx-auto mt-[10vh] flex w-full max-w-[1080px] flex-col items-center gap-4 overflow-y-auto pb-8 md:pb-12">
+            <div className="mx-auto flex w-full max-w-[1080px] flex-col items-center gap-4 overflow-y-auto">
               <motion.div
                 initial={{ y: 20 }}
                 animate={{ y: 0 }}
@@ -131,21 +136,24 @@ export default function VideoRecorder() {
                   />
                 </video>
               </motion.div>
-              <button
-                onClick={() => retakeVideo()}
-                className="hover:[linear-gradient(0deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)), #0D2247] group flex w-fit items-center justify-center rounded-full bg-brand px-4 py-2 text-[13px] font-semibold text-white no-underline  transition-all duration-75 active:scale-95  disabled:cursor-not-allowed"
-                style={{
-                  boxShadow:
-                    '0px 1px 4px rgba(13, 34, 71, 0.17), inset 0px 0px 0px 1px , inset 0px 0px 0px 2px rgba(255, 255, 255, 0.1)',
-                }}
-              >
-                Retake video
-              </button>
+              <div className="flex w-full justify-between">
+                <button
+                  onClick={() => retakeVideo()}
+                  className="hover:[linear-gradient(0deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)), #0D2247] group flex w-fit items-center justify-center rounded-full bg-brand px-4 py-2 text-[13px] font-semibold text-white no-underline  transition-all duration-75 active:scale-95  disabled:cursor-not-allowed"
+                  style={{
+                    boxShadow:
+                      '0px 1px 4px rgba(13, 34, 71, 0.17), inset 0px 0px 0px 1px , inset 0px 0px 0px 2px rgba(255, 255, 255, 0.1)',
+                  }}
+                >
+                  Retake video
+                </button>
+                <Button variant="default">Submit Form</Button>
+              </div>
             </div>
           ) : (
-            <div className="mt-[10vh] flex h-full w-full flex-col items-center">
+            <div className="flex h-full w-full flex-col items-center">
               {recordingPermission ? (
-                <div className="mx-auto flex w-full max-w-[1080px] flex-col justify-center">
+                <div className="mx-auto flex h-full w-full max-w-[1080px] flex-col justify-center">
                   <motion.div
                     initial={{ y: -20 }}
                     animate={{ y: 0 }}

@@ -3,14 +3,18 @@ import NavBar from '@/components/ui/navbar';
 
 import MarkdownComponent from '@/components/mark-down';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { URLs } from '@/lib/constants';
 import { projectFormSchema } from '@/lib/validations/project';
 import { getProjectById } from '@/server/actions/projects';
 import { extractIDfromYtURL } from '@/utils';
+import { ChevronLeft, LucideArrowUpRight, LucideGithub } from 'lucide-react';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import {
   GetInTouchButton,
   GetInTouchSection,
-  IsSameUserWrapper,
+  IsNotSameUserWrapper,
 } from './GetInTouchSections';
 
 type PageProps = {
@@ -31,6 +35,8 @@ async function Page({ params }: PageProps) {
 
   if (!projectDetails?.dev) return notFound();
 
+  console.log(projectDetails);
+
   const { project, dev } = projectDetails;
   const { title, description, youtubeUrl, projectMedia: media } = project;
 
@@ -43,6 +49,8 @@ async function Page({ params }: PageProps) {
   const toShowYTVideo = validYoutubeUrlResult.success;
 
   const initialLetter = displayName.charAt(0).toUpperCase();
+
+  const { sourceCodeUrl, hostedUrl } = projectDetails.project;
 
   return (
     <>
@@ -60,21 +68,31 @@ async function Page({ params }: PageProps) {
         </DialogContent>
       </Dialog> */}
 
-      <section className="flex min-h-feed items-start justify-center">
+      <section className="flex items-start justify-center">
         <main className="mt-8 flex w-full flex-col justify-center px-4 md:w-3/4">
+          <Link href={URLs.feed} className="mb-4">
+            <Button className="p-0" variant="link">
+              <ChevronLeft className="mr-2" />
+              Go back
+            </Button>
+          </Link>
           <h1 className="mb-4 w-full text-left text-2xl font-semibold">
             {title}
           </h1>
           <div className="mb-6 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Avatar>
-                <AvatarImage src={displayPictureUrl} alt={displayName} />
-                <AvatarFallback> {initialLetter} </AvatarFallback>
-              </Avatar>
+              <Link href={`/user/${dev.username}`}>
+                <Avatar className="h-auto w-14">
+                  <AvatarImage src={displayPictureUrl} alt={displayName} />
+                  <AvatarFallback> {initialLetter} </AvatarFallback>
+                </Avatar>
+              </Link>
               <div>
-                <div className="mb-0.5 text-sm font-semibold">
-                  {displayName}
-                </div>
+                <Link href={`/user/${dev.username}`}>
+                  <div className="mb-0.5 text-sm font-semibold">
+                    {displayName}
+                  </div>
+                </Link>
                 <div className="flex items-center">
                   <div
                     className={
@@ -96,14 +114,14 @@ async function Page({ params }: PageProps) {
               </div>
             </div>
 
-            <IsSameUserWrapper projectUserId={project.userId}>
+            <IsNotSameUserWrapper projectUserId={project.userId}>
               <GetInTouchButton displayName={displayName} />
-            </IsSameUserWrapper>
+            </IsNotSameUserWrapper>
           </div>
 
           {youtubeUrl && toShowYTVideo && (
             <iframe
-              className="aspect-video w-full max-w-2xl overflow-hidden rounded-lg"
+              className="aspect-video w-full max-w-2xl self-center overflow-hidden rounded-lg"
               src={
                 'https://www.youtube.com/embed/' +
                 extractIDfromYtURL(validYoutubeUrlResult.data!)
@@ -128,8 +146,36 @@ async function Page({ params }: PageProps) {
               ),
           )}
 
-          <div className="mt-8">
-            <MarkdownComponent content={description} />
+          <div className="mt-8 rounded-sm border border-gray-500 p-6">
+            <section className="mb-4 flex flex-col gap-2">
+              <h2 className="text-md mb-4 border-b border-gray-600 font-semibold">
+                Links
+              </h2>
+              {sourceCodeUrl && (
+                <Link
+                  className="flex items-center gap-2 text-blue-400"
+                  href={sourceCodeUrl}
+                >
+                  <LucideGithub size={18} />
+                  View Code
+                </Link>
+              )}
+              {hostedUrl && (
+                <Link
+                  className="flex items-center gap-2 text-blue-400"
+                  href={hostedUrl}
+                >
+                  <LucideArrowUpRight size={18} />
+                  Visit
+                </Link>
+              )}
+            </section>
+            <section>
+              <h2 className="text-md mb-4 border-b border-gray-600 font-semibold">
+                Description
+              </h2>
+              <MarkdownComponent content={description} />
+            </section>
           </div>
 
           <GetInTouchSection
