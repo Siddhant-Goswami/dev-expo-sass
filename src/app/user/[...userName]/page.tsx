@@ -3,7 +3,7 @@ import Grid from '@/components/ui/grid';
 import NavBar from '@/components/ui/navbar';
 import { getProjectsByUserId } from '@/server/actions/projects';
 import { getUserFromUsername } from '@/server/actions/users';
-import { Image } from 'lucide-react';
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { z } from 'zod';
 
