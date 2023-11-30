@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useRef, useState } from 'react';
 
 export default function FancyThumbnailPlayer(props: {
@@ -32,7 +33,10 @@ export default function FancyThumbnailPlayer(props: {
       className="group relative mb-8 aspect-video w-full max-w-lg overflow-hidden rounded-sm duration-200 hover:scale-110"
     >
       {props.thumbnailSrc && (
-        <img
+        <Image
+          width={250}
+          height={250}
+          alt=""
           src={
             'https://images.unsplash.com/photo-1701007633412-e519020c7c22?q=80&w=3640&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
           }

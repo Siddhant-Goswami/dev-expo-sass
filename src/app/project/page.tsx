@@ -1,8 +1,6 @@
-import { Avatar } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import GetInTouchModal from '@/components/ui/get-in-touch-modal';
 import NavBar from '@/components/ui/navbar';
-import { AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
 import Image from 'next/image';
 
 export default function Page() {
@@ -20,7 +18,10 @@ export default function Page() {
           </h1>
           <div className="mb-6 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <img
+              <Image
+                width={250}
+                height={250}
+                alt=""
                 className="w-12 rounded-full"
                 src="https://lh3.googleusercontent.com/a/ACg8ocLfbKiBRQohC1aCKjnp_7mEa7LGMSewqNZOVZHVuvjwLNFS=s96-c"
               />
@@ -56,7 +57,9 @@ export default function Page() {
               <GetInTouchModal />
             </div>
           </div>
-          <img
+          <Image
+            width={250}
+            height={250}
             className="h-500 w-900 rounded-sm"
             src="https://cdn.dribbble.com/userupload/11597547/file/original-0bc15864f71e1fcdfa8152b2379fdb44.jpg"
             alt="3D Cube Network"
