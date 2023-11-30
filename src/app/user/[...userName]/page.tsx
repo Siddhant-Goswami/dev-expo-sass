@@ -22,7 +22,9 @@ async function Page({ params }: PageProps) {
 
   const { userInfo, devInfo } = userResult;
   if (!userInfo) {
+    
     notFound();
+    
   }
 
   //   const user = {
