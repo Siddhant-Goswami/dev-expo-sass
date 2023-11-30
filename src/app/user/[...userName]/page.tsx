@@ -61,9 +61,9 @@ async function Page({ params }: PageProps) {
   });
 
   return (
-    <div className='flex flex-col'>
+    <div className="flex flex-col">
       <NavBar />
-      <section className="flex items-start justify-center min-h-[82vh]">
+      <section className="flex min-h-[82vh] items-start justify-center">
         <main className="mt-8 flex w-full flex-col justify-center gap-6 px-4 md:w-3/4">
           <div className="flex w-full flex-col items-center justify-center gap-4">
             {/* <Avatar>
@@ -73,7 +73,7 @@ async function Page({ params }: PageProps) {
             <Image
               width={250}
               height={250}
-              className="w-24 h-auto rounded-full md:w-32"
+              className="h-auto w-24 rounded-full md:w-32"
               src={userInfo.displayPictureUrl}
               alt="Profile Picture"
             />

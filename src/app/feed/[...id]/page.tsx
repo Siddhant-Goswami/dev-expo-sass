@@ -8,7 +8,12 @@ import { URLs } from '@/lib/constants';
 import { projectFormSchema } from '@/lib/validations/project';
 import { getProjectById } from '@/server/actions/projects';
 import { extractIDfromYtURL } from '@/utils';
-import { ChevronLeft, LucideArrowUpRight, LucideGithub, LucideLink } from 'lucide-react';
+import {
+  ChevronLeft,
+  LucideArrowUpRight,
+  LucideGithub,
+  LucideLink,
+} from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import {
@@ -118,28 +123,28 @@ async function Page({ params }: PageProps) {
               {hostedUrl && (
                 <Button
                   variant="outline"
-                  className="px-2.5 rounded-sm border-gray-500"
+                  className="rounded-sm border-gray-500 px-2.5"
                 >
                   <Link
                     className="flex items-center gap-2 text-gray-800 dark:text-white"
                     href={hostedUrl}
                   >
                     <LucideLink size={18} />
-                    <span className='hidden md:block'>Visit</span>
+                    <span className="hidden md:block">Visit</span>
                   </Link>
                 </Button>
               )}
               {sourceCodeUrl && (
                 <Button
                   variant="link"
-                  className="px-2.5 rounded-sm border border-gray-500"
+                  className="rounded-sm border border-gray-500 px-2.5"
                 >
                   <Link
                     className="flex items-center gap-2"
                     href={sourceCodeUrl}
                   >
                     <LucideGithub size={18} />
-                    <span className='hidden md:block'>View Code</span>
+                    <span className="hidden md:block">View Code</span>
                   </Link>
                 </Button>
               )}

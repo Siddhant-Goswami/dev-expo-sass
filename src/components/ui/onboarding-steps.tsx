@@ -206,7 +206,9 @@ export function OnboardingSteps() {
               )}
             />
             <div className="mb-4 flex w-full justify-center">
-              <Button type="submit" className='w-full'>Get Verfied</Button>
+              <Button type="submit" className="w-full">
+                Get Verfied
+              </Button>
             </div>
           </form>
         </Form>
