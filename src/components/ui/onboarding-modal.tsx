@@ -7,7 +7,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { OnbaordingSteps } from '@/components/ui/onboarding-steps';
+import { OnboardingSteps } from '@/components/ui/onboarding-steps';
 import { useState } from 'react';
 
 type OnboardUserProps = {
@@ -28,7 +28,7 @@ function OnboardUser({ children }: OnboardUserProps) {
             community.
           </DialogDescription>
         </DialogHeader>
-        <OnbaordingSteps />
+        <OnboardingSteps />
       </DialogContent>
     </Dialog>
   );

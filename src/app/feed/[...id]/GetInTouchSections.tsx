@@ -11,18 +11,22 @@ type GetInTouchButtonProps = {
 export const GetInTouchButton = ({ displayName }: GetInTouchButtonProps) => {
   const { userId } = useAuth();
 
-  return userId ? (
-    <GetInTouchModal username={displayName} text="Get in Touch" />
-  ) : (
-    <SignUpModal>
-      <Button variant="brand" className="mt-10 p-6">
-        Login in To Get in Touch
-      </Button>
-    </SignUpModal>
+  return (
+    <div className="flex justify-center">
+      {userId ? (
+        <GetInTouchModal username={displayName} text="Get in Touch" />
+      ) : (
+        <SignUpModal>
+          <Button variant="brand" className="w-fit">
+            Login in To Get in Touch
+          </Button>
+        </SignUpModal>
+      )}
+    </div>
   );
 };
 
-export const IsSameUserWrapper = ({
+export const IsNotSameUserWrapper = ({
   projectUserId,
   children,
 }: {
@@ -30,7 +34,7 @@ export const IsSameUserWrapper = ({
   children: React.ReactNode;
 }) => {
   const { userId } = useAuth();
-  const isSameUser = projectUserId === userId;
+  const isSameUser = projectUserId !== userId;
   return isSameUser && children;
 };
 
@@ -42,7 +46,7 @@ export const GetInTouchSection = ({
   userDisplayName: string;
 }) => {
   return (
-    <IsSameUserWrapper projectUserId={projectUserId}>
+    <IsNotSameUserWrapper projectUserId={projectUserId}>
       <div className="mt-6 flex w-full flex-col items-center justify-center border-t border-gray-500 py-8">
         <h3 className="text-xl font-medium">
           {' '}
@@ -53,6 +57,6 @@ export const GetInTouchSection = ({
         </p>
       </div>
       <GetInTouchButton displayName={userDisplayName} />
-    </IsSameUserWrapper>
+    </IsNotSameUserWrapper>
   );
 };

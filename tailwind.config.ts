@@ -35,7 +35,7 @@ module.exports = {
         '50': '50rem',
       },
       minHeight: {
-        feed: 'calc(100vh - 9.75rem)',
+        // feed: 'calc(100vh - 9.75rem)',
       },
       fontSize: {
         '3xl': ['36px', '40px'],

@@ -19,9 +19,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/components/ui/use-toast';
 import VideoRecorder from '@/components/video-recorder';
 import { useAuth } from '@/hooks/user/auth';
+import { createDevApplication } from '@/server/actions/users';
 import { isGithubUserValid } from '@/utils';
+import { ChevronLeft } from 'lucide-react';
 import { useState } from 'react';
-// import { toast } from "@/registry/new-york/ui/use-toast"
 
 const onboardingStepsSchema = z.object({
   displayName: z
@@ -43,7 +44,7 @@ const onboardingStepsSchema = z.object({
 type OnbaordingStepsValues = z.infer<typeof onboardingStepsSchema>;
 type VerificationStepValues = 'fields' | 'video';
 
-export function OnbaordingSteps() {
+export function OnboardingSteps() {
   const [verificationStep, setVerificationStep] =
     useState<VerificationStepValues>('fields');
 
@@ -68,15 +69,19 @@ export function OnbaordingSteps() {
     },
   });
 
-  async function onSubmit(data: OnbaordingStepsValues) {
+  const submitApplication = async () => {
+    const fn = createDevApplication;
+  };
+
+  async function submitFields(data: OnbaordingStepsValues) {
     console.log(data);
 
     const getGithubUsername = githubUsername
       ? githubUsername
-      : isGithubUserValid(data.githubUsername);
+      : await isGithubUserValid(data.githubUsername);
     console.log(getGithubUsername);
 
-    const isValidGithubUsername = await getGithubUsername;
+    const isValidGithubUsername = getGithubUsername;
 
     if (!isValidGithubUsername) {
       toast({
@@ -97,11 +102,19 @@ export function OnbaordingSteps() {
     }
   }
 
+  async function submitForm() {
+    console.log('submit form');
+  }
+
+  console.log('githubUsername', githubUsername);
   return (
     <>
-      {verificationStep === 'video' && (
+      {verificationStep === 'fields' && (
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form
+            onSubmit={form.handleSubmit(submitFields)}
+            className="space-y-8"
+          >
             <div className="flex w-full gap-4">
               <FormField
                 control={form.control}
@@ -206,12 +219,22 @@ export function OnbaordingSteps() {
         </Form>
       )}
 
-      {verificationStep === 'fields' && (
+      {verificationStep === 'video' && (
         <>
           {/* <p className="text-center text-2xl font-bold text-white"> </p> */}
-          <p className="w-full text-center text-sm font-medium">
-            Please record a short video introducing yourself and your work.
-          </p>
+          <div className='mr-auto flex w-full items-center gap-3 justify-start'>
+            <button
+              onClick={() => setVerificationStep('fields')}
+              className="flex items-center self-start"
+            >
+              <ChevronLeft />
+              <span>Edit Form</span>
+            </button>
+            <p className="text-center text-sm font-medium mx-auto">
+              Please record a short video introducing yourself and your work.
+            </p>
+          </div>
+
           <VideoRecorder />
         </>
       )}

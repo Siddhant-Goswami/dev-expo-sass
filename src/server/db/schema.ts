@@ -7,6 +7,7 @@ import {
   boolean,
   index,
   integer,
+  json,
   pgTableCreator,
   primaryKey,
   timestamp,
@@ -42,6 +43,7 @@ export const userProfiles = pgTable(
       .notNull(),
   },
   (table) => ({
+    usernameIndex: index('username_idx').on(table.username),
     displayNameIndex: index('display_name_idx').on(table.displayName),
   }),
 );
@@ -54,8 +56,10 @@ export const devProfiles = pgTable('devProfile', {
     .primaryKey()
     .references(() => userProfiles.id),
   availibity: boolean('availibity').notNull().default(true),
-  devApprovedAt: timestamp('devApprovedAt', { withTimezone: true }),
-  gitHubUrl: varchar('gitHubUrl', { length: 1024 }),
+  devApprovedAt: timestamp('devApprovedAt', {
+    withTimezone: true,
+  }).defaultNow(),
+  gitHubUrl: varchar('gitHubUrl', { length: 1024 }).notNull(),
   linkedInUrl: varchar('linkedInUrl', { length: 1024 }),
   twitterUrl: varchar('twitterUrl', { length: 1024 }),
   websiteUrl: varchar('websiteUrl', { length: 1024 }),
@@ -63,6 +67,28 @@ export const devProfiles = pgTable('devProfile', {
 
 export type DevProfileSelect = InferSelectModel<typeof devProfiles>;
 export type DevProfileInsert = InferInsertModel<typeof devProfiles>;
+
+export const devApplications = pgTable('devApplication', {
+  id: bigserial('id', { mode: 'number' }).primaryKey(),
+  userId: commonUserIdSchema('userId').references(() => userProfiles.id).notNull(),
+  displayName: varchar('displayName', { length: 256 }).notNull(),
+  bio: varchar('bio', { length: 500 }).notNull(),
+  applicationVideoLink: varchar('applicationVideoLink', {
+    length: 1024,
+  }).notNull(),
+  formFields: json('formFields').notNull(),
+  appliedAt: timestamp('appliedAt', { withTimezone: true }).notNull(),
+  status: varchar('status', { enum: ['pending', 'approved', 'rejected'] })
+    .notNull()
+    .default('pending'),
+  websiteUrl: varchar('websiteUrl', { length: 1024 }),
+  gitHubUrl: varchar('gitHubUrl', { length: 1024 }).notNull(),
+  twitterUrl: varchar('twitterUrl', { length: 1024 }),
+  linkedInUrl: varchar('linkedInUrl', { length: 1024 }),
+});
+
+export type DevApplicationSelect = InferSelectModel<typeof devApplications>;
+export type DevApplicationInsert = InferInsertModel<typeof devApplications>;
 
 export const recruiterProfiles = pgTable('recruiterProfile', {
   userId: commonUserIdSchema('userId')

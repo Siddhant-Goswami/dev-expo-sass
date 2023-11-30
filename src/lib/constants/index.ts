@@ -1,5 +1,6 @@
 export const URLs = {
   home: '/',
+  create: '/create',
   dashboard: '/dashboard',
   feed: '/feed',
   signIn: '/sign-in',

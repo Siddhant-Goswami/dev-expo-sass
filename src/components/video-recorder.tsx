@@ -94,6 +94,10 @@ export default function VideoRecorder() {
     restartVideo();
   }
 
+  function uploadApplicationVideo() {
+    const videoBlob = new Blob(recordedChunks, { type: 'video/mp4' });
+  }
+
   const videoConstraints = isDesktop
     ? { width: 1280, height: 720, facingMode: 'user' }
     : { width: 480, height: 640, facingMode: 'user' };
@@ -143,7 +147,7 @@ export default function VideoRecorder() {
                 >
                   Retake video
                 </button>
-                <Button variant="default">Submit</Button>
+                <Button variant="default">Submit Form</Button>
               </div>
             </div>
           ) : (
