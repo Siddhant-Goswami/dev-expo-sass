@@ -43,8 +43,8 @@ const NavBar = () => {
                   variant="outline"
                   className="rounded-sm border-brand text-brand hover:bg-brand hover:text-white hover:shadow-sm hover:shadow-brand"
                 >
-                  <LucidePlus className="mr-2 w-4" />
-                  Create Project
+                  <LucidePlus className="md:mr-2 w-4" />
+                  <span className='hidden md:block'>Create Project</span>
                 </Button>
               </Link>
               <UserAuthButton />

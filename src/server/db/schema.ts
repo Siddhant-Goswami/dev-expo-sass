@@ -75,10 +75,9 @@ export const devApplications = pgTable('devApplication', {
     .notNull(),
   displayName: varchar('displayName', { length: 256 }).notNull(),
   bio: varchar('bio', { length: 500 }).notNull(),
-  applicationVideoLink: varchar('applicationVideoLink', {
+  applicationVideoPublicId: varchar('applicationVideoPublicId', {
     length: 1024,
-  }).notNull(),
-  formFields: json('formFields').notNull(),
+  }),
   appliedAt: timestamp('appliedAt', { withTimezone: true }).notNull(),
   status: varchar('status', { enum: ['pending', 'approved', 'rejected'] })
     .notNull()

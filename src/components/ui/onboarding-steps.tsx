@@ -115,86 +115,79 @@ export function OnboardingSteps() {
             onSubmit={form.handleSubmit(submitFields)}
             className="space-y-8"
           >
-            <div className="flex w-full gap-4">
-              <FormField
-                control={form.control}
-                name="displayName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Display Name</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="Enter your display name" />
-                    </FormControl>
-                    <FormDescription>
-                      Edit your user name if you want to change how it appears
-                      on your profile.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="githubUsername"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>GitHub Username</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="Enter your GitHub username"
-                        disabled={githubUsername ? true : false}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Your GitHub username is used to fetch your projects and
-                      contributions.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            <FormField
+              control={form.control}
+              name="displayName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Display Name</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="Enter your display name" />
+                  </FormControl>
+                  <FormDescription>
+                    Edit your user name if you want to change how it appears on
+                    your profile.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="githubUsername"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>GitHub Username</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      placeholder="Enter your GitHub username"
+                      disabled={githubUsername ? true : false}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Your GitHub username is used to fetch your projects and
+                    contributions.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-            <div className="flex w-full gap-4">
-              <FormField
-                control={form.control}
-                name="portfolioLink"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Portfolio Link</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="Enter your portfolio URL"
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Your portfolio link is used to showcase your work on your
-                      profile.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="twitterLink"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Twitter Link</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="Enter your Twitter URL" />
-                    </FormControl>
-                    <FormDescription>
-                      Your Twitter link is used to showcase your work on your
-                      profile.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            <FormField
+              control={form.control}
+              name="portfolioLink"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Portfolio Link</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="Enter your portfolio URL" />
+                  </FormControl>
+                  <FormDescription>
+                    Your portfolio link is used to showcase your work on your
+                    profile.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="twitterLink"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Twitter Link</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="Enter your Twitter URL" />
+                  </FormControl>
+                  <FormDescription>
+                    Your Twitter link is used to showcase your work on your
+                    profile.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <FormField
               control={form.control}
@@ -212,8 +205,8 @@ export function OnboardingSteps() {
                 </FormItem>
               )}
             />
-            <div className="mb-4 flex w-full justify-end">
-              <Button type="submit">Get Verfied</Button>
+            <div className="mb-4 flex w-full justify-center">
+              <Button type="submit" className='w-full'>Get Verfied</Button>
             </div>
           </form>
         </Form>

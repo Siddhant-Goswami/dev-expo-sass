@@ -8,7 +8,7 @@ import { URLs } from '@/lib/constants';
 import { projectFormSchema } from '@/lib/validations/project';
 import { getProjectById } from '@/server/actions/projects';
 import { extractIDfromYtURL } from '@/utils';
-import { ChevronLeft, LucideArrowUpRight, LucideGithub } from 'lucide-react';
+import { ChevronLeft, LucideArrowUpRight, LucideGithub, LucideLink } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import {
@@ -69,8 +69,8 @@ async function Page({ params }: PageProps) {
       </Dialog> */}
 
       <section className="flex items-start justify-center">
-        <main className="mt-8 flex w-full flex-col justify-center px-4 md:w-3/4">
-          <Link href={URLs.feed} className="mb-4">
+        <main className="mt-8 flex w-full flex-col justify-center px-4 md:max-w-4xl">
+          <Link href={URLs.feed} className="mb-4 w-fit">
             <Button className="p-0" variant="link">
               <ChevronLeft className="mr-2" />
               Go back
@@ -114,9 +114,40 @@ async function Page({ params }: PageProps) {
               </div>
             </div>
 
-            <IsNotSameUserWrapper projectUserId={project.userId}>
-              <GetInTouchButton displayName={displayName} />
-            </IsNotSameUserWrapper>
+            <div className="flex gap-2">
+              {hostedUrl && (
+                <Button
+                  variant="outline"
+                  className="px-2.5 rounded-sm border-gray-500"
+                >
+                  <Link
+                    className="flex items-center gap-2 text-gray-800 dark:text-white"
+                    href={hostedUrl}
+                  >
+                    <LucideLink size={18} />
+                    <span className='hidden md:block'>Visit</span>
+                  </Link>
+                </Button>
+              )}
+              {sourceCodeUrl && (
+                <Button
+                  variant="link"
+                  className="px-2.5 rounded-sm border border-gray-500"
+                >
+                  <Link
+                    className="flex items-center gap-2"
+                    href={sourceCodeUrl}
+                  >
+                    <LucideGithub size={18} />
+                    <span className='hidden md:block'>View Code</span>
+                  </Link>
+                </Button>
+              )}
+
+              <IsNotSameUserWrapper projectUserId={project.userId}>
+                <GetInTouchButton displayName={displayName} />
+              </IsNotSameUserWrapper>
+            </div>
           </div>
 
           {youtubeUrl && toShowYTVideo && (
@@ -147,7 +178,7 @@ async function Page({ params }: PageProps) {
           )}
 
           <div className="mt-8 rounded-sm border border-gray-500 p-6">
-            <section className="mb-4 flex flex-col gap-2">
+            {/* <section className="mb-4 flex flex-col gap-2">
               <h2 className="text-md mb-4 border-b border-gray-600 font-semibold">
                 Links
               </h2>
@@ -169,7 +200,7 @@ async function Page({ params }: PageProps) {
                   Visit
                 </Link>
               )}
-            </section>
+            </section> */}
             <section>
               <h2 className="text-md mb-4 border-b border-gray-600 font-semibold">
                 Description
