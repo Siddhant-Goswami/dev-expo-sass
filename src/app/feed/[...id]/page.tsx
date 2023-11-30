@@ -22,7 +22,6 @@ type PageProps = {
   params: { id: string[] };
 };
 
-export const revalidate = false;
 async function Page({ params }: PageProps) {
   const availableForWork = true;
 
