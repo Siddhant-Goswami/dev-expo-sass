@@ -8,12 +8,7 @@ import { URLs } from '@/lib/constants';
 import { projectFormSchema } from '@/lib/validations/project';
 import { getProjectById } from '@/server/actions/projects';
 import { extractIDfromYtURL } from '@/utils';
-import {
-  ChevronLeft,
-  LucideArrowUpRight,
-  LucideGithub,
-  LucideLink,
-} from 'lucide-react';
+import { ChevronLeft, LucideGithub, LucideLink } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -155,36 +150,39 @@ async function Page({ params }: PageProps) {
               </IsNotSameUserWrapper>
             </div>
           </div>
+          <div className="flex flex-col gap-4 md:gap-5">
+            {youtubeUrl && toShowYTVideo && (
+              <iframe
+                className="aspect-video w-full max-w-2xl self-center overflow-hidden rounded-lg"
+                src={
+                  'https://www.youtube.com/embed/' +
+                  extractIDfromYtURL(validYoutubeUrlResult.data!)
+                }
+                title="YouTube video player"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            )}
 
-          {youtubeUrl && toShowYTVideo && (
-            <iframe
-              className="aspect-video w-full max-w-2xl self-center overflow-hidden rounded-lg"
-              src={
-                'https://www.youtube.com/embed/' +
-                extractIDfromYtURL(validYoutubeUrlResult.data!)
-              }
-              title="YouTube video player"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowFullScreen
-            />
-          )}
-
-          {images.map(
-            (image, index) =>
-              // h-500 w-900
-              image.url && (
-                <div className="mb-8 overflow-hidden rounded-sm" key={image.id}>
-                  <Image
-                    width={250}
-                    height={250}
-                    className="h-full w-full object-cover"
-                    src={image.url}
-                    alt={`${project.title} image ${index + 1} `}
-                  />
-                </div>
-              ),
-          )}
-
+            {images.map(
+              (image, index) =>
+                // h-500 w-900
+                image.url && (
+                  <div
+                    className="mb-8 overflow-hidden rounded-sm"
+                    key={image.id}
+                  >
+                    <Image
+                      width={250}
+                      height={250}
+                      className="h-full w-full object-cover"
+                      src={image.url}
+                      alt={`${project.title} image ${index + 1} `}
+                    />
+                  </div>
+                ),
+            )}
+          </div>
           <div className="mt-8 rounded-sm border border-gray-500 p-6">
             {/* <section className="mb-4 flex flex-col gap-2">
               <h2 className="text-md mb-4 border-b border-gray-600 font-semibold">
