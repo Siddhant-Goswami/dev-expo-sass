@@ -11,7 +11,7 @@ function Page() {
   return (
     <>
       <NavBar />
-      <section className="mx-auto mb-32 flex max-w-4xl flex-col items-center justify-center px-4">
+      <section className="mx-auto mb-32 flex min-h-[65vh] max-w-4xl flex-col items-center justify-start px-4">
         <h1 className="mt-8 w-max text-2xl font-extrabold tracking-tight md:text-4xl lg:text-5xl">
           {isUserVerified ? 'Create a new project' : 'Become a developer now!'}
         </h1>
