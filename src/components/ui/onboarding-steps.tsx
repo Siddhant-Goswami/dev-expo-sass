@@ -37,7 +37,7 @@ const onboardingStepsSchema = z.object({
   twitterLink: z.string().url('Please enter a valid URL.'),
   bio: z
     .string()
-    .min(20, 'Bio must be at least 20 characters.')
+    .min(10, 'Bio must be at least 10 characters.')
     .max(300, 'Bio must be less than 300 characters.'),
 });
 
