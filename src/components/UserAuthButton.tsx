@@ -6,15 +6,18 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { supabaseClientComponentClient, useAuth } from '@/hooks/user/auth';
+import { useUserProfile } from '@/hooks/user/profile';
 import { URLs } from '@/lib/constants';
-import { LogOutIcon, User2Icon, UserCircle, UserIcon } from 'lucide-react';
+import { LogOutIcon, User2Icon } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
+import Link from 'next/link';
 
 export default function UserAuthButton() {
   const { session } = useAuth();
+  // const { username } = useUserProfile();
   const supabase = supabaseClientComponentClient();
-
+  // console.log(username);
   return (
     <Popover>
       <PopoverTrigger>
@@ -38,12 +41,17 @@ export default function UserAuthButton() {
       </PopoverTrigger>
       <PopoverContent className="w-fit">
         <ul className="flex flex-col gap-2">
-          {/* <li>
-            <Button onClick={} variant="outline" className="flex w-full items-center gap-3">
-              <User2Icon/>
-              Profile
-            </Button>
-          </li> */}
+          {/* {username && <li>
+            <Link href={`/user/${username}`}>
+              <Button
+                variant="outline"
+                className="flex w-full items-center gap-3"
+              >
+                <User2Icon />
+                Profile
+              </Button>
+            </Link>
+          </li>} */}
           <li>
             <Button
               variant="outline"

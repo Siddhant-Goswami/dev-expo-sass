@@ -3,11 +3,9 @@ import ScrollableChips from '@/components/ui/chip';
 import Footer from '@/components/ui/footer';
 import Grid from '@/components/ui/grid';
 import NavBar from '@/components/ui/navbar';
-import ProjectUploadModal from '@/components/ui/project-upload-modal';
-import { categories } from '@/lib/constants';
+import { URLs, categories } from '@/lib/constants';
 import { getAllProjects } from '@/server/actions/projects';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import Link from 'next/link';
 
 type FeedProps = {
   searchParams: {
@@ -64,11 +62,11 @@ async function Feed({ searchParams }: FeedProps) {
             </h3>
 
             {
-              <ProjectUploadModal>
+              <Link href={URLs.create}>
                 <ShimmerButton>
                   Be the first one to upload {validFilter.label} project
                 </ShimmerButton>
-              </ProjectUploadModal>
+              </Link>
             }
           </div>
         )}

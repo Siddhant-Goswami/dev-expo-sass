@@ -61,9 +61,9 @@ async function Page({ params }: PageProps) {
   });
 
   return (
-    <>
+    <div className="flex flex-col">
       <NavBar />
-      <section className="flex items-start justify-center">
+      <section className="flex min-h-[82vh] items-start justify-center">
         <main className="mt-8 flex w-full flex-col justify-center gap-6 px-4 md:w-3/4">
           <div className="flex w-full flex-col items-center justify-center gap-4">
             {/* <Avatar>
@@ -73,7 +73,7 @@ async function Page({ params }: PageProps) {
             <Image
               width={250}
               height={250}
-              className="w-30 h-auto rounded-full md:w-32"
+              className="h-auto w-24 rounded-full md:w-32"
               src={userInfo.displayPictureUrl}
               alt="Profile Picture"
             />
@@ -81,7 +81,7 @@ async function Page({ params }: PageProps) {
               <h1 className="grow-1 text-center text-xl font-medium tracking-tight lg:text-2xl ">
                 {userInfo.displayName}
               </h1>
-              <p className="mb-2 text-base opacity-70 lg:text-lg">
+              <p className="mb-2 text-center text-base opacity-70 lg:text-lg">
                 {/* perfectly balanced as all things should be */}
                 {userInfo.bio}
               </p>
@@ -95,7 +95,7 @@ async function Page({ params }: PageProps) {
         </main>
       </section>
       <Footer />
-    </>
+    </div>
   );
 }
 

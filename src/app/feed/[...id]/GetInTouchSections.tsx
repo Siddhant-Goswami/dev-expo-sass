@@ -18,7 +18,7 @@ export const GetInTouchButton = ({ displayName }: GetInTouchButtonProps) => {
       ) : (
         <SignUpModal>
           <Button variant="brand" className="w-fit">
-            Login in To Get in Touch
+            Login To Get in Touch
           </Button>
         </SignUpModal>
       )}
