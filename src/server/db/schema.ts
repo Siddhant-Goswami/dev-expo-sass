@@ -1,6 +1,7 @@
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
+import { devApplicationStatusesEnum } from '@/components/ui/onboarding-steps';
 import {
   relations,
   type InferInsertModel,
@@ -78,11 +79,8 @@ export const devApplications = pgTable('devApplication', {
     .notNull(),
   displayName: varchar('displayName', { length: 256 }).notNull(),
   bio: varchar('bio', { length: 500 }).notNull(),
-  applicationVideoPublicId: varchar('applicationVideoPublicId', {
-    length: 1024,
-  }),
   appliedAt: timestamp('appliedAt', { withTimezone: true }).notNull(),
-  status: varchar('status', { enum: ['pending', 'approved', 'rejected'] })
+  status: varchar('status', { enum: devApplicationStatusesEnum })
     .notNull()
     .default('pending'),
   websiteUrl: varchar('websiteUrl', { length: 1024 }),
@@ -93,6 +91,58 @@ export const devApplications = pgTable('devApplication', {
 
 export type DevApplicationSelect = InferSelectModel<typeof devApplications>;
 export type DevApplicationInsert = InferInsertModel<typeof devApplications>;
+
+type ApplicationMediaType = 'image' | 'video';
+
+export const devApplicationMedia = pgTable(
+  'devApplicationMedia',
+  {
+    id: bigserial('id', { mode: 'number' }).primaryKey(),
+    applicationId: bigserial('applicationId', { mode: 'number' })
+      .references(() => devApplications.id)
+      .notNull(),
+    type: varchar('type', { length: 50 })
+      .$type<ApplicationMediaType>()
+      .notNull(),
+    url: varchar('url', { length: 1024 }),
+
+    uploadInitiatedAt: timestamp('uploadInitiatedAt', { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+
+    expiresAt: timestamp('expiresAt', { withTimezone: true }),
+
+    userId: commonUserIdSchema('userId')
+      .notNull()
+      .references(() => userProfiles.id),
+
+    // TODO: Add data specific to different upload providers, like S3 keys and cloudinary public ids...
+    publicId: varchar('publicId', { length: 2048 }).notNull().unique(), // Cloudinary public id
+
+    createdAt: timestamp('createdAt', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp('updatedAt', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => {
+    return {
+      typeIndex: index('type_idx').on(table.type),
+      applicationIdIndex: index('application_id_idx').on(table.applicationId),
+      userIdIndex: index('user_id_idx').on(table.userId),
+      publicIdIndex: index('public_id_idx').on(table.publicId),
+      expiresAtIndex: index('expires_at_idx').on(table.expiresAt),
+    };
+  },
+);
+
+export type ApplicationMediaSelect = InferSelectModel<
+  typeof devApplicationMedia
+>;
+export type ApplicationMediaInsert = InferInsertModel<
+  typeof devApplicationMedia
+>;
 
 export const recruiterProfiles = pgTable('recruiterProfile', {
   userId: commonUserIdSchema('userId')
@@ -320,6 +370,8 @@ export const userProfileRelations = relations(userProfiles, ({ one, many }) => {
       fields: [userProfiles.id],
       references: [recruiterProfiles.userId],
     }),
+    devApplications: many(devApplications),
+    devApplicationMedia: many(devApplicationMedia),
   };
 });
 
@@ -352,6 +404,36 @@ export const projectTagsRelation = relations(projectTags, ({ one }) => {
     tag: one(tags, { fields: [projectTags.tagId], references: [tags.id] }),
   };
 });
+
+export const devApplicationMediaRelation = relations(
+  devApplicationMedia,
+  ({ one }) => {
+    return {
+      devApplications: one(devApplications, {
+        fields: [devApplicationMedia.applicationId],
+        references: [devApplications.id],
+      }),
+
+      userProfiles: one(userProfiles, {
+        fields: [devApplicationMedia.userId],
+        references: [userProfiles.id],
+      }),
+    };
+  },
+);
+
+export const devApplicationRelations = relations(
+  devApplications,
+  ({ one, many }) => {
+    return {
+      devApplicationMedia: one(devApplicationMedia),
+      userProfiles: one(userProfiles, {
+        fields: [devApplications.userId],
+        references: [userProfiles.id],
+      }),
+    };
+  },
+);
 
 export const projectMediaRelation = relations(projectMedia, ({ one }) => {
   return {

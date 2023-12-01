@@ -1,6 +1,8 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { createDevApplication } from '@/server/actions/users';
+import { useMutation } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Webcam from 'react-webcam';
@@ -19,6 +21,12 @@ export default function VideoRecorder() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
   const [completed, setCompleted] = useState(false);
+
+  const { isLoading: isSubmittingApplication } = useMutation({
+    mutationFn: async () => {
+      createDevApplication({});
+    },
+  });
 
   useEffect(() => {
     setIsDesktop(window.innerWidth >= 768);
@@ -73,7 +81,9 @@ export default function VideoRecorder() {
   const handleDownload = async () => {
     if (recordedChunks.length) {
       setSubmitting(true);
+
       await new Promise((res) => setTimeout(res, 400));
+
       setStatus('Processing');
       setIsSuccess(true);
       setSubmitting(false);
@@ -92,10 +102,6 @@ export default function VideoRecorder() {
     setIsSuccess(false);
     setCompleted(false);
     restartVideo();
-  }
-
-  function uploadApplicationVideo() {
-    const videoBlob = new Blob(recordedChunks, { type: 'video/mp4' });
   }
 
   const videoConstraints = isDesktop
@@ -147,7 +153,14 @@ export default function VideoRecorder() {
                 >
                   Retake video
                 </button>
-                <Button variant="default">Submit Form</Button>
+
+                <Button
+                  variant="default"
+                  type="button"
+                  disabled={isSubmittingApplication}
+                >
+                  Submit Form
+                </Button>
               </div>
             </div>
           ) : (

@@ -19,10 +19,45 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/components/ui/use-toast';
 import VideoRecorder from '@/components/video-recorder';
 import { useAuth } from '@/hooks/user/auth';
-import { createDevApplication } from '@/server/actions/users';
 import { isGithubUserValid } from '@/utils';
 import { ChevronLeft } from 'lucide-react';
 import { useState } from 'react';
+
+export const devApplicationStatusesEnum = [
+  'pending',
+  'approved',
+  'rejected',
+] as const;
+
+const devApplicationStatusesSchema = z.enum(devApplicationStatusesEnum);
+
+export const devApplicationSchema = z.object({
+  displayName: z.string().min(1).max(256),
+  bio: z
+    .string()
+    .min(10, 'Bio must be at least 10 characters.')
+    .max(300, 'Bio must be less than 300 characters.'),
+  websiteUrl: z
+    .string()
+    .url('Please enter a valid URL.')
+    .nullable()
+    .default(null),
+  gitHubUrl: z
+    .string()
+    .url('Please enter a valid URL.')
+    .nullable()
+    .default(null),
+  twitterUsername: z.string().nullable().default(null),
+  linkedInUrl: z
+    .string()
+    .url('Please enter a valid URL.')
+    .nullable()
+    .default(null),
+  status: devApplicationStatusesSchema.default('pending'),
+  userId: z.string(),
+});
+
+export type DevApplicationFormSubmitType = z.infer<typeof devApplicationSchema>;
 
 const onboardingStepsSchema = z.object({
   displayName: z
@@ -35,10 +70,7 @@ const onboardingStepsSchema = z.object({
     .max(50, 'GitHub Username must be less than 50 characters.'),
   portfolioLink: z.string().url('Please enter a valid URL.'),
   twitterLink: z.string().url('Please enter a valid URL.'),
-  bio: z
-    .string()
-    .min(10, 'Bio must be at least 10 characters.')
-    .max(300, 'Bio must be less than 300 characters.'),
+  bio: devApplicationSchema.shape.bio,
 });
 
 type OnbaordingStepsValues = z.infer<typeof onboardingStepsSchema>;
@@ -69,10 +101,6 @@ export function OnboardingSteps() {
     },
   });
 
-  const submitApplication = async () => {
-    const fn = createDevApplication;
-  };
-
   async function submitFields(data: OnbaordingStepsValues) {
     console.log(data);
 
@@ -100,10 +128,6 @@ export function OnboardingSteps() {
       });
       setVerificationStep('video');
     }
-  }
-
-  async function submitForm() {
-    console.log('submit form');
   }
 
   console.log('githubUsername', githubUsername);
