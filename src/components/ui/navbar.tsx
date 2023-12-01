@@ -1,7 +1,7 @@
 'use client';
 
 import { Button, buttonVariants } from '@/components/ui/button';
-import SignUpModal from '@/components/ui/sign-up-modal';
+import SignInModal from '@/components/ui/sign-up-modal';
 import { ThemeToggle } from '@/components/ui/toggle';
 import { useAuth } from '@/hooks/user/auth';
 import { URLs } from '@/lib/constants';
@@ -46,9 +46,9 @@ const NavBar = () => {
           )}
 
           {!userId && isLoaded && (
-            <SignUpModal>
+            <SignInModal>
               <Button variant="secondary">Sign In</Button>
-            </SignUpModal>
+            </SignInModal>
           )}
 
           {!isLoaded && !userId && (
