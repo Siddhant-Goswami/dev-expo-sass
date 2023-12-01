@@ -25,7 +25,7 @@ import { uploadNewProject } from '@/server/actions/projects';
 import { useMutation } from '@tanstack/react-query';
 import { LucideLoader, LucideSave } from 'lucide-react';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 type ProjectUploadValues = z.infer<typeof projectFormSchema>;
