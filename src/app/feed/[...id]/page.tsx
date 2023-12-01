@@ -19,6 +19,7 @@ import {
   GetInTouchSection,
   IsNotSameUserWrapper,
 } from './GetInTouchSections';
+import GoBack from '@/components/ui/go-back';
 
 type PageProps = {
   params: { id: string[] };
@@ -72,12 +73,7 @@ async function Page({ params }: PageProps) {
 
       <section className="flex items-start justify-center">
         <main className="mt-8 flex w-full flex-col justify-center px-4 md:max-w-4xl">
-          <Link href={URLs.feed} className="mb-4 w-fit">
-            <Button className="p-0" variant="link">
-              <ChevronLeft className="mr-2" />
-              Go back
-            </Button>
-          </Link>
+          <GoBack />
           <h1 className="mb-4 w-full text-left text-2xl font-semibold">
             {title}
           </h1>
@@ -156,14 +152,14 @@ async function Page({ params }: PageProps) {
               )}
 
               <IsNotSameUserWrapper projectUserId={project.userId}>
-                <GetInTouchButton displayName={displayName} />
+                <GetInTouchButton displayName={displayName} devId={dev.id} />
               </IsNotSameUserWrapper>
             </div>
           </div>
           <div className="flex flex-col gap-4 md:gap-5">
             {youtubeUrl && toShowYTVideo && (
               <iframe
-                className="aspect-video w-full max-w-2xl self-center overflow-hidden rounded-lg"
+                className="aspect-video w-full max-w-4xl self-center overflow-hidden rounded-lg"
                 src={
                   'https://www.youtube.com/embed/' +
                   extractIDfromYtURL(validYoutubeUrlResult.data!)
