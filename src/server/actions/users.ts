@@ -4,7 +4,7 @@ import { desc, eq } from 'drizzle-orm';
 
 import { db } from '../db';
 import {
-  DevApplicationInsert,
+  type DevApplicationInsert,
   devApplications,
   devProfiles,
   projects,

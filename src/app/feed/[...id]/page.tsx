@@ -3,14 +3,14 @@ import NavBar from '@/components/ui/navbar';
 
 import MarkdownComponent from '@/components/mark-down';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Button, buttonVariants } from '@/components/ui/button';
-import { URLs } from '@/lib/constants';
+import { buttonVariants } from '@/components/ui/button';
+import GoBack from '@/components/ui/go-back';
+import { useAuth } from '@/hooks/user/auth';
 import { projectFormSchema } from '@/lib/validations/project';
-import { getProjectById } from '@/server/actions/projects';
+import { getProjectById, isLikedByUser } from '@/server/actions/projects';
 import { extractIDfromYtURL } from '@/utils';
 import { cn } from '@/utils/cn';
 import { GitHubLogoIcon, Link2Icon } from '@radix-ui/react-icons';
-import { ChevronLeft } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -19,7 +19,7 @@ import {
   GetInTouchSection,
   IsNotSameUserWrapper,
 } from './GetInTouchSections';
-import GoBack from '@/components/ui/go-back';
+import LikeButton from './LikeButton';
 
 type PageProps = {
   params: { id: string[] };
@@ -30,14 +30,13 @@ export const revalidate = 10;
 async function Page({ params }: PageProps) {
   const availableForWork = true;
 
-  const projectId = params.id[0];
+  const projectId = Number(params.id[0]);
 
   if (!projectId) {
     return notFound();
   }
 
-  const projectDetails = await getProjectById(Number(projectId));
-
+  const projectDetails = await getProjectById(projectId);
   if (!projectDetails?.dev) return notFound();
 
   const { project, dev } = projectDetails;
@@ -54,6 +53,12 @@ async function Page({ params }: PageProps) {
   const initialLetter = displayName.charAt(0).toUpperCase();
 
   const { sourceCodeUrl, hostedUrl } = projectDetails.project;
+
+  const isLiked = await isLikedByUser({
+    projectId: projectDetails.project.id,
+  });
+
+  console.log('isLiked', isLiked);
 
   return (
     <>
@@ -118,6 +123,11 @@ async function Page({ params }: PageProps) {
             </div>
 
             <div className="flex gap-2">
+              <LikeButton
+                likesCount={projectDetails.likesCount}
+                isLiked={isLiked}
+                projectId={projectId}
+              />
               {hostedUrl && (
                 <Link
                   className={cn(
@@ -150,7 +160,6 @@ async function Page({ params }: PageProps) {
                   <span className="hidden md:inline-block">View Code</span>
                 </Link>
               )}
-
               <IsNotSameUserWrapper projectUserId={project.userId}>
                 <GetInTouchButton displayName={displayName} devId={dev.id} />
               </IsNotSameUserWrapper>
@@ -190,29 +199,6 @@ async function Page({ params }: PageProps) {
             )}
           </div>
           <div className="mt-8 rounded-sm border border-gray-500 p-6">
-            {/* <section className="mb-4 flex flex-col gap-2">
-              <h2 className="text-md mb-4 border-b border-gray-600 font-semibold">
-                Links
-              </h2>
-              {sourceCodeUrl && (
-                <Link
-                  className="flex items-center gap-2 text-blue-400"
-                  href={sourceCodeUrl}
-                >
-                  <LucideGithub size={18} />
-                  View Code
-                </Link>
-              )}
-              {hostedUrl && (
-                <Link
-                  className="flex items-center gap-2 text-blue-400"
-                  href={hostedUrl}
-                >
-                  <LucideArrowUpRight size={18} />
-                  Visit
-                </Link>
-              )}
-            </section> */}
             <section>
               <h2 className="text-md mb-4 border-b border-gray-600 font-semibold">
                 Description

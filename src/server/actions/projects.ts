@@ -1,9 +1,9 @@
 'use server';
 import { projectFormSchema } from '@/lib/validations/project';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
-import { desc, eq } from 'drizzle-orm';
+import { desc, eq, sql } from 'drizzle-orm';
 import { cookies } from 'next/headers';
-import { z } from 'zod';
+import { number, z } from 'zod';
 import { db } from '../db';
 import {
   comments,
@@ -16,7 +16,6 @@ import {
   type ProjectSelect,
   type UserProfileSelect,
 } from '../db/schema';
-import { getUserInfo } from './users';
 
 // TODO: filter categories
 
@@ -106,35 +105,45 @@ export const getProjectById = async (projectId: ProjectSelect['id']) => {
   });
 
   const userPromise = db.query.userProfiles.findFirst({
-    where: eq(userProfiles.id, projectWithMedia?.userId),
+    where: eq(userProfiles.id, projectWithMedia.userId),
   });
 
-  const [tags, user] = await Promise.all([tagsPromise, userPromise]);
+  const totalLikes = db
+    .select({ recordCount: sql`COUNT(*)` })
+    .from(likes)
+    .where(eq(likes.projectId, projectWithMedia.id));
 
-  // const likeCount = (
-  //   await db.query.likes.findMany({
-  //     where: eq(likes.projectId, projectId),
-  //   })
-  // ).length;
-
-  // const commentCount = (
-  //   await db.query.comments.findMany({
-  //     where: eq(comments.projectId, projectId),
-  //   })
-  // ).length;
-
-  // const bookmarkCount = (
-  //   await db.query.projectBookmarks.findMany({
-  //     where: eq(projectBookmarks.projectId, projectId),
-  //   })
-  // ).length;
+  const [tags, user, likesCount] = await Promise.all([
+    tagsPromise,
+    userPromise,
+    totalLikes,
+  ]);
 
   return {
     project: projectWithMedia,
     dev: user,
     tags,
-    // media,
+    likesCount: Number(likesCount[0]?.recordCount),
   };
+};
+
+export const isLikedByUser = async ({ projectId }: { projectId: number }) => {
+  const supabase = createServerActionClient({ cookies });
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session?.user.id) {
+    throw new Error('Unauthorized');
+  }
+
+  const userId = session.user.id;
+
+  const like = await db.query.likes.findFirst({
+    where: eq(likes.projectId, projectId) && eq(likes.userId, userId),
+  });
+  return !!like;
 };
 
 type ProjectData = z.infer<typeof projectFormSchema>;
@@ -230,13 +239,28 @@ export const createComment = async ({
 };
 
 // add like
-export const createLike = async ({
-  userId,
-  projectId,
-}: {
-  userId: number;
-  projectId: number;
-}) => {
+export const createOrDeleteLike = async (projectId: number) => {
+  const supabase = createServerActionClient({ cookies });
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session?.user.id) {
+    throw new Error('Unauthorized');
+  }
+
+  const userId = session.user.id;
+
+  const like = await db.query.likes.findFirst({
+    where: eq(likes.userId, userId) && eq(likes.projectId, projectId),
+  });
+  if (like) {
+    await db
+      .delete(likes)
+      .where(eq(likes.projectId, projectId) && eq(likes.userId, userId));
+    return;
+  }
   await db.insert(likes).values({
     userId: userId.toString(),
     projectId,
@@ -249,11 +273,11 @@ export const createBookmark = async ({
   userId,
   projectId,
 }: {
-  userId: number;
+  userId: string;
   projectId: number;
 }) => {
   await db.insert(projectBookmarks).values({
-    userId: userId.toString(),
+    userId: userId,
     projectId,
     timestamp: new Date(),
   });
