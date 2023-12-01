@@ -2,7 +2,7 @@ import Footer from '@/components/ui/footer';
 import NavBar from '@/components/ui/navbar';
 
 import MarkdownComponent from '@/components/mark-down';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { URLs } from '@/lib/constants';
 import { projectFormSchema } from '@/lib/validations/project';
@@ -22,6 +22,8 @@ type PageProps = {
   params: { id: string[] };
 };
 
+export const revalidate = 10;
+
 async function Page({ params }: PageProps) {
   const availableForWork = true;
 
@@ -34,8 +36,6 @@ async function Page({ params }: PageProps) {
   const projectDetails = await getProjectById(Number(projectId));
 
   if (!projectDetails?.dev) return notFound();
-
-  console.log(projectDetails);
 
   const { project, dev } = projectDetails;
   const { title, description, youtubeUrl, projectMedia: media } = project;
@@ -83,7 +83,12 @@ async function Page({ params }: PageProps) {
             <div className="flex items-center gap-3">
               <Link href={`/user/${dev.username}`}>
                 <Avatar className="h-auto w-14">
-                  <AvatarImage src={displayPictureUrl} alt={displayName} />
+                  <Image
+                    width={200}
+                    height={200}
+                    src={displayPictureUrl}
+                    alt={displayName}
+                  />
                   <AvatarFallback> {initialLetter} </AvatarFallback>
                 </Avatar>
               </Link>
