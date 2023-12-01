@@ -3,16 +3,17 @@ import NavBar from '@/components/ui/navbar';
 
 import { UserAuthForm } from '@/components/AuthForm';
 import MarkdownComponent from '@/components/mark-down';
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { buttonVariants } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
 import GoBack from '@/components/ui/go-back';
+import { URLs } from '@/lib/constants';
 import { projectFormSchema } from '@/lib/validations/project';
 import { getProjectById } from '@/server/actions/projects';
 import { extractIDfromYtURL } from '@/utils';
@@ -66,24 +67,46 @@ async function Page({ params }: PageProps) {
 
   const { sourceCodeUrl, hostedUrl } = projectDetails.project;
 
+  if (!userId) {
+    return (
+      <>
+        <NavBar />
+        <AlertDialog defaultOpen>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                <h2 className="text-lg font-medium">Get Started</h2>
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                <UserAuthForm />
+                <p className="px-8 text-center text-sm text-muted-foreground">
+                  By clicking continue, you agree to our{' '}
+                  <Link
+                    href={URLs.termsOfService}
+                    className="underline underline-offset-4 hover:text-primary"
+                  >
+                    Terms of Service
+                  </Link>{' '}
+                  and{' '}
+                  <Link
+                    href={URLs.privacyPolicy}
+                    className="underline underline-offset-4 hover:text-primary"
+                  >
+                    Privacy Policy
+                  </Link>
+                  .
+                </p>
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+          </AlertDialogContent>
+        </AlertDialog>
+      </>
+    );
+  }
+
   return (
     <>
       <NavBar />
-
-      {!userId && (
-        <Dialog defaultOpen>
-          <DialogContent className="h-screen w-full overflow-scroll md:h-max md:max-w-xl">
-            <DialogHeader>
-              <DialogTitle>Get Started</DialogTitle>
-              <DialogDescription>
-                Sign in with your Github or Google account.
-              </DialogDescription>
-            </DialogHeader>
-            <UserAuthForm />
-          </DialogContent>
-        </Dialog>
-      )}
-
       <section className="flex items-start justify-center">
         <main className="mt-8 flex w-full flex-col justify-center px-4 md:max-w-4xl">
           <GoBack />
