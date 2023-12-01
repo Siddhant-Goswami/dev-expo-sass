@@ -3,11 +3,9 @@ import Footer from '@/components/ui/footer';
 import NavBar from '@/components/ui/navbar';
 import { OnboardingSteps } from '@/components/ui/onboarding-steps';
 import { ProjectUpload } from '@/components/ui/project-upload';
-import { useState } from 'react';
 
 function Page() {
-  const isUserVerified = true;
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const isUserVerified = false;
   return (
     <>
       <NavBar />

@@ -5,7 +5,7 @@ import { desc, eq } from 'drizzle-orm';
 import {
   DevApplicationFormSubmitType,
   devApplicationSchema,
-} from '@/components/ui/onboarding-steps';
+} from '@/lib/validations/user';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { db } from '../db';
@@ -78,27 +78,29 @@ export const createDevApplication = async (
 
   const appliedAt = new Date();
 
-  // const [devApplication] = await db
-  //   .insert(devApplications)
-  //   .values({
-  //     bio: devApplicationInsertData.bio,
-  //     displayName: devApplicationInsertData.displayName,
-  //     twitterUrl: devApplicationInsertData.twitterUsername
-  //       ? `https://twitter.com/` + devApplicationInsertData.twitterUsername
-  //       : null,
-  //     status: 'pending',
-  //     gitHubUrl: devApplicationInsertData.gitHubUsername ?
-  //     `https://github.com/` + devApplicationInsertData.gitHubUsername : null
-  //     userId,
-  //     appliedAt,
-  //   })
-  //   .returning();
+  const [devApplication] = await db
+    .insert(devApplications)
+    .values({
+      bio: `${devApplicationInsertData.bio}`,
+      displayName: devApplicationInsertData.displayName,
+      twitterUrl: devApplicationInsertData.twitterUsername
+        ? `https://twitter.com/` + devApplicationInsertData.twitterUsername
+        : null,
+      websiteUrl: devApplicationInsertData.websiteUrl,
+      status: 'pending',
+      gitHubUrl:
+        `https://github.com/` + devApplicationInsertData.githubUsername,
+      userId,
+      appliedAt,
+    })
+    .returning();
 
-  // if (!devApplication?.id) {
-  //   throw new Error('Could not create dev application');
-  // }
+  if (!devApplication?.id) {
+    throw new Error('Could not create dev application');
+  }
   return {
     success: true,
+    devApplicationId: devApplication.id,
   };
 };
 

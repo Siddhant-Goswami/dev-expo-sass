@@ -1,7 +1,7 @@
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
-import { devApplicationStatusesEnum } from '@/components/ui/onboarding-steps';
+import { devApplicationStatusesEnum } from '@/lib/validations/user';
 import {
   relations,
   type InferInsertModel,

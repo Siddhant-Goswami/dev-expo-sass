@@ -1,13 +1,14 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { createDevApplication } from '@/server/actions/users';
-import { useMutation } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Webcam from 'react-webcam';
 
-export default function VideoRecorder() {
+export default function VideoRecorder(props: {
+  onClickNextStep: () => void;
+  setFacecamBlobUrl: React.Dispatch<React.SetStateAction<string | null>>;
+}) {
   const [loading, setLoading] = useState(true);
   const webcamRef = useRef<Webcam>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -21,12 +22,6 @@ export default function VideoRecorder() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
   const [completed, setCompleted] = useState(false);
-
-  const { isLoading: isSubmittingApplication } = useMutation({
-    mutationFn: async () => {
-      createDevApplication({});
-    },
-  });
 
   useEffect(() => {
     setIsDesktop(window.innerWidth >= 768);
@@ -157,7 +152,14 @@ export default function VideoRecorder() {
                 <Button
                   variant="default"
                   type="button"
-                  disabled={isSubmittingApplication}
+                  onClick={() => {
+                    props.setFacecamBlobUrl(
+                      URL.createObjectURL(
+                        new Blob(recordedChunks, { type: 'video/mp4' }),
+                      ),
+                    );
+                    props.onClickNextStep();
+                  }}
                 >
                   Submit Form
                 </Button>
