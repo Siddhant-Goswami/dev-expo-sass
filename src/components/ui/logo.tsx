@@ -1,4 +1,4 @@
-function Logo() {
+function Logo100xTalents() {
   return (
     <svg
       // width="109"
@@ -20,4 +20,4 @@ function Logo() {
   );
 }
 
-export default Logo;
+export default Logo100xTalents;

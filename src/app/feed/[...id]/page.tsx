@@ -2,13 +2,15 @@ import Footer from '@/components/ui/footer';
 import NavBar from '@/components/ui/navbar';
 
 import MarkdownComponent from '@/components/mark-down';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { URLs } from '@/lib/constants';
 import { projectFormSchema } from '@/lib/validations/project';
 import { getProjectById } from '@/server/actions/projects';
 import { extractIDfromYtURL } from '@/utils';
-import { ChevronLeft, LucideGithub, LucideLink } from 'lucide-react';
+import { cn } from '@/utils/cn';
+import { GitHubLogoIcon, Link2Icon } from '@radix-ui/react-icons';
+import { ChevronLeft } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -22,6 +24,8 @@ type PageProps = {
   params: { id: string[] };
 };
 
+export const revalidate = 10;
+
 async function Page({ params }: PageProps) {
   const availableForWork = true;
 
@@ -34,8 +38,6 @@ async function Page({ params }: PageProps) {
   const projectDetails = await getProjectById(Number(projectId));
 
   if (!projectDetails?.dev) return notFound();
-
-  console.log(projectDetails);
 
   const { project, dev } = projectDetails;
   const { title, description, youtubeUrl, projectMedia: media } = project;
@@ -83,7 +85,12 @@ async function Page({ params }: PageProps) {
             <div className="flex items-center gap-3">
               <Link href={`/user/${dev.username}`}>
                 <Avatar className="h-auto w-14">
-                  <AvatarImage src={displayPictureUrl} alt={displayName} />
+                  <Image
+                    width={200}
+                    height={200}
+                    src={displayPictureUrl}
+                    alt={displayName}
+                  />
                   <AvatarFallback> {initialLetter} </AvatarFallback>
                 </Avatar>
               </Link>
@@ -116,36 +123,36 @@ async function Page({ params }: PageProps) {
 
             <div className="flex gap-2">
               {hostedUrl && (
-                <Button
-                  variant="outline"
-                  className="rounded-sm border-gray-500 px-2.5"
+                <Link
+                  className={cn(
+                    buttonVariants({
+                      variant: 'outline',
+                      className: 'rounded-sm px-3.5',
+                    }),
+                  )}
+                  href={hostedUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
-                  <Link
-                    className="flex items-center gap-2 text-gray-800 dark:text-white"
-                    href={hostedUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <LucideLink size={18} />
-                    <span className="hidden md:block">Visit</span>
-                  </Link>
-                </Button>
+                  <Link2Icon className="mr-2" />
+                  <span className="hidden md:inline-block">Visit</span>
+                </Link>
               )}
               {sourceCodeUrl && (
-                <Button
-                  variant="link"
-                  className="rounded-sm border border-gray-500 px-2.5"
+                <Link
+                  className={cn(
+                    buttonVariants({
+                      variant: 'outline',
+                      className: 'rounded-sm px-3.5',
+                    }),
+                  )}
+                  href={sourceCodeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
-                  <Link
-                    className="flex items-center gap-2"
-                    href={sourceCodeUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <LucideGithub size={18} />
-                    <span className="hidden md:block">View Code</span>
-                  </Link>
-                </Button>
+                  <GitHubLogoIcon className="md:mr-2" />
+                  <span className="hidden md:inline-block">View Code</span>
+                </Link>
               )}
 
               <IsNotSameUserWrapper projectUserId={project.userId}>

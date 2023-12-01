@@ -1,7 +1,11 @@
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
-import { InferInsertModel, InferSelectModel, relations } from 'drizzle-orm';
+import {
+  relations,
+  type InferInsertModel,
+  type InferSelectModel,
+} from 'drizzle-orm';
 import {
   bigserial,
   boolean,

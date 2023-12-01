@@ -13,6 +13,8 @@ type FeedProps = {
   };
 };
 
+export const dynamic = 'force-dynamic';
+
 async function Feed({ searchParams }: FeedProps) {
   const filter = searchParams?.filter ?? '';
 

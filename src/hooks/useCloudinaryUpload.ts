@@ -60,10 +60,10 @@ const useCloudinaryUpload = ({
         );
       }
 
-      console.log(`Uploading the blob:`, {
-        uploadUrl,
-        blobUrl,
-      });
+      // console.log(`Uploading the blob:`, {
+      //   uploadUrl,
+      //   blobUrl,
+      // });
 
       // Get file
       const file = await fetch(blobUrl)

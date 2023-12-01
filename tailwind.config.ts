@@ -100,7 +100,7 @@ module.exports = {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: 0 },
         },
-        spin: {
+        'shimmer-spin': {
           '0%': {
             transform: 'translateZ(0) rotate(0)',
           },
@@ -124,7 +124,7 @@ module.exports = {
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        spin: 'spin calc(var(--speed) * 2) infinite linear',
+        'shimmer-spin': 'shimmer-spin calc(var(--speed) * 2) infinite linear',
         slide: 'slide var(--speed) ease-in-out infinite alternate',
       },
     },

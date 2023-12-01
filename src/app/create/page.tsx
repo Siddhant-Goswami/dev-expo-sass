@@ -21,11 +21,7 @@ function Page() {
             : 'Showcase your incredible work to the world and get hired by the best companies.'}
         </p>
         <main className="mt-14 flex w-full flex-col items-center justify-center px-4">
-          {isUserVerified ? (
-            <ProjectUpload setIsModalOpen={setIsModalOpen} />
-          ) : (
-            <OnboardingSteps />
-          )}
+          {isUserVerified ? <ProjectUpload /> : <OnboardingSteps />}
         </main>
       </section>
       <Footer />
