@@ -22,7 +22,6 @@ type PageProps = {
   params: { id: string[] };
 };
 
-export const revalidate = false;
 async function Page({ params }: PageProps) {
   const availableForWork = true;
 
@@ -124,6 +123,8 @@ async function Page({ params }: PageProps) {
                   <Link
                     className="flex items-center gap-2 text-gray-800 dark:text-white"
                     href={hostedUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
                     <LucideLink size={18} />
                     <span className="hidden md:block">Visit</span>
@@ -138,6 +139,8 @@ async function Page({ params }: PageProps) {
                   <Link
                     className="flex items-center gap-2"
                     href={sourceCodeUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
                     <LucideGithub size={18} />
                     <span className="hidden md:block">View Code</span>
