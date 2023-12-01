@@ -3,6 +3,9 @@ export const URLs = {
   create: '/create',
   dashboard: '/dashboard',
   feed: '/feed',
+  projectPage(id: string) {
+    return `${this.feed}/${id}`;
+  },
   signIn: '/sign-in',
   signUp: '/sign-up',
   termsOfService: 'https://100xengineers.com/terms-and-conditions',

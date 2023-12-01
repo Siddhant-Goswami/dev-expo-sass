@@ -13,7 +13,7 @@ import { URLs } from '@/lib/constants';
 import { api } from '@/trpc/react';
 import { ExitIcon, PersonIcon } from '@radix-ui/react-icons';
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { toast } from './ui/use-toast';
 export default function UserAuthButton() {
@@ -21,6 +21,8 @@ export default function UserAuthButton() {
   const { data } = api.user.hello.useQuery(undefined, {
     enabled: !!session?.user?.id,
   });
+
+  const router = useRouter();
 
   const supabase = supabaseClientComponentClient();
 
@@ -76,7 +78,7 @@ export default function UserAuthButton() {
                 description: error.message,
               });
             } else {
-              redirect(URLs.home);
+              router.push(URLs.home);
             }
           }}
         >

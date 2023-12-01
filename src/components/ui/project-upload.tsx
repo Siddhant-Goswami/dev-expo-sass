@@ -18,19 +18,22 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
 import useCloudinaryUpload from '@/hooks/useCloudinaryUpload';
-import { MAX_IMAGE_SIZE, MAX_NUMBER_OF_IMAGES } from '@/lib/constants';
+import { MAX_IMAGE_SIZE, MAX_NUMBER_OF_IMAGES, URLs } from '@/lib/constants';
 import { projectFormSchema } from '@/lib/validations/project';
 import { validateAndPersistUpload } from '@/server/actions/projectMedia';
 import { uploadNewProject } from '@/server/actions/projects';
 import { useMutation } from '@tanstack/react-query';
 import { LucideLoader, LucideSave } from 'lucide-react';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 
 type ProjectUploadValues = z.infer<typeof projectFormSchema>;
 // type Page = 'data-entry' | 'media-upload';
 
 export function ProjectUpload() {
+  const router = useRouter();
+
   const { toast } = useToast();
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   // const [selectedVideos, setSelectedVideos] = useState<File[]>([]);
@@ -67,12 +70,6 @@ export function ProjectUpload() {
     onSuccess: (data) => {
       setActualStatus('uploading-images');
       void uploadAllSelectedImages(data.projectId);
-      // toast({
-      //   title: 'Project uploaded successfully!',
-      // });
-      // setIsModalOpen(false);
-      // // Redirect user to their new project page
-      // window.location.href = `/feed/${data?.projectId}`;
     },
 
     onError: (err) => {
@@ -127,7 +124,7 @@ export function ProjectUpload() {
       setActualStatus('success');
       toast({ title: 'Project uploaded successfully!' });
       // Redirect user to their new project page
-      window.location.href = `/feed/${projectId}`;
+      void router.push(URLs.projectPage(projectId.toString()));
     });
   };
 
