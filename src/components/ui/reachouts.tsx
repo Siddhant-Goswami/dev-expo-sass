@@ -20,6 +20,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/hooks/user/auth';
 import { createRecruiterReachout } from '@/server/actions/reachouts';
+import { useMutation } from '@tanstack/react-query';
+import { LucideLoader } from 'lucide-react';
 // import { toast } from '@/registry/new-york/ui/use-toast';
 
 const workTypeArr = [
@@ -38,23 +40,15 @@ const getInTouchSchema = z.object({
 type GetInTouchValues = z.infer<typeof getInTouchSchema>;
 type GetInTouchProps = {
   setIsModalOpen: (isOpen: boolean) => void;
+  devId: string;
 };
 
-export function GetInTouch({ setIsModalOpen }: GetInTouchProps) {
-  const { toast } = useToast();
-  const form = useForm<GetInTouchValues>({
-    resolver: zodResolver(getInTouchSchema),
-    defaultValues: {
-      employmentType: 'freelance',
-      message: '',
-      pricing: 1000,
-    },
-  });
-
+export function GetInTouch({ setIsModalOpen, devId }: GetInTouchProps) {
   const user = useAuth();
   const { userId } = user;
 
-  const requestReachOut = async (data: GetInTouchValues) => {
+  const requestReachOut = async () => {
+    const data = form.getValues();
     if (!userId) {
       return;
     }
@@ -63,7 +57,7 @@ export function GetInTouch({ setIsModalOpen }: GetInTouchProps) {
       workType: data.employmentType,
       quotePrice: data.pricing,
       message: data.message,
-      devId: userId,
+      devId: devId,
     };
 
     const { success } = await createRecruiterReachout(requestObject);
@@ -82,9 +76,23 @@ export function GetInTouch({ setIsModalOpen }: GetInTouchProps) {
     }
   };
 
+  const { isLoading, mutate } = useMutation({
+    mutationFn: requestReachOut,
+  });
+
+  const { toast } = useToast();
+  const form = useForm<GetInTouchValues>({
+    resolver: zodResolver(getInTouchSchema),
+    defaultValues: {
+      employmentType: 'freelance',
+      message: '',
+      pricing: 1000,
+    },
+  });
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(requestReachOut)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(() => mutate())} className="space-y-8">
         <FormField
           control={form.control}
           name="employmentType"
@@ -138,7 +146,13 @@ export function GetInTouch({ setIsModalOpen }: GetInTouchProps) {
           )}
         />
         <div className="flex justify-end">
-          <Button type="submit">Submit</Button>
+          <Button disabled={isLoading} type="submit">
+            {isLoading ? (
+              <LucideLoader size={20} className="animate-spin" />
+            ) : (
+              <>Submit</>
+            )}
+          </Button>
         </div>
       </form>
     </Form>

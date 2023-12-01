@@ -6,15 +6,23 @@ import { useAuth } from '@/hooks/user/auth';
 
 type GetInTouchButtonProps = {
   displayName: string;
+  devId: string;
 };
 
-export const GetInTouchButton = ({ displayName }: GetInTouchButtonProps) => {
+export const GetInTouchButton = ({
+  displayName,
+  devId,
+}: GetInTouchButtonProps) => {
   const { userId } = useAuth();
 
   return (
     <div className="flex justify-center">
       {userId ? (
-        <GetInTouchModal username={displayName} text="Get in Touch" />
+        <GetInTouchModal
+          username={displayName}
+          devId={devId}
+          text="Get in Touch"
+        />
       ) : (
         <SignUpModal>
           <Button variant="brand" className="w-fit">
@@ -56,7 +64,7 @@ export const GetInTouchSection = ({
           Get in touch with {userDisplayName} to discuss your project.
         </p>
       </div>
-      <GetInTouchButton displayName={userDisplayName} />
+      <GetInTouchButton displayName={userDisplayName} devId={projectUserId} />
     </IsNotSameUserWrapper>
   );
 };
