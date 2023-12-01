@@ -6,20 +6,27 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { supabaseClientComponentClient, useAuth } from '@/hooks/user/auth';
-import { useUserProfile } from '@/hooks/user/profile';
 import { URLs } from '@/lib/constants';
-import { LogOutIcon, User2Icon } from 'lucide-react';
+import { api } from '@/trpc/react';
+import { LogOutIcon, LucideUser2 } from 'lucide-react';
+import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
-import Link from 'next/link';
+import { toast } from './ui/use-toast';
 
 export default function UserAuthButton() {
   const { session } = useAuth();
-  // const { username } = useUserProfile();
+  const { data } = api.user.hello.useQuery(undefined, {
+    enabled: !!session?.user?.id,
+  });
+
   const supabase = supabaseClientComponentClient();
-  // console.log(username);
+
+  const username = data?.userProfile?.username;
+
   return (
-    <Popover>
+    <Popover modal={true}>
       <PopoverTrigger>
         <Avatar>
           <AvatarImage
@@ -39,37 +46,36 @@ export default function UserAuthButton() {
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
       </PopoverTrigger>
-      <PopoverContent className="w-fit">
-        <ul className="flex flex-col gap-2">
-          {/* {username && <li>
-            <Link href={`/user/${username}`}>
-              <Button
-                variant="outline"
-                className="flex w-full items-center gap-3"
-              >
-                <User2Icon />
-                Profile
-              </Button>
-            </Link>
-          </li>} */}
-          <li>
+      <PopoverContent className="w-44 p-1">
+        {username && (
+          <Link href={`/user/${username}`}>
             <Button
               variant="outline"
               className="flex w-full items-center gap-3"
-              onClick={async () => {
-                const { error } = await supabase.auth.signOut();
-                if (error) {
-                  alert(error.message);
-                } else {
-                  window.location.href = URLs.home;
-                }
-              }}
             >
-              <LogOutIcon />
-              Logout
+              <LucideUser2 />
+              Profile
             </Button>
-          </li>
-        </ul>
+          </Link>
+        )}
+        <Button
+          variant="outline"
+          className="flex w-full items-center gap-3 rounded-sm"
+          onClick={async () => {
+            const { error } = await supabase.auth.signOut();
+            if (error) {
+              toast({
+                title: 'Could not logout',
+                description: error.message,
+              });
+            } else {
+              redirect(URLs.home);
+            }
+          }}
+        >
+          <LogOutIcon />
+          Logout
+        </Button>
       </PopoverContent>
     </Popover>
   );

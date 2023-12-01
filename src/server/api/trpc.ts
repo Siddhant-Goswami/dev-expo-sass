@@ -32,7 +32,7 @@ import { type NextRequest } from 'next/server';
  * @see https://trpc.io/docs/server/context
  */
 
-type CreateContextOptions = {
+export type CreateContextOptions = {
   headers: Headers;
   session: Session | null;
   db: typeof db;
