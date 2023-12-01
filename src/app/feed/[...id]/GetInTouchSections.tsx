@@ -1,7 +1,7 @@
 'use client';
 import { Button } from '@/components/ui/button';
 import GetInTouchModal from '@/components/ui/get-in-touch-modal';
-import SignUpModal from '@/components/ui/sign-up-modal';
+import SignInModal from '@/components/ui/sign-up-modal';
 import { useAuth } from '@/hooks/user/auth';
 
 type GetInTouchButtonProps = {
@@ -24,11 +24,11 @@ export const GetInTouchButton = ({
           text="Get in Touch"
         />
       ) : (
-        <SignUpModal>
+        <SignInModal>
           <Button variant="brand" className="w-fit">
             Login To Get in Touch
           </Button>
-        </SignUpModal>
+        </SignInModal>
       )}
     </div>
   );
