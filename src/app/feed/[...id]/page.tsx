@@ -1,16 +1,25 @@
 import Footer from '@/components/ui/footer';
 import NavBar from '@/components/ui/navbar';
 
+import { UserAuthForm } from '@/components/AuthForm';
 import MarkdownComponent from '@/components/mark-down';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Button, buttonVariants } from '@/components/ui/button';
-import { URLs } from '@/lib/constants';
+import { buttonVariants } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import GoBack from '@/components/ui/go-back';
 import { projectFormSchema } from '@/lib/validations/project';
 import { getProjectById } from '@/server/actions/projects';
 import { extractIDfromYtURL } from '@/utils';
 import { cn } from '@/utils/cn';
 import { GitHubLogoIcon, Link2Icon } from '@radix-ui/react-icons';
-import { ChevronLeft } from 'lucide-react';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -19,7 +28,6 @@ import {
   GetInTouchSection,
   IsNotSameUserWrapper,
 } from './GetInTouchSections';
-import GoBack from '@/components/ui/go-back';
 
 type PageProps = {
   params: { id: string[] };
@@ -28,6 +36,9 @@ type PageProps = {
 export const revalidate = 10;
 
 async function Page({ params }: PageProps) {
+  const supabase = createServerComponentClient({ cookies });
+  const resp = await supabase.auth.getSession();
+  const userId = resp.data.session?.user.id ?? null;
   const availableForWork = true;
 
   const projectId = params.id[0];
@@ -59,17 +70,19 @@ async function Page({ params }: PageProps) {
     <>
       <NavBar />
 
-      {/* <Dialog defaultOpen>
-        <DialogContent className="h-screen w-full overflow-scroll md:h-max md:max-w-xl">
-          <DialogHeader>
-            <DialogTitle>Get Started</DialogTitle>
-            <DialogDescription>
-              Sign in with your Github or Google account.
-            </DialogDescription>
-          </DialogHeader>
-          <SignUp />
-        </DialogContent>
-      </Dialog> */}
+      {!userId && (
+        <Dialog defaultOpen>
+          <DialogContent className="h-screen w-full overflow-scroll md:h-max md:max-w-xl">
+            <DialogHeader>
+              <DialogTitle>Get Started</DialogTitle>
+              <DialogDescription>
+                Sign in with your Github or Google account.
+              </DialogDescription>
+            </DialogHeader>
+            <UserAuthForm />
+          </DialogContent>
+        </Dialog>
+      )}
 
       <section className="flex items-start justify-center">
         <main className="mt-8 flex w-full flex-col justify-center px-4 md:max-w-4xl">

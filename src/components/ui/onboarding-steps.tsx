@@ -33,8 +33,16 @@ const onboardingStepsSchema = z.object({
     .string()
     .min(5, 'GitHub Username is required.')
     .max(50, 'GitHub Username must be less than 50 characters.'),
-  portfolioLink: z.string().url('Please enter a valid URL.'),
-  twitterLink: z.string().url('Please enter a valid URL.'),
+  portfolioLink: z
+    .string()
+    .transform((val) => {
+      if (!val?.startsWith('https://')) {
+        val = 'https://' + val;
+      }
+      return val;
+    })
+    .pipe(z.string().url('Please enter a valid Portfolio URL')),
+  twitterUsername: z.string().min(5, 'Twitter Username is required.'),
   bio: z
     .string()
     .min(10, 'Bio must be at least 10 characters.')
@@ -64,7 +72,7 @@ export function OnboardingSteps() {
       displayName,
       githubUsername,
       portfolioLink: '',
-      twitterLink: '',
+      twitterUsername: '',
       bio: '',
     },
   });
@@ -76,28 +84,20 @@ export function OnboardingSteps() {
   async function submitFields(data: OnbaordingStepsValues) {
     console.log(data);
 
-    const getGithubUsername = githubUsername
+    const validGithubUsername = githubUsername
       ? githubUsername
       : await isGithubUserValid(data.githubUsername);
-    console.log(getGithubUsername);
+    console.log(validGithubUsername);
 
-    const isValidGithubUsername = getGithubUsername;
+    console.log('isValidGithubUsername', validGithubUsername);
 
-    if (!isValidGithubUsername) {
+    if (!validGithubUsername) {
       toast({
         title: 'Invalid GitHub Username',
         description: 'Please enter a valid GitHub username.',
         variant: 'destructive',
       });
     } else {
-      toast({
-        title: 'Form submitted successfully',
-        description: (
-          <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-            <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-          </pre>
-        ),
-      });
       setVerificationStep('video');
     }
   }
@@ -173,17 +173,16 @@ export function OnboardingSteps() {
             />
             <FormField
               control={form.control}
-              name="twitterLink"
+              name="twitterUsername"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Twitter Link</FormLabel>
+                  <FormLabel> X (Twitter) Username</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Enter your Twitter URL" />
+                    <Input
+                      {...field}
+                      placeholder="Enter your Twitter Username"
+                    />
                   </FormControl>
-                  <FormDescription>
-                    Your Twitter link is used to showcase your work on your
-                    profile.
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
