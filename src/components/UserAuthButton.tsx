@@ -11,7 +11,7 @@ import {
 import { supabaseClientComponentClient, useAuth } from '@/hooks/user/auth';
 import { URLs } from '@/lib/constants';
 import { api } from '@/trpc/react';
-import { ExitIcon } from '@radix-ui/react-icons';
+import { ExitIcon, PersonIcon } from '@radix-ui/react-icons';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
@@ -26,7 +26,8 @@ export default function UserAuthButton() {
 
   const username = data?.userProfile?.username;
 
-  const userDisplayName = session?.user?.user_metadata?.name as string;
+  const userDisplayName =
+    (session?.user?.user_metadata?.name as string) ?? 'Your Account';
 
   return (
     <DropdownMenu>
@@ -55,11 +56,14 @@ export default function UserAuthButton() {
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
-        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+        <DropdownMenuLabel>{userDisplayName}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {username && (
           <Link href={`/user/${username}`}>
-            <DropdownMenuItem>Profile</DropdownMenuItem>
+            <DropdownMenuItem>
+              <PersonIcon className="mr-2" />
+              Profile
+            </DropdownMenuItem>
           </Link>
         )}
 
