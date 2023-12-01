@@ -4,16 +4,16 @@ import { Resend } from 'resend';
 
 const resend = new Resend(env.RESEND_API_KEY);
 const emailSendResponse = await resend.emails.send({
-  from: 'hello@overpoweredjobs.com',
-  to: 'ajinkyabodke@gmail.com',
-  subject: 'hello world',
+  from: '',
+  to: '',
+  subject: '',
   react: OpportunityEmail({
-    devName: 'AjinkyaB',
-    message: 'Hi,testing 123',
-    recruiterName: 'Sid 100x',
+    devName: '',
+    message: '',
+    recruiterName: '',
     quotePriceInRupees: 10000,
-    typeOfWork: 'freelance',
-    recruiterEmail: 'siddhant@100xengineers.com',
+    typeOfWork: '',
+    recruiterEmail: '',
   }),
 });
 
