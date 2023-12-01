@@ -13,6 +13,8 @@ type FeedProps = {
   };
 };
 
+export const revalidate = 10;
+
 async function Feed({ searchParams }: FeedProps) {
   const filter = searchParams?.filter ?? '';
 
