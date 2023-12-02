@@ -19,7 +19,7 @@ async function Page() {
     return <AuthwallPage />;
   }
 
-  const isUserVerified = false;
+  const isUserVerified = true;
 
   return (
     <>
