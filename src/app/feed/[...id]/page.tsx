@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { buttonVariants } from '@/components/ui/button';
 import GoBack from '@/components/ui/go-back';
 import { projectFormSchema } from '@/lib/validations/project';
-import { getProjectById } from '@/server/actions/projects';
+import { getProjectById, isLikedByUser } from '@/server/actions/projects';
 import { extractIDfromYtURL } from '@/utils';
 import { cn } from '@/utils/cn';
 import { GitHubLogoIcon, Link2Icon } from '@radix-ui/react-icons';
@@ -22,6 +22,8 @@ import {
   GetInTouchSection,
   IsNotSameUserWrapper,
 } from './GetInTouchSections';
+import LikeButton from './LikeButton';
+import ProjectOptions from './ProjectOptions';
 
 type PageProps = {
   params: { id: string[] };
@@ -72,12 +74,19 @@ async function Page({ params }: PageProps) {
 
   const { sourceCodeUrl, hostedUrl } = projectDetails.project;
 
+  const isLiked = await isLikedByUser({
+    projectId: projectDetails.project.id,
+  });
+
   return (
     <>
       <NavBar />
       <section className="flex items-start justify-center">
         <main className="mt-8 flex w-full flex-col justify-center px-4 md:max-w-4xl">
-          <GoBack />
+          <div className="flex w-full items-center justify-between">
+            <GoBack />
+            {userId === dev.id && <ProjectOptions projectId={projectId} />}
+          </div>
           <h1 className="mb-4 w-full text-left text-2xl font-semibold">
             {title}
           </h1>
@@ -122,6 +131,11 @@ async function Page({ params }: PageProps) {
             </div>
 
             <div className="flex gap-2">
+              <LikeButton
+                originalTotalLikes={projectDetails.likesCount}
+                isOriginallyLikedByUser={isLiked}
+                projectId={projectId}
+              />
               {hostedUrl && (
                 <Link
                   className={cn(
@@ -154,7 +168,6 @@ async function Page({ params }: PageProps) {
                   <span className="hidden md:inline-block">View Code</span>
                 </Link>
               )}
-
               <IsNotSameUserWrapper projectUserId={project.userId}>
                 <GetInTouchButton displayName={displayName} devId={dev.id} />
               </IsNotSameUserWrapper>
@@ -194,29 +207,6 @@ async function Page({ params }: PageProps) {
             )}
           </div>
           <div className="mt-8 rounded-sm border border-gray-500 p-6">
-            {/* <section className="mb-4 flex flex-col gap-2">
-              <h2 className="text-md mb-4 border-b border-gray-600 font-semibold">
-                Links
-              </h2>
-              {sourceCodeUrl && (
-                <Link
-                  className="flex items-center gap-2 text-blue-400"
-                  href={sourceCodeUrl}
-                >
-                  <LucideGithub size={18} />
-                  View Code
-                </Link>
-              )}
-              {hostedUrl && (
-                <Link
-                  className="flex items-center gap-2 text-blue-400"
-                  href={hostedUrl}
-                >
-                  <LucideArrowUpRight size={18} />
-                  Visit
-                </Link>
-              )}
-            </section> */}
             <section>
               <h2 className="text-md mb-4 border-b border-gray-600 font-semibold">
                 Description
