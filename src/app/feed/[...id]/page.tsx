@@ -3,14 +3,13 @@ import NavBar from '@/components/ui/navbar';
 
 import MarkdownComponent from '@/components/mark-down';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Button, buttonVariants } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import GoBack from '@/components/ui/go-back';
 import { projectFormSchema } from '@/lib/validations/project';
 import { getProjectById, isLikedByUser } from '@/server/actions/projects';
 import { extractIDfromYtURL } from '@/utils';
 import { cn } from '@/utils/cn';
 import { GitHubLogoIcon, Link2Icon } from '@radix-ui/react-icons';
-import { LucideMoreVertical } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -20,6 +19,9 @@ import {
   IsNotSameUserWrapper,
 } from './GetInTouchSections';
 import LikeButton from './LikeButton';
+import ProjectOptions from './ProjectOptions';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 
 type PageProps = {
   params: { id: string[] };
@@ -28,6 +30,11 @@ type PageProps = {
 export const revalidate = 10;
 
 async function Page({ params }: PageProps) {
+
+  const supabase = createServerComponentClient({ cookies });
+  const resp = await supabase.auth.getSession();
+  const userId = resp.data.session?.user.id ?? null;
+
   const availableForWork = true;
 
   const projectId = Number(params.id[0]);
@@ -58,7 +65,9 @@ async function Page({ params }: PageProps) {
     projectId: projectDetails.project.id,
   });
 
-  console.log('isLiked', isLiked);
+  if(!userId){
+    notFound();
+  }
 
   return (
     <>
@@ -67,9 +76,7 @@ async function Page({ params }: PageProps) {
         <main className="mt-8 flex w-full flex-col justify-center px-4 md:max-w-4xl">
           <div className="flex w-full items-center justify-between">
             <GoBack />
-            <Button variant={'ghost'}>
-              <LucideMoreVertical size={18} />
-            </Button>
+            {userId===dev.id && <ProjectOptions projectId={projectId}/>}
           </div>
           <h1 className="mb-4 w-full text-left text-2xl font-semibold">
             {title}

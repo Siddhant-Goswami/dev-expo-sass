@@ -2,7 +2,9 @@
 import { projectFormSchema } from '@/lib/validations/project';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
 import { desc, eq, sql } from 'drizzle-orm';
+import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { db } from '../db';
 import {
@@ -15,8 +17,8 @@ import {
   userProfiles,
   type ProjectSelect,
   type UserProfileSelect,
+  projectMedia,
 } from '../db/schema';
-import { revalidatePath } from 'next/cache';
 
 // TODO: filter categories
 
@@ -223,6 +225,20 @@ export const uploadNewProject = async (_project: ProjectData) => {
   }
 
   return { projectId };
+};
+
+export const deleteProject = async (projectId: number) => {
+  const project = await db.query.projects.findFirst({
+    where: eq(projects.id, projectId),
+  })
+  if(!project){
+    throw new Error('Project not found')
+  }
+  await db.delete(projectTags).where(eq(projectTags.projectId, projectId));
+  await db.delete(likes).where(eq(likes.projectId, projectId));
+  await db.delete(projectMedia).where(eq(projectMedia.projectId, projectId));
+  await db.delete(projects).where(eq(projects.id, projectId));
+  redirect('/feed');
 };
 
 // add comment
