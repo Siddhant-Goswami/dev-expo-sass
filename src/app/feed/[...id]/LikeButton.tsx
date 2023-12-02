@@ -56,7 +56,7 @@ function LikeButton({
       <Button
         onClick={handleClick}
         variant={variant}
-        className="flex gap-2 rounded-sm "
+        className="flex w-32 gap-2 rounded-sm"
       >
         <LucideTriangle
           size={12}

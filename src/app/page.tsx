@@ -7,6 +7,8 @@ import { URLs } from '@/lib/constants';
 import { getAllProjects } from '@/server/actions/projects';
 import Link from 'next/link';
 
+export const revalidate = false;
+export const dynamic = 'force-dynamic';
 export default async function Page() {
   const allProjects = await getAllProjects({ limit: 8 });
   const filteredProjectsData = allProjects.map(

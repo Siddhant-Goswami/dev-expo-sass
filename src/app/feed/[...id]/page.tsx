@@ -7,7 +7,11 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { buttonVariants } from '@/components/ui/button';
 import GoBack from '@/components/ui/go-back';
 import { projectFormSchema } from '@/lib/validations/project';
-import { getProjectById, isLikedByUser } from '@/server/actions/projects';
+import {
+  getAllLikes,
+  getProjectById,
+  isLikedByUser,
+} from '@/server/actions/projects';
 import { extractIDfromYtURL } from '@/utils';
 import { cn } from '@/utils/cn';
 import { GitHubLogoIcon, Link2Icon } from '@radix-ui/react-icons';
@@ -79,6 +83,8 @@ async function Page({ params }: PageProps) {
   const isLiked = await isLikedByUser({
     projectId: projectDetails.project.id,
   });
+  await getAllLikes();
+  console.log('isLiked', isLiked, 'devId', dev.id);
 
   return (
     <>
