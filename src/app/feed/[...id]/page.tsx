@@ -3,6 +3,13 @@ import NavBar from '@/components/ui/navbar';
 
 import AuthwallPage from '@/components/AuthwallPage';
 import MarkdownComponent from '@/components/mark-down';
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { buttonVariants } from '@/components/ui/button';
 import GoBack from '@/components/ui/go-back';
@@ -63,6 +70,43 @@ async function Page({ params }: PageProps) {
   const initialLetter = displayName.charAt(0).toUpperCase();
 
   const { sourceCodeUrl, hostedUrl } = projectDetails.project;
+
+  if (!userId) {
+    return (
+      <>
+        <NavBar />
+        <AlertDialog defaultOpen>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                <h2 className="text-lg font-medium">Get Started</h2>
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                <UserAuthForm />
+                <p className="px-8 text-center text-sm text-muted-foreground">
+                  By clicking continue, you agree to our{' '}
+                  <Link
+                    href={URLs.termsOfService}
+                    className="underline underline-offset-4 hover:text-primary"
+                  >
+                    Terms of Service
+                  </Link>{' '}
+                  and{' '}
+                  <Link
+                    href={URLs.privacyPolicy}
+                    className="underline underline-offset-4 hover:text-primary"
+                  >
+                    Privacy Policy
+                  </Link>
+                  .
+                </p>
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+          </AlertDialogContent>
+        </AlertDialog>
+      </>
+    );
+  }
 
   return (
     <>

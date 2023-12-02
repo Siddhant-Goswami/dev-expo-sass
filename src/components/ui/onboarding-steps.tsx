@@ -253,7 +253,7 @@ export function OnboardingSteps() {
             name="twitterUsername"
             render={({ field }) => (
               <FormItem>
-                <FormLabel> X (Twitter) Username</FormLabel>
+                <FormLabel> 𝕏 (Twitter) Username</FormLabel>
                 <FormControl>
                   <Input {...field} placeholder="Enter your Twitter Username" />
                 </FormControl>
