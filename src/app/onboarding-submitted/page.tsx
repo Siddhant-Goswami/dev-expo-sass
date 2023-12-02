@@ -1,5 +1,5 @@
+import NewFooter from '@/components/NewFooter';
 import { buttonVariants } from '@/components/ui/button';
-import Footer from '@/components/ui/footer';
 import NavBar from '@/components/ui/navbar';
 import { cn } from '@/utils/cn';
 import { LucideCheckCircle2 } from 'lucide-react';
@@ -49,7 +49,7 @@ export default function Page() {
           alt="Success iamge"
         />
       </div>
-      <Footer />
+      <NewFooter />
     </>
   );
 }

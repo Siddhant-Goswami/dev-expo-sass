@@ -1,4 +1,4 @@
-import NewFooter from '@/components/newfooter';
+import NewFooter from '@/components/NewFooter';
 import Grid from '@/components/ui/grid';
 import NavBar from '@/components/ui/navbar';
 import { getProjectsByUserId } from '@/server/actions/projects';

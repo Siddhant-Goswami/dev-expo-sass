@@ -1,7 +1,7 @@
 'use client';
 import { env } from '@/env';
+import { supabaseClientComponentClient } from '@/hooks/user/auth';
 import { URLs } from '@/lib/constants';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 import { Auth } from '@supabase/auth-ui-react';
 import {
@@ -10,7 +10,7 @@ import {
 } from '@supabase/auth-ui-shared';
 
 export const UserAuthForm = () => {
-  const supabase = createClientComponentClient();
+  const supabase = supabaseClientComponentClient();
 
   return (
     <>

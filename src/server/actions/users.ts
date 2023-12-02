@@ -3,8 +3,8 @@ import { desc, eq } from 'drizzle-orm';
 // TODO: make these regular functions instead of server actions, and import `server-only`
 
 import {
-  DevApplicationFormSubmitType,
   devApplicationSchema,
+  type DevApplicationFormSubmitType,
 } from '@/lib/validations/user';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';

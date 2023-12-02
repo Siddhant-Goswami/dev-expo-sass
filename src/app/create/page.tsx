@@ -1,5 +1,5 @@
 import AuthwallPage from '@/components/AuthwallPage';
-import NewFooter from '@/components/newfooter';
+import NewFooter from '@/components/NewFooter';
 import NavBar from '@/components/ui/navbar';
 import { OnboardingSteps } from '@/components/ui/onboarding-steps';
 import { ProjectUpload } from '@/components/ui/project-upload';
@@ -16,7 +16,7 @@ async function Page() {
   const userId = session?.user.id;
 
   if (!userId) {
-    return AuthwallPage;
+    return <AuthwallPage />;
   }
 
   const isUserVerified = false;

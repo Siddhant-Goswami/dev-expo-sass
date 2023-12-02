@@ -1,3 +1,4 @@
+'use client';
 import { env } from '@/env';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useQuery } from '@tanstack/react-query';

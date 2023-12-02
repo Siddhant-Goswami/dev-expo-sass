@@ -1,3 +1,5 @@
+'use client';
+import { URLs } from '@/lib/constants';
 import Link from 'next/link';
 import Logo100xTalents from './ui/logo';
 
@@ -12,20 +14,19 @@ export default function NewFooter() {
             </Link>
 
             <ul className="mb-6 flex flex-wrap items-center text-sm font-medium text-gray-500 dark:text-gray-400 sm:mb-0">
-              <li></li>
               <li>
-                <a
-                  href="/privacy-policy"
+                <Link
+                  href={URLs.privacyPolicy}
                   className="me-4 hover:underline md:me-6"
                 >
                   Privacy Policy
-                </a>
+                </Link>
               </li>
 
               <li>
-                <a href="/terms-and-conditions" className="hover:underline">
+                <Link href={URLs.termsOfService} className="hover:underline">
                   Terms & Conditions
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

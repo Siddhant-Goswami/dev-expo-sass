@@ -6,26 +6,26 @@ import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
 import { createClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
 import { Resend } from 'resend';
-import { db } from '../db';
-import { type RecruiterReachoutInsert, recruiterReachouts } from '../db/schema';
 import { z } from 'zod';
+import { db } from '../db';
+import { recruiterReachouts, type RecruiterReachoutInsert } from '../db/schema';
 
 const resend = new Resend(env.RESEND_API_KEY);
 
 const recruiterReachoutInsertSchema = z.object({
   devId: z.string(),
   workType: z.enum(['full-time', 'freelance']),
-  quotePrice: z.number().min(1000).max(1000000),
+  // quotePrice: null,
   message: z.string(),
 });
 
-const createRecruiterReachout = async (
+export const createRecruiterReachout = async (
   props: Pick<
     RecruiterReachoutInsert,
     'devId' | 'workType' | 'quotePrice' | 'message'
   >,
 ) => {
-  const { devId, workType, quotePrice, message } =
+  const { devId, workType, message } =
     recruiterReachoutInsertSchema.parse(props);
 
   const supabase = createServerActionClient({
@@ -56,7 +56,7 @@ const createRecruiterReachout = async (
       recruiterId,
       devId,
       workType,
-      quotePrice,
+      // quotePrice,
       message,
       timestamp: new Date(),
     });
@@ -91,7 +91,7 @@ const createRecruiterReachout = async (
         devName: dev.user_metadata.name as unknown as string,
         message,
         recruiterName: session.user.user_metadata.name as unknown as string,
-        quotePriceInRupees: quotePrice,
+        // quotePriceInRupees: quotePrice,
         typeOfWork: workType,
         recruiterEmail: session.user.email as unknown as string,
       }),
@@ -117,5 +117,3 @@ const createRecruiterReachout = async (
 //   // });
 //   // return reachouts;
 // };
-
-export { createRecruiterReachout };

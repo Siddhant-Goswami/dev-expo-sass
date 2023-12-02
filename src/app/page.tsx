@@ -1,6 +1,6 @@
 import GetStartedButton from '@/components/get-started-button';
 import ShimmerButton from '@/components/magicui/shimmer-button';
-import NewFooter from '@/components/newfooter';
+import NewFooter from '@/components/NewFooter';
 import Grid from '@/components/ui/grid';
 import Navbar from '@/components/ui/navbar';
 import { URLs } from '@/lib/constants';
@@ -25,7 +25,7 @@ export default async function Page() {
   );
 
   return (
-    <div>
+    <>
       <Navbar />
       <section className="relative flex h-hero w-full flex-col items-center justify-center px-5 sm:px-18">
         <div
@@ -105,6 +105,6 @@ export default async function Page() {
         />
       </section>
       <NewFooter />
-    </div>
+    </>
   );
 }

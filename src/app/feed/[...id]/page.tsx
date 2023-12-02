@@ -1,8 +1,8 @@
 import NavBar from '@/components/ui/navbar';
 
 import AuthwallPage from '@/components/AuthwallPage';
+import NewFooter from '@/components/NewFooter';
 import MarkdownComponent from '@/components/mark-down';
-import NewFooter from '@/components/newfooter';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { buttonVariants } from '@/components/ui/button';
 import GoBack from '@/components/ui/go-back';
@@ -33,11 +33,13 @@ export const revalidate = 10;
 
 async function Page({ params }: PageProps) {
   const supabase = createServerComponentClient({ cookies });
-  const resp = await supabase.auth.getSession();
-  const userId = resp.data.session?.user.id;
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  const userId = session?.user.id;
 
   if (!userId) {
-    return AuthwallPage;
+    return <AuthwallPage />;
   }
 
   const availableForWork = true;
@@ -206,9 +208,10 @@ async function Page({ params }: PageProps) {
                 ),
             )}
           </div>
+
           <div className="mt-8 rounded-sm border border-gray-500 p-6">
             <section>
-              <h2 className="text-md mb-4 border-b border-gray-600 font-semibold">
+              <h2 className="text-md mb-4 border-b border-gray-300 font-semibold">
                 Description
               </h2>
               <MarkdownComponent content={description} />

@@ -1,5 +1,5 @@
+import NewFooter from '@/components/NewFooter';
 import ShimmerButton from '@/components/magicui/shimmer-button';
-import NewFooter from '@/components/newfooter';
 import ScrollableChips from '@/components/ui/chip';
 import Grid from '@/components/ui/grid';
 import NavBar from '@/components/ui/navbar';
