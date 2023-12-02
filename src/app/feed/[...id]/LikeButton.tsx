@@ -1,6 +1,6 @@
 'use client';
 import { Button } from '@/components/ui/button';
-import { createOrDeleteLike } from '@/server/actions/projects';
+import { createOrDeleteLike, deleteAllLikes, getAllLikes } from '@/server/actions/projects';
 import { cn } from '@/utils/cn';
 import { LucideTriangle } from 'lucide-react';
 import { useState } from 'react';
@@ -14,6 +14,7 @@ function LikeButton({
   isLiked: boolean;
   projectId: number;
 }) {
+  console.log(likesCount, isLiked, projectId)
   const [likes, setLikes] = useState(likesCount);
   const [liked, setLiked] = useState(isLiked);
 
@@ -26,6 +27,8 @@ function LikeButton({
       setLiked(true);
     }
     await createOrDeleteLike(projectId);
+    // await getAllLikes();
+    // await deleteAllLikes();
   };
 
   const variant = liked ? 'outline' : 'brand';

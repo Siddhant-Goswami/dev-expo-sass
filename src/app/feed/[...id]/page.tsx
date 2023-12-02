@@ -3,14 +3,14 @@ import NavBar from '@/components/ui/navbar';
 
 import MarkdownComponent from '@/components/mark-down';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { buttonVariants } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import GoBack from '@/components/ui/go-back';
-import { useAuth } from '@/hooks/user/auth';
 import { projectFormSchema } from '@/lib/validations/project';
 import { getProjectById, isLikedByUser } from '@/server/actions/projects';
 import { extractIDfromYtURL } from '@/utils';
 import { cn } from '@/utils/cn';
 import { GitHubLogoIcon, Link2Icon } from '@radix-ui/react-icons';
+import { LucideMoreVertical } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -63,22 +63,14 @@ async function Page({ params }: PageProps) {
   return (
     <>
       <NavBar />
-
-      {/* <Dialog defaultOpen>
-        <DialogContent className="h-screen w-full overflow-scroll md:h-max md:max-w-xl">
-          <DialogHeader>
-            <DialogTitle>Get Started</DialogTitle>
-            <DialogDescription>
-              Sign in with your Github or Google account.
-            </DialogDescription>
-          </DialogHeader>
-          <SignUp />
-        </DialogContent>
-      </Dialog> */}
-
       <section className="flex items-start justify-center">
         <main className="mt-8 flex w-full flex-col justify-center px-4 md:max-w-4xl">
-          <GoBack />
+          <div className="flex w-full items-center justify-between">
+            <GoBack />
+            <Button variant={'ghost'}>
+              <LucideMoreVertical size={18} />
+            </Button>
+          </div>
           <h1 className="mb-4 w-full text-left text-2xl font-semibold">
             {title}
           </h1>

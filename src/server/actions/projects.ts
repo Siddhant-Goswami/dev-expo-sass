@@ -3,7 +3,7 @@ import { projectFormSchema } from '@/lib/validations/project';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
 import { desc, eq, sql } from 'drizzle-orm';
 import { cookies } from 'next/headers';
-import { number, z } from 'zod';
+import { z } from 'zod';
 import { db } from '../db';
 import {
   comments,
@@ -16,6 +16,7 @@ import {
   type ProjectSelect,
   type UserProfileSelect,
 } from '../db/schema';
+import { revalidatePath } from 'next/cache';
 
 // TODO: filter categories
 
@@ -127,6 +128,18 @@ export const getProjectById = async (projectId: ProjectSelect['id']) => {
   };
 };
 
+export const getProjectLikes = async ({
+  projectId,
+}: {
+  projectId: number;
+}) => {
+  const totalLikes = await db
+  .select({ recordCount: sql`COUNT(*)` })
+  .from(likes)
+  .where(eq(likes.projectId, projectId));
+  return Number(totalLikes[0]?.recordCount);
+};
+
 export const isLikedByUser = async ({ projectId }: { projectId: number }) => {
   const supabase = createServerActionClient({ cookies });
 
@@ -140,10 +153,11 @@ export const isLikedByUser = async ({ projectId }: { projectId: number }) => {
 
   const userId = session.user.id;
 
-  const like = await db.query.likes.findFirst({
-    where: eq(likes.projectId, projectId) && eq(likes.userId, userId),
+  const likes = await db.query.likes.findMany({
+    where: (likes, {eq}) => eq(likes.projectId, projectId),
   });
-  return !!like;
+  const hasUserLiked = likes.find((like) => like.userId === userId);
+  return !!hasUserLiked;
 };
 
 type ProjectData = z.infer<typeof projectFormSchema>;
@@ -266,6 +280,7 @@ export const createOrDeleteLike = async (projectId: number) => {
     projectId,
     timestamp: new Date(),
   });
+  revalidatePath(`/projects/${projectId}`);
 };
 
 // bookmark
@@ -282,3 +297,12 @@ export const createBookmark = async ({
     timestamp: new Date(),
   });
 };
+
+export const deleteAllLikes = async() => {
+  await db.delete(likes);
+}
+
+export const getAllLikes = async() => {
+  const likes = await db.query.likes.findMany();
+  console.log(likes);
+}
