@@ -1,17 +1,22 @@
 import Footer from '@/components/ui/footer';
 import NavBar from '@/components/ui/navbar';
 
+import AuthwallPage from '@/components/AuthwallPage';
 import MarkdownComponent from '@/components/mark-down';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import { URLs } from '@/lib/constants';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { buttonVariants } from '@/components/ui/button';
+import GoBack from '@/components/ui/go-back';
 import { projectFormSchema } from '@/lib/validations/project';
 import { getProjectById } from '@/server/actions/projects';
 import { extractIDfromYtURL } from '@/utils';
-import { ChevronLeft, LucideGithub, LucideLink } from 'lucide-react';
+import { cn } from '@/utils/cn';
+import { GitHubLogoIcon, Link2Icon } from '@radix-ui/react-icons';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { z } from 'zod';
 import {
   GetInTouchButton,
   GetInTouchSection,
@@ -22,21 +27,35 @@ type PageProps = {
   params: { id: string[] };
 };
 
-export const revalidate = false;
+export const revalidate = 10;
+
 async function Page({ params }: PageProps) {
-  const availableForWork = true;
+  const supabase = createServerComponentClient({ cookies });
+  const resp = await supabase.auth.getSession();
+  const userId = resp.data.session?.user.id;
 
-  const projectId = params.id[0];
-
-  if (!projectId) {
-    return notFound();
+  if (!userId) {
+    return AuthwallPage;
   }
 
-  const projectDetails = await getProjectById(Number(projectId));
+  const availableForWork = true;
 
-  if (!projectDetails?.dev) return notFound();
+  const projectIdResult = z.coerce
+    .number()
+    .int()
+    .finite()
+    .safeParse(params.id[0]);
 
-  console.log(projectDetails);
+  if (!projectIdResult.success) {
+    notFound();
+  }
+  const projectId = projectIdResult.data;
+
+  const projectDetails = await getProjectById(projectId);
+
+  if (!projectDetails?.dev) {
+    notFound();
+  }
 
   const { project, dev } = projectDetails;
   const { title, description, youtubeUrl, projectMedia: media } = project;
@@ -56,27 +75,9 @@ async function Page({ params }: PageProps) {
   return (
     <>
       <NavBar />
-
-      {/* <Dialog defaultOpen>
-        <DialogContent className="h-screen w-full overflow-scroll md:h-max md:max-w-xl">
-          <DialogHeader>
-            <DialogTitle>Get Started</DialogTitle>
-            <DialogDescription>
-              Sign in with your Github or Google account.
-            </DialogDescription>
-          </DialogHeader>
-          <SignUp />
-        </DialogContent>
-      </Dialog> */}
-
       <section className="flex items-start justify-center">
         <main className="mt-8 flex w-full flex-col justify-center px-4 md:max-w-4xl">
-          <Link href={URLs.feed} className="mb-4 w-fit">
-            <Button className="p-0" variant="link">
-              <ChevronLeft className="mr-2" />
-              Go back
-            </Button>
-          </Link>
+          <GoBack />
           <h1 className="mb-4 w-full text-left text-2xl font-semibold">
             {title}
           </h1>
@@ -84,7 +85,12 @@ async function Page({ params }: PageProps) {
             <div className="flex items-center gap-3">
               <Link href={`/user/${dev.username}`}>
                 <Avatar className="h-auto w-14">
-                  <AvatarImage src={displayPictureUrl} alt={displayName} />
+                  <Image
+                    width={200}
+                    height={200}
+                    src={displayPictureUrl}
+                    alt={displayName}
+                  />
                   <AvatarFallback> {initialLetter} </AvatarFallback>
                 </Avatar>
               </Link>
@@ -98,7 +104,7 @@ async function Page({ params }: PageProps) {
                   <div
                     className={
                       'h-2 w-2 ' +
-                      (availableForWork ? 'bg-green-500' : 'bg-red-500') +
+                      (availableForWork ? 'bg-green-500' : 'bg-gray-500') +
                       ' mr-2 rounded-full'
                     }
                   ></div>
@@ -107,7 +113,7 @@ async function Page({ params }: PageProps) {
                       Available for work
                     </span>
                   ) : (
-                    <span className="text-xs text-red-500">
+                    <span className="text-xs text-gray-500">
                       Not available for work
                     </span>
                   )}
@@ -117,43 +123,47 @@ async function Page({ params }: PageProps) {
 
             <div className="flex gap-2">
               {hostedUrl && (
-                <Button
-                  variant="outline"
-                  className="rounded-sm border-gray-500 px-2.5"
+                <Link
+                  className={cn(
+                    buttonVariants({
+                      variant: 'outline',
+                      className: 'rounded-sm px-3.5',
+                    }),
+                  )}
+                  href={hostedUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
-                  <Link
-                    className="flex items-center gap-2 text-gray-800 dark:text-white"
-                    href={hostedUrl}
-                  >
-                    <LucideLink size={18} />
-                    <span className="hidden md:block">Visit</span>
-                  </Link>
-                </Button>
+                  <Link2Icon className="mr-2" />
+                  <span className="hidden md:inline-block">Visit</span>
+                </Link>
               )}
               {sourceCodeUrl && (
-                <Button
-                  variant="link"
-                  className="rounded-sm border border-gray-500 px-2.5"
+                <Link
+                  className={cn(
+                    buttonVariants({
+                      variant: 'outline',
+                      className: 'rounded-sm px-3.5',
+                    }),
+                  )}
+                  href={sourceCodeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
-                  <Link
-                    className="flex items-center gap-2"
-                    href={sourceCodeUrl}
-                  >
-                    <LucideGithub size={18} />
-                    <span className="hidden md:block">View Code</span>
-                  </Link>
-                </Button>
+                  <GitHubLogoIcon className="md:mr-2" />
+                  <span className="hidden md:inline-block">View Code</span>
+                </Link>
               )}
 
               <IsNotSameUserWrapper projectUserId={project.userId}>
-                <GetInTouchButton displayName={displayName} />
+                <GetInTouchButton displayName={displayName} devId={dev.id} />
               </IsNotSameUserWrapper>
             </div>
           </div>
           <div className="flex flex-col gap-4 md:gap-5">
             {youtubeUrl && toShowYTVideo && (
               <iframe
-                className="aspect-video w-full max-w-2xl self-center overflow-hidden rounded-lg"
+                className="aspect-video w-full max-w-4xl self-center overflow-hidden rounded-lg"
                 src={
                   'https://www.youtube.com/embed/' +
                   extractIDfromYtURL(validYoutubeUrlResult.data!)

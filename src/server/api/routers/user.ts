@@ -1,26 +1,21 @@
+import { getOrCreateUserProfile } from '@/hooks/user/actions';
 import { createTRPCRouter, privateProcedure } from '@/server/api/trpc';
-import { db } from '@/server/db';
-import { TRPCError } from '@trpc/server';
 
 export const userRouter = createTRPCRouter({
-  hello: privateProcedure
-    // .input(z.object({ text: z.string() }))
-    .query(async ({ ctx, input }) => {
-      const { user } = ctx.session;
+  /**
+   * Creates a user profile in the database if it doesn't exist
+   * @returns User profile from the database
+   */
+  hello: privateProcedure.query(async ({ ctx }) => {
+    const loggedInUser = ctx.session.user;
+    const userId = loggedInUser.id;
 
-      const userProfile = await db.query.userProfiles.findFirst({
-        where: (up, { eq }) => eq(up.id, user.id),
-      });
+    console.log('Getting user from db:', userId);
 
-      if (!userProfile) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'User profile not found',
-        });
-      }
+    const userInDb = await getOrCreateUserProfile(ctx);
 
-      return {
-        userProfile,
-      };
-    }),
+    return {
+      userProfile: userInDb,
+    };
+  }),
 });

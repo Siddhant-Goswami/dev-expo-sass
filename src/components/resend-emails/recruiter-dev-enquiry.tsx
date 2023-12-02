@@ -17,7 +17,7 @@ export const OpportunityEmail = ({
 }: Readonly<OpportunityEmailProps>) => (
   <div>
     <p>Hey {devName},</p>
-    <p>We hope this message finds you well! :star2:</p>
+    <p>We hope this message finds you well! 🤩</p>
 
     <p>
       We're excited to share an opportunity highlighted by {recruiterName} who
@@ -46,7 +46,7 @@ export const OpportunityEmail = ({
     </p>
 
     <p>
-      Best regards, <br /> The 100xTalent Team :rocket:
+      Best regards, <br /> The 100xTalent Team 🚀
     </p>
   </div>
 );

@@ -8,18 +8,20 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { useState } from 'react';
-import { GetInTouch } from './get-in-touch';
+import { GetInTouch } from './reachouts';
 
 type GetInTouchModalProps = {
   username?: string;
   text?: string;
   roundedFull?: boolean;
+  devId: string;
 };
 
 function GetInTouchModal({
   username,
   text,
   roundedFull,
+  devId,
 }: GetInTouchModalProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -34,7 +36,7 @@ function GetInTouchModal({
         <DialogHeader>
           <DialogTitle>Message {username}</DialogTitle>
         </DialogHeader>
-        <GetInTouch setIsModalOpen={setIsModalOpen} />
+        <GetInTouch setIsModalOpen={setIsModalOpen} devId={devId} />
       </DialogContent>
     </Dialog>
   );

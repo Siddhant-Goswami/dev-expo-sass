@@ -2,24 +2,23 @@ import { env } from '@/env.js';
 import React from 'react';
 
 import { type CloudinaryUploadResponse } from '@/lib/types/cloudinary';
-import { initiateNewUpload } from '@/server/actions/projectMedia';
-import { useMutation } from '@tanstack/react-query';
+import { api } from '@/trpc/react';
 import { useAuth } from './user/auth';
 
-const useCloudinaryUpload = ({
+const useFacecamUpload = ({
   onError,
   onSuccess,
 }: {
-  onError?: (error: unknown) => void;
+  onError?: (error: unknown) => Promise<void>;
   onSuccess?: (props: {
     public_id: string;
-    projectId: number;
+    devApplicationId: number;
     url: string;
-  }) => void;
+  }) => Promise<void>;
 }) => {
-  const generatePresignedUrlMutation = useMutation({
-    mutationFn: initiateNewUpload,
-  });
+  const generatePresignedUrlMutation =
+    api.devApplication.initiateFacecamUpload.useMutation();
+
   const [status, setStatus] = React.useState<
     'idle' | 'uploading' | 'succeeded' | 'failed' | 'cancelled'
   >('idle');
@@ -29,16 +28,16 @@ const useCloudinaryUpload = ({
   const upload = async ({
     type = 'video',
     blobUrl,
-    isWebcam = false,
-    projectId,
+    useWebcamOptimization = false,
+    devApplicationId,
     overridenOnSuccess,
   }: {
     type?: 'video' | 'image';
     // | 'audio' | 'screen'
     blobUrl: string;
-    isWebcam?: boolean;
+    useWebcamOptimization?: boolean;
     overridenOnSuccess?: (url: string) => void;
-    projectId: number;
+    devApplicationId: number;
   }) => {
     if (!userId) {
       return alert('You must be logged in to upload media');
@@ -51,7 +50,9 @@ const useCloudinaryUpload = ({
     ) {
       // Get signature
       const { success, public_id, error, signature, timestamp, uploadUrl } =
-        await generatePresignedUrlMutation.mutateAsync({ type, projectId });
+        await generatePresignedUrlMutation.mutateAsync({
+          applicationId: devApplicationId,
+        });
 
       if (error ?? !success) {
         throw new Error(
@@ -80,9 +81,7 @@ const useCloudinaryUpload = ({
                     'image/png',
             }),
         )
-        .catch((error) => {
-          onError?.(error);
-        });
+        .catch(onError);
 
       if (!file) {
         throw new Error(
@@ -120,30 +119,32 @@ const useCloudinaryUpload = ({
           console.error('No secure url returned from cloudinary');
           return onError?.('No secure url returned!');
         }
-        const usableUrl = isWebcam
+        const usableUrl = useWebcamOptimization
           ? data.secure_url.replace('/upload/', '/upload/w_250,h_250,c_fill/')
           : data.secure_url;
 
+        setStatus('succeeded');
         overridenOnSuccess
           ? overridenOnSuccess(usableUrl)
-          : onSuccess?.({
+          : await onSuccess?.({
               public_id,
-              projectId,
+              devApplicationId,
               url: usableUrl,
             });
-        setStatus('succeeded');
       } catch (e) {
         setStatus('failed');
-        onError?.((e as Error)?.message ?? 'Unknown error');
+        void onError?.((e as Error)?.message ?? 'Unknown error');
       }
     } else {
       // TODO: Handle this better
       setStatus('failed');
-      onError?.('The media is not yet ready for uploading. Please try again.');
+      void onError?.(
+        'The media is not yet ready for uploading. Please try again.',
+      );
     }
   };
 
   return { upload, status };
 };
 
-export default useCloudinaryUpload;
+export default useFacecamUpload;

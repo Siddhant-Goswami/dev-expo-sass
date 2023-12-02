@@ -1,4 +1,5 @@
 import ProjectCard from '@/components/ui/project-card';
+import { URLs } from '@/lib/constants';
 import { type getAllProjects } from '@/server/actions/projects';
 import Link from 'next/link';
 
@@ -17,7 +18,7 @@ function Grid({ data }: GridProps) {
     <div className="flex h-max w-full flex-wrap items-center justify-center gap-6 xl:gap-x-10 [&>*:nth-child(7)]:hidden sm:[&>*:nth-child(7)]:block [&>*:nth-child(8)]:hidden sm:[&>*:nth-child(8)]:block">
       {data.map((project) => (
         <Link
-          href={`/feed/${project.id}`}
+          href={URLs.projectPage(project.id.toString())}
           key={project.id}
           className="h-max w-max"
         >
