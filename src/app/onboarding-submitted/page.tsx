@@ -1,5 +1,5 @@
-import NewFooter from '@/components/newfooter';
 import { buttonVariants } from '@/components/ui/button';
+import Footer from '@/components/ui/footer';
 import NavBar from '@/components/ui/navbar';
 import { cn } from '@/utils/cn';
 import { LucideCheckCircle2 } from 'lucide-react';
@@ -14,7 +14,7 @@ export default function Page() {
       <div className="mx-auto mt-10 flex min-h-[70vh] max-w-3xl flex-col items-center">
         <LucideCheckCircle2
           size={50}
-          className="fill-emerald-100 stroke-emerald-600"
+          className="fill-emerald-100 stroke-emerald-600 dark:fill-emerald-800 dark:stroke-emerald-300"
         />
 
         <h1 className="mt-7 scroll-m-20 text-center text-4xl font-extrabold tracking-tight lg:text-5xl">
@@ -42,14 +42,14 @@ export default function Page() {
         </p>
 
         <Image
-          src={'https://illustrations.popsy.co/teal/shaking-hands.svg'}
+          src={'https://illustrations.popsy.co/white/shaking-hands.svg'}
           width={500}
           height={500}
-          className="w-72"
+          className="w-72 dark:invert"
           alt="Success iamge"
         />
       </div>
-      <NewFooter />
+      <Footer />
     </>
   );
 }
