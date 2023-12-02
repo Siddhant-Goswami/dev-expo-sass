@@ -18,7 +18,7 @@ const NavBar = () => {
   const userId = session?.user?.id;
 
   return (
-    <nav className="sticky top-0 z-50 flex w-screen items-center justify-between bg-background/30 px-6 py-4 backdrop-blur-md md:px-10">
+    <nav className="sticky top-0 z-50 flex items-center justify-between bg-background/30 px-6 py-4 backdrop-blur-md md:px-10">
       <div className="flex w-full items-center justify-between space-x-4">
         <div className="flex items-center">
           <Link href="/" className="text-2xl font-semibold">

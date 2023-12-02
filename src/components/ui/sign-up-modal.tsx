@@ -6,6 +6,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { URLs } from '@/lib/constants';
+import Link from 'next/link';
 import { UserAuthForm } from '../AuthForm';
 
 type SignInModalProps = {
@@ -16,7 +18,7 @@ function SignInModal({ children }: SignInModalProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="h-screen w-full overflow-scroll md:h-max md:max-w-xl">
+      <DialogContent className="h-screen w-full overflow-scroll md:h-max md:max-w-md">
         <DialogHeader>
           <DialogTitle>Get Started</DialogTitle>
           <DialogDescription>
@@ -24,6 +26,24 @@ function SignInModal({ children }: SignInModalProps) {
           </DialogDescription>
         </DialogHeader>
         <UserAuthForm />
+
+        <p className="px-8 text-center text-sm text-muted-foreground">
+          By clicking continue, you agree to our{' '}
+          <Link
+            href={URLs.termsOfService}
+            className="underline underline-offset-4 hover:text-primary"
+          >
+            Terms of Service
+          </Link>{' '}
+          and{' '}
+          <Link
+            href={URLs.privacyPolicy}
+            className="underline underline-offset-4 hover:text-primary"
+          >
+            Privacy Policy
+          </Link>
+          .
+        </p>
       </DialogContent>
     </Dialog>
   );

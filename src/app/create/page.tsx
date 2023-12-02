@@ -24,7 +24,7 @@ async function Page() {
   return (
     <>
       <NavBar />
-      <section className="mx-auto mb-32 flex min-h-[65vh] max-w-4xl flex-col items-center justify-start px-4">
+      <div className="mx-auto mb-32 flex min-h-[105vh] max-w-4xl flex-col items-center justify-start px-4">
         <h1 className="mt-8 w-max text-2xl font-extrabold tracking-tight md:text-4xl lg:text-5xl">
           {isUserVerified ? 'Create a new project' : 'Become a developer now!'}
         </h1>
@@ -33,10 +33,10 @@ async function Page() {
             ? 'Create a new project to showcase your skills and get hired.'
             : 'Showcase your incredible work to the world and get hired by the best companies.'}
         </p>
-        <main className="mt-14 flex w-full flex-col items-center justify-center px-4">
+        <div className="mt-14 flex w-full flex-col items-center justify-center px-4">
           {isUserVerified ? <ProjectUpload /> : <OnboardingSteps />}
-        </main>
-      </section>
+        </div>
+      </div>
       <NewFooter />
     </>
   );
