@@ -281,7 +281,9 @@ export function ProjectUpload() {
                       if (image.size > MAX_IMAGE_SIZE) {
                         return toast({
                           variant: 'destructive',
-                          title: 'Image size should be less than 5MB',
+                          title: `Image size should be less than ${
+                            MAX_IMAGE_SIZE / 1024 / 1024
+                          } MB per image`,
                         });
                       }
                     });
@@ -300,7 +302,7 @@ export function ProjectUpload() {
               </FormControl>
               <FormDescription>
                 Upload up to 3 images to showcase your project. Max file size is
-                5MB.
+                {MAX_IMAGE_SIZE / 1024 / 1024} MB per image
               </FormDescription>
               <FormMessage />
             </FormItem>

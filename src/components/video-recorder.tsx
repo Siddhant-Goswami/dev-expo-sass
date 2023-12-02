@@ -7,7 +7,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import Webcam from 'react-webcam';
 import { type VerificationStep } from './ui/onboarding-steps';
 
-const MAX_VIDEO_TIME_IN_SECONDS = 60;
+const MAX_VIDEO_TIME_IN_SECONDS = 60 as const;
+const MAX_VIDEO_FILE_SIZE = 100 * 1024 * 1024;
 
 export default function VideoRecorder(props: {
   onClickNextStep: () => void;
@@ -20,7 +21,7 @@ export default function VideoRecorder(props: {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const [capturing, setCapturing] = useState(false);
   const [recordedChunks, setRecordedChunks] = useState<Blob[]>([]);
-  const [seconds, setSeconds] = useState(MAX_VIDEO_TIME_IN_SECONDS);
+  const [seconds, setSeconds] = useState<number>(MAX_VIDEO_TIME_IN_SECONDS);
   const [recordingPermission, setRecordingPermission] = useState(true);
   const [cameraLoaded, setCameraLoaded] = useState(false);
   const [isSubmitting, setSubmitting] = useState(false);
@@ -160,9 +161,18 @@ export default function VideoRecorder(props: {
                   type: 'video/mp4',
                 });
 
-                console.log({
-                  videoSizeInMB: videoBlob.size / 1024 / 1024,
-                });
+                const videoSizeInMB = videoBlob.size / 1024 / 1024;
+
+                console.log({ videoSizeInMB });
+
+                if (videoSizeInMB > MAX_VIDEO_FILE_SIZE) {
+                  alert(
+                    `Your video is too large. Please record a video under ${
+                      MAX_VIDEO_FILE_SIZE / 1024 / 1024
+                    } mb.`,
+                  );
+                  return;
+                }
 
                 const blobUrl = URL.createObjectURL(videoBlob);
 

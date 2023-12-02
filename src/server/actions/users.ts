@@ -65,14 +65,17 @@ export const createDevApplication = async (
   const existingApplication = await db.query.devApplications.findFirst({
     where: eq(devApplications.userId, userId),
   });
-  if (
-    existingApplication &&
-    (existingApplication.status === 'pending' ||
-      existingApplication.status === 'approved')
-  ) {
+  if (existingApplication?.status === 'approved') {
     return {
       success: false,
-      error: 'You already have an application pending or approved',
+      error: 'User already has a developer profile!',
+    };
+  }
+
+  if (existingApplication?.status === 'pending') {
+    return {
+      success: false,
+      error: 'User already has a pending application!',
     };
   }
 

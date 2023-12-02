@@ -27,7 +27,7 @@ import { api } from '@/trpc/react';
 import { isGithubUserValid } from '@/utils';
 import { cn } from '@/utils/cn';
 import { useMutation } from '@tanstack/react-query';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, LucideLoader } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -40,15 +40,7 @@ const onboardingStepsSchema = z.object({
     .string()
     .min(5, 'GitHub Username is required.')
     .max(50, 'GitHub Username must be less than 50 characters.'),
-  websiteUrl: z
-    .string()
-    .transform((val) => {
-      if (!val?.startsWith('https://')) {
-        val = 'https://' + val;
-      }
-      return val;
-    })
-    .pipe(z.string().url('Please enter a valid Portfolio URL')),
+  websiteUrl: devApplicationSchema.shape.websiteUrl,
   twitterUsername: z.string().min(2, 'Twitter Username is required.'),
   bio: devApplicationSchema.shape.bio,
 });
@@ -324,6 +316,15 @@ export function OnboardingSteps() {
             verificationStep={verificationStep}
           />
         )}
+      </div>
+
+      <div
+        className={cn(
+          verificationStep === 'submitting' ? 'flex' : 'hidden',
+          'mx-auto min-h-[30rem] w-full flex-col items-center justify-center rounded-xl bg-slate-100',
+        )}
+      >
+        <LucideLoader size={70} className="animate-spin stroke-brand" />
       </div>
     </>
   );
