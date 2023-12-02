@@ -512,7 +512,9 @@ export default function Page() {
           having deleted cookies, You should contact the supplier of Your web
           browser.
         </p>
-        <p className={paragraph}>Opting out of Analytical performance cookies</p>
+        <p className={paragraph}>
+          Opting out of Analytical performance cookies
+        </p>
         <p className={paragraph}>
           If You would like to opt out of Analytics cookies, please do so by
           clicking on the links below: Opting out of Behavioral Advertising
