@@ -1,6 +1,6 @@
 import GetStartedButton from '@/components/get-started-button';
 import ShimmerButton from '@/components/magicui/shimmer-button';
-import Footer from '@/components/ui/footer';
+import NewFooter from '@/components/newfooter';
 import Grid from '@/components/ui/grid';
 import Navbar from '@/components/ui/navbar';
 import { URLs } from '@/lib/constants';
@@ -104,7 +104,7 @@ export default async function Page() {
           }
         />
       </section>
-      <Footer />
+      <NewFooter />
     </div>
   );
 }
