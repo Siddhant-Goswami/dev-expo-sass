@@ -1,19 +1,11 @@
 import Footer from '@/components/ui/footer';
 import NavBar from '@/components/ui/navbar';
 
-import { UserAuthForm } from '@/components/AuthForm';
+import AuthwallPage from '@/components/AuthwallPage';
 import MarkdownComponent from '@/components/mark-down';
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { buttonVariants } from '@/components/ui/button';
 import GoBack from '@/components/ui/go-back';
-import { URLs } from '@/lib/constants';
 import { projectFormSchema } from '@/lib/validations/project';
 import { getProjectById } from '@/server/actions/projects';
 import { extractIDfromYtURL } from '@/utils';
@@ -24,6 +16,7 @@ import { cookies } from 'next/headers';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { z } from 'zod';
 import {
   GetInTouchButton,
   GetInTouchSection,
@@ -39,18 +32,30 @@ export const revalidate = 10;
 async function Page({ params }: PageProps) {
   const supabase = createServerComponentClient({ cookies });
   const resp = await supabase.auth.getSession();
-  const userId = resp.data.session?.user.id ?? null;
-  const availableForWork = true;
+  const userId = resp.data.session?.user.id;
 
-  const projectId = params.id[0];
-
-  if (!projectId) {
-    return notFound();
+  if (!userId) {
+    return AuthwallPage;
   }
 
-  const projectDetails = await getProjectById(Number(projectId));
+  const availableForWork = true;
 
-  if (!projectDetails?.dev) return notFound();
+  const projectIdResult = z.coerce
+    .number()
+    .int()
+    .finite()
+    .safeParse(params.id[0]);
+
+  if (!projectIdResult.success) {
+    notFound();
+  }
+  const projectId = projectIdResult.data;
+
+  const projectDetails = await getProjectById(projectId);
+
+  if (!projectDetails?.dev) {
+    notFound();
+  }
 
   const { project, dev } = projectDetails;
   const { title, description, youtubeUrl, projectMedia: media } = project;
@@ -66,43 +71,6 @@ async function Page({ params }: PageProps) {
   const initialLetter = displayName.charAt(0).toUpperCase();
 
   const { sourceCodeUrl, hostedUrl } = projectDetails.project;
-
-  if (!userId) {
-    return (
-      <>
-        <NavBar />
-        <AlertDialog defaultOpen>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>
-                <h2 className="text-lg font-medium">Get Started</h2>
-              </AlertDialogTitle>
-              <AlertDialogDescription>
-                <UserAuthForm />
-                <p className="px-8 text-center text-sm text-muted-foreground">
-                  By clicking continue, you agree to our{' '}
-                  <Link
-                    href={URLs.termsOfService}
-                    className="underline underline-offset-4 hover:text-primary"
-                  >
-                    Terms of Service
-                  </Link>{' '}
-                  and{' '}
-                  <Link
-                    href={URLs.privacyPolicy}
-                    className="underline underline-offset-4 hover:text-primary"
-                  >
-                    Privacy Policy
-                  </Link>
-                  .
-                </p>
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-          </AlertDialogContent>
-        </AlertDialog>
-      </>
-    );
-  }
 
   return (
     <>
@@ -136,7 +104,7 @@ async function Page({ params }: PageProps) {
                   <div
                     className={
                       'h-2 w-2 ' +
-                      (availableForWork ? 'bg-green-500' : 'bg-red-500') +
+                      (availableForWork ? 'bg-green-500' : 'bg-gray-500') +
                       ' mr-2 rounded-full'
                     }
                   ></div>
@@ -145,7 +113,7 @@ async function Page({ params }: PageProps) {
                       Available for work
                     </span>
                   ) : (
-                    <span className="text-xs text-red-500">
+                    <span className="text-xs text-gray-500">
                       Not available for work
                     </span>
                   )}

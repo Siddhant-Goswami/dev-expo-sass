@@ -26,6 +26,7 @@ export async function getOrCreateUserProfile({
     const existingUser = await getUserProfileFromDb(userId);
 
     if (existingUser?.id) {
+      console.log('Found existing user in db:', existingUser.id);
       userInDb = existingUser;
     } else {
       const parsedUserResult = z
