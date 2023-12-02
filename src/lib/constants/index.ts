@@ -6,6 +6,7 @@ export const URLs = {
   projectPage(id: string) {
     return `${this.feed}/${id}`;
   },
+  onboardingSubmitted: '/onboarding-submitted',
   signIn: '/sign-in',
   signUp: '/sign-up',
   termsOfService: 'https://100xengineers.com/terms-and-conditions',

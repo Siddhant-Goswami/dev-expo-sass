@@ -146,7 +146,6 @@ export const devApplicationRouter = createTRPCRouter({
       const { devApplicationId, publicId } = input;
 
       const userId = ctx.session.user.id;
-      const userEmail = ctx.session.user.email;
 
       const existingMediaInDb =
         await ctx.db.query.devApplicationMedia.findFirst({
@@ -189,14 +188,15 @@ export const devApplicationRouter = createTRPCRouter({
         cloud_name: env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
         secure: true,
       });
-      const assetUrl = cloudinary.v2.utils.url(publicId);
+      const videoUrl = cloudinary.v2.utils.video_url(publicId);
+      console.log(`💚 Video URL: ${videoUrl}`);
 
       const [updatedRecord] = await ctx.db
         .update(devApplicationMedia)
         .set({
           expiresAt: null,
           updatedAt: new Date(),
-          url: assetUrl,
+          url: videoUrl,
         })
         .where(eq(devApplicationMedia.id, existingMediaInDb.id))
         .returning({ id: devApplicationMedia.id });

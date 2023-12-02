@@ -1,7 +1,7 @@
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
-import { devApplicationStatusesEnum } from '@/lib/validations/user';
+import { type DevApplicationStatus } from '@/lib/validations/user';
 import {
   relations,
   type InferInsertModel,
@@ -80,8 +80,9 @@ export const devApplications = pgTable('devApplication', {
   displayName: varchar('displayName', { length: 256 }).notNull(),
   bio: varchar('bio', { length: 500 }).notNull(),
   appliedAt: timestamp('appliedAt', { withTimezone: true }).notNull(),
-  status: varchar('status', { enum: devApplicationStatusesEnum })
+  status: varchar('status')
     .notNull()
+    .$type<DevApplicationStatus>()
     .default('pending'),
   websiteUrl: varchar('websiteUrl', { length: 1024 }),
   gitHubUrl: varchar('gitHubUrl', { length: 1024 }).notNull(),
@@ -422,18 +423,15 @@ export const devApplicationMediaRelation = relations(
   },
 );
 
-export const devApplicationRelations = relations(
-  devApplications,
-  ({ one, many }) => {
-    return {
-      devApplicationMedia: one(devApplicationMedia),
-      userProfiles: one(userProfiles, {
-        fields: [devApplications.userId],
-        references: [userProfiles.id],
-      }),
-    };
-  },
-);
+export const devApplicationRelations = relations(devApplications, ({ one }) => {
+  return {
+    devApplicationMedia: one(devApplicationMedia),
+    userProfiles: one(userProfiles, {
+      fields: [devApplications.userId],
+      references: [userProfiles.id],
+    }),
+  };
+});
 
 export const projectMediaRelation = relations(projectMedia, ({ one }) => {
   return {

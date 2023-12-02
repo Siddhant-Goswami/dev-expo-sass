@@ -20,10 +20,12 @@ import { toast } from '@/components/ui/use-toast';
 import VideoRecorder from '@/components/video-recorder';
 import useFacecamUpload from '@/hooks/useFacecamUpload';
 import { useAuth } from '@/hooks/user/auth';
+import { URLs } from '@/lib/constants';
 import { devApplicationSchema } from '@/lib/validations/user';
 import { createDevApplication } from '@/server/actions/users';
 import { api } from '@/trpc/react';
 import { isGithubUserValid } from '@/utils';
+import { cn } from '@/utils/cn';
 import { useMutation } from '@tanstack/react-query';
 import { ChevronLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -52,16 +54,16 @@ const onboardingStepsSchema = z.object({
 });
 
 type OnbaordingStepsValues = z.infer<typeof onboardingStepsSchema>;
-type VerificationStepValues = 'fields' | 'video' | 'finish';
+export type VerificationStep = 'fields' | 'video' | 'submitting';
 
 export function OnboardingSteps() {
+  const { session } = useAuth();
   const router = useRouter();
 
   const [verificationStep, setVerificationStep] =
-    useState<VerificationStepValues>('fields');
+    useState<VerificationStep>('fields');
   const [facecamBlobUrl, setFacecamBlobUrl] = useState<string | null>(null);
 
-  const { session } = useAuth();
   const displayName = z
     .string()
     .catch('')
@@ -75,6 +77,7 @@ export function OnboardingSteps() {
     resolver: zodResolver(onboardingStepsSchema),
     defaultValues: {
       displayName,
+      // TODO: remove this
       githubUsername: 'thecmdrunner',
       websiteUrl: 'https://pranava.dev',
       twitterUsername: 'thecmdrunner',
@@ -109,17 +112,18 @@ export function OnboardingSteps() {
   } = api.devApplication.validateAndPersistFacecamUpload.useMutation({
     onSuccess: (data) => {
       if (data?.success) {
-        setVerificationStep('finish');
-        return toast({
+        toast({
           title: '🎉 Application submitted',
           description: 'Your application has been submitted for review.',
         });
-      }
 
-      toast({
-        title: 'Could not submit video',
-        description: data.message,
-      });
+        router.push(URLs.onboardingSubmitted);
+      } else {
+        toast({
+          title: 'Could not submit video',
+          description: data.message,
+        });
+      }
     },
 
     onError: (error) => {
@@ -165,6 +169,7 @@ export function OnboardingSteps() {
           console.error({ error, devApplicationId });
           throw new Error('Could not submit application');
         }
+        setVerificationStep('submitting');
 
         await uploadFacecamToCloudinary({
           devApplicationId,
@@ -180,135 +185,146 @@ export function OnboardingSteps() {
         });
       },
     });
+
+  const isActuallyLoading =
+    isSubmittingApplication ||
+    isValidatingUpload ||
+    facecamUploadStatus === 'uploading';
+
   return (
     <>
-      {verificationStep === 'fields' && (
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(submitFields)}
-            className="space-y-8"
-          >
-            <FormField
-              control={form.control}
-              name="displayName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Display Name</FormLabel>
-                  <FormControl>
-                    <Input {...field} placeholder="Enter your display name" />
-                  </FormControl>
-                  <FormDescription>
-                    Edit your user name if you want to change how it appears on
-                    your profile.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="githubUsername"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>GitHub Username</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      placeholder="Enter your GitHub username"
-                      disabled={githubUsername ? true : false}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Your GitHub username is used to fetch your projects and
-                    contributions.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(submitFields)}
+          className={cn(
+            verificationStep === 'fields' ? 'flex' : 'hidden',
+            'flex-col space-y-8',
+          )}
+        >
+          <FormField
+            control={form.control}
+            name="displayName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Display Name</FormLabel>
+                <FormControl>
+                  <Input {...field} placeholder="Enter your display name" />
+                </FormControl>
+                <FormDescription>
+                  Edit your user name if you want to change how it appears on
+                  your profile.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="githubUsername"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>GitHub Username</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    placeholder="Enter your GitHub username"
+                    disabled={githubUsername ? true : false}
+                  />
+                </FormControl>
+                <FormDescription>
+                  Your GitHub username is used to fetch your projects and
+                  contributions.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-            <FormField
-              control={form.control}
-              name="websiteUrl"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Portfolio Link</FormLabel>
-                  <FormControl>
-                    <Input {...field} placeholder="Enter your portfolio URL" />
-                  </FormControl>
-                  <FormDescription>
-                    Your portfolio link is used to showcase your work on your
-                    profile.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="twitterUsername"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel> X (Twitter) Username</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      placeholder="Enter your Twitter Username"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <FormField
+            control={form.control}
+            name="websiteUrl"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Portfolio Link</FormLabel>
+                <FormControl>
+                  <Input {...field} placeholder="Enter your portfolio URL" />
+                </FormControl>
+                <FormDescription>
+                  Your portfolio link is used to showcase your work on your
+                  profile.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="twitterUsername"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel> X (Twitter) Username</FormLabel>
+                <FormControl>
+                  <Input {...field} placeholder="Enter your Twitter Username" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-            <FormField
-              control={form.control}
-              name="bio"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Bio</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      {...field}
-                      placeholder="Write a few words describing yourself and your work."
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <div className="mb-4 flex w-full justify-center">
-              <Button type="submit" className="w-full">
-                Get Verfied
-              </Button>
-            </div>
-          </form>
-        </Form>
-      )}
-
-      {verificationStep === 'video' && (
-        <>
-          {/* <p className="text-center text-2xl font-bold text-white"> </p> */}
-          <div className="mr-auto flex w-full items-center justify-start gap-3">
-            <Button
-              variant={'ghost'}
-              onClick={() => setVerificationStep('fields')}
-              className="flex items-center self-start"
-            >
-              <ChevronLeft />
-              <span>Edit Form</span>
+          <FormField
+            control={form.control}
+            name="bio"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Bio</FormLabel>
+                <FormControl>
+                  <Textarea
+                    {...field}
+                    placeholder="Write a few words describing yourself and your work."
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div className="mb-4 flex w-full justify-center">
+            <Button type="submit" className="w-full">
+              Get Verfied
             </Button>
-            <p className="mx-auto text-center text-sm font-medium">
-              Please record a short video introducing yourself and your work.
-            </p>
           </div>
+        </form>
+      </Form>
 
+      <div
+        className={cn(
+          verificationStep === 'video' ? 'flex' : 'hidden',
+          'mx-auto w-full flex-col items-center',
+        )}
+      >
+        {/* <p className="text-center text-2xl font-bold text-white"> </p> */}
+        <div className="mr-auto flex w-full items-center justify-start gap-3">
+          <Button
+            variant={'ghost'}
+            onClick={() => setVerificationStep('fields')}
+            className="flex items-center self-start"
+          >
+            <ChevronLeft />
+            <span>Edit Form</span>
+          </Button>
+          <p className="mx-auto text-center text-sm font-medium">
+            Please record a short video introducing yourself and your work.
+          </p>
+        </div>
+
+        {verificationStep === 'video' && (
           <VideoRecorder
             onClickNextStep={submitAll}
             setFacecamBlobUrl={setFacecamBlobUrl}
+            isActuallyLoading={isActuallyLoading}
+            verificationStep={verificationStep}
           />
-        </>
-      )}
+        )}
+      </div>
     </>
   );
 }
