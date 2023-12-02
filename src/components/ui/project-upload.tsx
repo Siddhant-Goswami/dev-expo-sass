@@ -23,20 +23,34 @@ import { projectFormSchema } from '@/lib/validations/project';
 import { validateAndPersistUpload } from '@/server/actions/projectMedia';
 import { uploadNewProject } from '@/server/actions/projects';
 import { useMutation } from '@tanstack/react-query';
-import { LucideLoader, LucideSave } from 'lucide-react';
+import {
+  LucideLoader,
+  LucideRocket,
+  LucideTrash2,
+  LucideUploadCloud,
+} from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { Label } from './label';
 
 type ProjectUploadValues = z.infer<typeof projectFormSchema>;
-// type Page = 'data-entry' | 'media-upload';
-
+const acceptedImageTypes = [
+  'image/png',
+  'image/jpeg',
+  'image/jpg',
+  'image/webp',
+];
 export function ProjectUpload() {
   const router = useRouter();
 
   const { toast } = useToast();
-  const [selectedImages, setSelectedImages] = useState<File[]>([]);
-  // const [selectedVideos, setSelectedVideos] = useState<File[]>([]);
+  const [selectedImages, setSelectedImages] = useState<
+    {
+      uniqueId: string;
+      file: File;
+    }[]
+  >([]);
 
   const [actualStatus, setActualStatus] = useState<
     'uploading-images' | 'uploading-data' | 'success' | 'idle' | 'error'
@@ -51,12 +65,6 @@ export function ProjectUpload() {
       sourceCodeUrl: '',
       youtubeUrl: '',
       tags: [],
-      // title: 'TEST PROJECT',
-      // hostedUrl: 'http://localhost:3000',
-      // sourceCodeUrl: 'http://localhost:3000',
-      // youtubeUrl: 'https://www.youtube.com/watch?v=EeHJUijhszw',
-      // tags: ['1', '2'],
-      // description: 'TEST PROJECTTEST PROJECT', // Default description value
     },
   });
 
@@ -109,15 +117,16 @@ export function ProjectUpload() {
       return alert('No images selected!');
     }
 
-    const imageUploadPromises = selectedImages.map((img, index) => {
-      const blobUrl = URL.createObjectURL(img);
+    const imageUploadPromises = selectedImages.map(async (img, index) => {
+      const blobUrl = URL.createObjectURL(img.file);
 
-      return uploadToCloudinary({
+      await uploadToCloudinary({
         type: 'image',
         blobUrl,
         isWebcam: false,
         projectId,
-      }).then(() => console.log(`Uploaded image: ${index}`));
+      });
+      return console.log(`Uploaded image: ${index}`);
     });
 
     await Promise.all(imageUploadPromises).then(() => {
@@ -260,53 +269,80 @@ export function ProjectUpload() {
           name="images"
           render={() => (
             <FormItem>
-              <FormLabel> Upload Images </FormLabel>
+              {/* <FormLabel> Upload Images </FormLabel> */}
               <FormControl>
-                <Input
-                  required
-                  multiple
-                  accept="image/*"
-                  id="imageFile"
-                  type="file"
-                  // value={selectedImages}
-                  onChange={(e) => {
-                    const images = e.target.files;
-                    if (!images) return;
+                <>
+                  <Button asChild>
+                    <Label htmlFor="imageFiles" className={'cursor-pointer'}>
+                      <LucideUploadCloud size={16} className="mr-2" />
+                      Upload Images
+                    </Label>
+                  </Button>
+                  <Input
+                    required
+                    multiple
+                    accept="image/*"
+                    id="imageFiles"
+                    type="file"
+                    className="hidden"
+                    // value={selectedImages}
+                    onChange={(e) => {
+                      const images = e.target.files;
+                      if (!images) return;
 
-                    const imagesArray = Array.from(images);
-                    console.log(`Selected images:`, imagesArray);
-                    imagesArray.forEach((image) => {
-                      if (!image.type.startsWith('image/')) {
-                        return toast({
-                          variant: 'destructive',
-                          title: 'Image type should be png or jpeg',
-                        });
-                      }
-                      if (image.size > MAX_IMAGE_SIZE) {
-                        return toast({
-                          variant: 'destructive',
-                          title: `Image size should be less than ${
-                            MAX_IMAGE_SIZE / 1024 / 1024
-                          } MB per image`,
-                        });
-                      }
-                    });
-                    const filteredImages = imagesArray.filter(
-                      (image, index) =>
-                        image.size < MAX_IMAGE_SIZE &&
-                        index < MAX_NUMBER_OF_IMAGES,
-                    );
+                      const imagesArray = Array.from(images).filter(
+                        (img, idx) => {
+                          const isExceedingMaxSize = img.size > MAX_IMAGE_SIZE;
+                          const isExceedingMaxQuantity =
+                            idx + 1 > MAX_NUMBER_OF_IMAGES;
+                          const isValidAcceptedType =
+                            acceptedImageTypes.includes(img.type);
 
-                    console.log(`Filtered images:`, filteredImages);
-                    setSelectedImages(filteredImages);
+                          if (!isValidAcceptedType) {
+                            toast({
+                              variant: 'destructive',
+                              title: `Please supply a valid image type!`,
+                            });
+                          }
 
-                    // alert("You've selected " + imagesArray.length + ' images.');
-                  }}
-                />
+                          if (isExceedingMaxSize) {
+                            toast({
+                              variant: 'destructive',
+                              title: `Image size should not exceed ${
+                                MAX_IMAGE_SIZE / 1024 / 1024
+                              } MB`,
+                            });
+                          }
+
+                          if (isExceedingMaxQuantity) {
+                            toast({
+                              variant: 'destructive',
+                              title: `You can only upload up to ${MAX_NUMBER_OF_IMAGES} images`,
+                            });
+                          }
+
+                          const toInclude =
+                            !isExceedingMaxSize && !isExceedingMaxQuantity;
+
+                          return toInclude;
+                        },
+                      );
+
+                      const selectedImagesWithIds = imagesArray.map((img) => ({
+                        uniqueId: Math.random().toString(36).substring(2, 9),
+                        file: img,
+                      }));
+
+                      setSelectedImages(selectedImagesWithIds);
+                      e.target.files = null;
+                    }}
+                  />
+                </>
               </FormControl>
               <FormDescription>
-                Upload up to 3 images to showcase your project. Max file size is
-                {MAX_IMAGE_SIZE / 1024 / 1024} MB per image
+                Upload at least 1 image to showcase your project.
+                <br />
+                The first image will be used as the cover image.
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -314,32 +350,62 @@ export function ProjectUpload() {
         />
 
         {selectedImages.length > 0 && (
-          <div className="flex w-full flex-wrap items-start gap-1">
-            {selectedImages.map((image, index) => (
-              <Image
-                width={250}
-                height={250}
-                key={index}
-                className="h-auto w-auto max-w-[10rem] rounded-sm"
-                src={URL.createObjectURL(image)}
-                alt="image"
-              />
-            ))}
-          </div>
+          <>
+            <div className="flex w-full flex-wrap items-start gap-1">
+              {selectedImages.map((img, index) => (
+                <div
+                  key={index}
+                  className="relative flex items-center justify-center"
+                >
+                  <Image
+                    width={250}
+                    height={250}
+                    className="h-auto w-auto max-w-[10rem] rounded-sm"
+                    src={URL.createObjectURL(img.file)}
+                    alt={`Selected image ${index + 1}`}
+                  />
+
+                  <Button
+                    variant={'secondary'}
+                    type="button"
+                    onClick={() => {
+                      const newSelectedImages = selectedImages.filter(
+                        (image) => image.uniqueId !== img.uniqueId,
+                      );
+                      setSelectedImages(newSelectedImages);
+                    }}
+                    className="absolute right-2 top-2 aspect-square h-8 w-8 rounded-sm p-0"
+                  >
+                    <LucideTrash2 size={15} />
+                  </Button>
+                </div>
+              ))}
+            </div>
+
+            <p className="text-sm text-gray-500">
+              {selectedImages.length} / {MAX_NUMBER_OF_IMAGES} images selected
+              <br />
+              Max file size is {MAX_IMAGE_SIZE / 1024 / 1024} MB per image
+            </p>
+          </>
         )}
 
         <div className="flex flex-wrap-reverse justify-end gap-3">
           <Button
             type="submit"
-            className="flex w-full items-center gap-2 sm:w-36"
+            className="w-full rounded-[0.375rem] sm:w-max"
             loading={isActuallyLoading}
+            disabled={selectedImages.length === 0}
           >
             {isActuallyLoading ? (
-              <LucideLoader size={20} className="animate-spin" />
+              <LucideLoader size={16} className="animate-spin" />
             ) : (
               <>
-                <LucideSave className="pr-1" size={18} />
-                Submit
+                <LucideRocket className="mr-2" size={16} />
+                {/* Submit */}
+                {/* Publish now */}
+                Launch now
+                {/* Schedule for later (No img required) */}
               </>
             )}
           </Button>
