@@ -19,6 +19,7 @@ import {
   type ProjectSelect,
   type UserProfileSelect,
 } from '../db/schema';
+import { revalidatePath, revalidateTag } from 'next/cache';
 
 // TODO: filter categories
 
@@ -151,13 +152,15 @@ export const isLikedByUser = async ({ projectId }: { projectId: number }) => {
     if (!userId) {
       throw new Error('Unauthorized');
     }
-
-    const userLike = await db.query.likes.findMany({
-      where: (ls, { eq, and }) =>
-        and(eq(ls.projectId, projectId), eq(ls.userId, userId)),
-    });
-
-    return !!userLike;
+    console.log('my user id', userId); 
+    const query = sql`SELECT COUNT(*) FROM dev_expo_likes WHERE ${likes.projectId} = ${projectId} AND ${likes.userId} = ${userId}`
+    const res = await db.execute(query);
+    // const likes = await db.query.likes.findMany({
+    //   where: (likes, { eq }) => eq(likes.projectId, projectId),
+    // });
+    // const hasUserLiked = likes.find((like) => like.userId === userId);
+    const userLikeRecord = z.coerce.number().parse(res.rows[0]?.count as {count:string}[] );
+    return userLikeRecord===1;
   } catch (err) {
     console.error(err);
     return false;
@@ -362,8 +365,7 @@ export const createOrDeleteLike = async (projectId: number) => {
       });
     }
     // Probably not needed
-    // revalidatePath(URLs.projectPage(projectId.toString()));
-
+    revalidatePath(URLs.projectPage(projectId.toString()));
     return {
       success: true,
     };
