@@ -56,9 +56,7 @@ export const GetInTouchSection = ({
   return (
     <IsNotSameUserWrapper projectUserId={projectUserId}>
       <div className="mt-6 flex w-full flex-col items-center justify-center border-t border-gray-500 py-8">
-        <h3 className="text-xl font-medium">
-          Liked {userDisplayName}'s work?
-        </h3>
+        <h3 className="text-xl font-medium">Liked {userDisplayName}'s work?</h3>
         <p className="mb-4 mt-2 text-sm">
           Get in touch with {userDisplayName} to discuss your project.
         </p>
