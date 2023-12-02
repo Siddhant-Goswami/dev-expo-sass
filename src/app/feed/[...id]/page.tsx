@@ -16,6 +16,7 @@ import { cookies } from 'next/headers';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { z } from 'zod';
 import {
   GetInTouchButton,
   GetInTouchSection,
@@ -31,7 +32,7 @@ export const revalidate = 10;
 async function Page({ params }: PageProps) {
   const supabase = createServerComponentClient({ cookies });
   const resp = await supabase.auth.getSession();
-  const userId = resp.data.session?.user.id ?? null;
+  const userId = resp.data.session?.user.id;
 
   if (!userId) {
     return AuthwallPage;
@@ -39,15 +40,22 @@ async function Page({ params }: PageProps) {
 
   const availableForWork = true;
 
-  const projectId = params.id[0];
+  const projectIdResult = z.coerce
+    .number()
+    .int()
+    .finite()
+    .safeParse(params.id[0]);
 
-  if (!projectId) {
-    return notFound();
+  if (!projectIdResult.success) {
+    notFound();
   }
+  const projectId = projectIdResult.data;
 
-  const projectDetails = await getProjectById(Number(projectId));
+  const projectDetails = await getProjectById(projectId);
 
-  if (!projectDetails?.dev) return notFound();
+  if (!projectDetails?.dev) {
+    notFound();
+  }
 
   const { project, dev } = projectDetails;
   const { title, description, youtubeUrl, projectMedia: media } = project;
@@ -63,10 +71,6 @@ async function Page({ params }: PageProps) {
   const initialLetter = displayName.charAt(0).toUpperCase();
 
   const { sourceCodeUrl, hostedUrl } = projectDetails.project;
-
-  if (!userId) {
-    return AuthwallPage;
-  }
 
   return (
     <>
@@ -100,7 +104,7 @@ async function Page({ params }: PageProps) {
                   <div
                     className={
                       'h-2 w-2 ' +
-                      (availableForWork ? 'bg-green-500' : 'bg-red-500') +
+                      (availableForWork ? 'bg-green-500' : 'bg-gray-500') +
                       ' mr-2 rounded-full'
                     }
                   ></div>
@@ -109,7 +113,7 @@ async function Page({ params }: PageProps) {
                       Available for work
                     </span>
                   ) : (
-                    <span className="text-xs text-red-500">
+                    <span className="text-xs text-gray-500">
                       Not available for work
                     </span>
                   )}
