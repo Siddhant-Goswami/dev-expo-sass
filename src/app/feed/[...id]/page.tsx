@@ -1,19 +1,11 @@
 import Footer from '@/components/ui/footer';
 import NavBar from '@/components/ui/navbar';
 
-import { UserAuthForm } from '@/components/AuthForm';
+import AuthwallPage from '@/components/AuthwallPage';
 import MarkdownComponent from '@/components/mark-down';
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { buttonVariants } from '@/components/ui/button';
 import GoBack from '@/components/ui/go-back';
-import { URLs } from '@/lib/constants';
 import { projectFormSchema } from '@/lib/validations/project';
 import { getProjectById } from '@/server/actions/projects';
 import { extractIDfromYtURL } from '@/utils';
@@ -40,6 +32,11 @@ async function Page({ params }: PageProps) {
   const supabase = createServerComponentClient({ cookies });
   const resp = await supabase.auth.getSession();
   const userId = resp.data.session?.user.id ?? null;
+
+  if (!userId) {
+    return AuthwallPage;
+  }
+
   const availableForWork = true;
 
   const projectId = params.id[0];
@@ -66,43 +63,6 @@ async function Page({ params }: PageProps) {
   const initialLetter = displayName.charAt(0).toUpperCase();
 
   const { sourceCodeUrl, hostedUrl } = projectDetails.project;
-
-  if (!userId) {
-    return (
-      <>
-        <NavBar />
-        <AlertDialog defaultOpen>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>
-                <h2 className="text-lg font-medium">Get Started</h2>
-              </AlertDialogTitle>
-              <AlertDialogDescription>
-                <UserAuthForm />
-                <p className="px-8 text-center text-sm text-muted-foreground">
-                  By clicking continue, you agree to our{' '}
-                  <Link
-                    href={URLs.termsOfService}
-                    className="underline underline-offset-4 hover:text-primary"
-                  >
-                    Terms of Service
-                  </Link>{' '}
-                  and{' '}
-                  <Link
-                    href={URLs.privacyPolicy}
-                    className="underline underline-offset-4 hover:text-primary"
-                  >
-                    Privacy Policy
-                  </Link>
-                  .
-                </p>
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-          </AlertDialogContent>
-        </AlertDialog>
-      </>
-    );
-  }
 
   return (
     <>
