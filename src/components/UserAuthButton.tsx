@@ -9,7 +9,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { supabaseClientComponentClient, useAuth } from '@/hooks/user/auth';
-import { URLs } from '@/lib/constants';
 import { api } from '@/trpc/react';
 import { ExitIcon, PersonIcon } from '@radix-ui/react-icons';
 import Link from 'next/link';
@@ -78,7 +77,8 @@ export default function UserAuthButton() {
                 description: error.message,
               });
             } else {
-              router.push(URLs.home);
+              // router.push(URLs.home);
+              window.location.reload();
             }
           }}
         >
