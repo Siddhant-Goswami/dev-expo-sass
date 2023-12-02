@@ -69,11 +69,10 @@ export function OnboardingSteps() {
     resolver: zodResolver(onboardingStepsSchema),
     defaultValues: {
       displayName,
-      // TODO: remove this
-      githubUsername: 'thecmdrunner',
-      websiteUrl: 'https://pranava.dev',
-      twitterUsername: 'thecmdrunner',
-      bio: 'im nice dev plz work with me',
+      githubUsername,
+      websiteUrl: '',
+      twitterUsername: '',
+      bio: '',
     },
   });
 
