@@ -128,15 +128,11 @@ export const getProjectById = async (projectId: ProjectSelect['id']) => {
   };
 };
 
-export const getProjectLikes = async ({
-  projectId,
-}: {
-  projectId: number;
-}) => {
+export const getProjectLikes = async ({ projectId }: { projectId: number }) => {
   const totalLikes = await db
-  .select({ recordCount: sql`COUNT(*)` })
-  .from(likes)
-  .where(eq(likes.projectId, projectId));
+    .select({ recordCount: sql`COUNT(*)` })
+    .from(likes)
+    .where(eq(likes.projectId, projectId));
   return Number(totalLikes[0]?.recordCount);
 };
 
@@ -154,7 +150,7 @@ export const isLikedByUser = async ({ projectId }: { projectId: number }) => {
   const userId = session.user.id;
 
   const likes = await db.query.likes.findMany({
-    where: (likes, {eq}) => eq(likes.projectId, projectId),
+    where: (likes, { eq }) => eq(likes.projectId, projectId),
   });
   const hasUserLiked = likes.find((like) => like.userId === userId);
   return !!hasUserLiked;
@@ -298,11 +294,11 @@ export const createBookmark = async ({
   });
 };
 
-export const deleteAllLikes = async() => {
+export const deleteAllLikes = async () => {
   await db.delete(likes);
-}
+};
 
-export const getAllLikes = async() => {
+export const getAllLikes = async () => {
   const likes = await db.query.likes.findMany();
   console.log(likes);
-}
+};
