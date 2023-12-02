@@ -1,5 +1,5 @@
 import AuthwallPage from '@/components/AuthwallPage';
-import Footer from '@/components/ui/footer';
+import NewFooter from '@/components/newfooter';
 import NavBar from '@/components/ui/navbar';
 import { OnboardingSteps } from '@/components/ui/onboarding-steps';
 import { ProjectUpload } from '@/components/ui/project-upload';
@@ -37,7 +37,7 @@ async function Page() {
           {isUserVerified ? <ProjectUpload /> : <OnboardingSteps />}
         </main>
       </section>
-      <Footer />
+      <NewFooter />
     </>
   );
 }

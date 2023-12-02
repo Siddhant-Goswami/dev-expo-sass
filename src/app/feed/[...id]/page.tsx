@@ -1,4 +1,3 @@
-import Footer from '@/components/ui/footer';
 import NavBar from '@/components/ui/navbar';
 
 import AuthwallPage from '@/components/AuthwallPage';
@@ -22,6 +21,7 @@ import {
   GetInTouchSection,
   IsNotSameUserWrapper,
 } from './GetInTouchSections';
+import NewFooter from '@/components/newfooter';
 
 type PageProps = {
   params: { id: string[] };
@@ -231,7 +231,7 @@ async function Page({ params }: PageProps) {
           />
         </main>
       </section>
-      <Footer />
+      <NewFooter />
     </>
   );
 }
