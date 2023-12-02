@@ -78,10 +78,6 @@ async function Page({ params }: PageProps) {
     projectId: projectDetails.project.id,
   });
 
-  if (!userId) {
-    notFound();
-  }
-
   return (
     <>
       <NavBar />
