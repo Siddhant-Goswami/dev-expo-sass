@@ -246,6 +246,10 @@ export function ProjectUpload() {
                   value={field.value ?? ''}
                 />
               </FormControl>
+              <FormDescription>
+                Upload a video that showcases your project. Help users
+                understand your project.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}

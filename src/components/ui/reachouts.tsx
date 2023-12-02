@@ -13,7 +13,6 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
 import RadioBtns from '@/components/ui/radio-btns';
 import { RadioGroup } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
@@ -34,7 +33,7 @@ const getInTouchSchema = z.object({
     required_error: 'Employment type is required.',
   }),
   message: z.string().min(20, 'Message is should have atleast 20 characters.'),
-  pricing: z.number().min(1000, 'Pricing must be a more than 1000 Rupees.'),
+  // pricing: z.number().min(1000, 'Pricing must be a more than 1000 Rupees.'),
 });
 
 type GetInTouchValues = z.infer<typeof getInTouchSchema>;
@@ -46,6 +45,15 @@ type GetInTouchProps = {
 export function GetInTouch({ setIsModalOpen, devId }: GetInTouchProps) {
   const user = useAuth();
   const { userId } = user;
+  const { toast } = useToast();
+  const form = useForm<GetInTouchValues>({
+    resolver: zodResolver(getInTouchSchema),
+    defaultValues: {
+      employmentType: 'freelance',
+      message: '',
+      // pricing: 1000,
+    },
+  });
 
   const requestReachOut = async () => {
     const data = form.getValues();
@@ -55,7 +63,7 @@ export function GetInTouch({ setIsModalOpen, devId }: GetInTouchProps) {
 
     const requestObject = {
       workType: data.employmentType,
-      quotePrice: data.pricing,
+      // quotePrice: data.pricing,
       message: data.message,
       devId: devId,
     };
@@ -78,16 +86,6 @@ export function GetInTouch({ setIsModalOpen, devId }: GetInTouchProps) {
 
   const { isLoading, mutate } = useMutation({
     mutationFn: requestReachOut,
-  });
-
-  const { toast } = useToast();
-  const form = useForm<GetInTouchValues>({
-    resolver: zodResolver(getInTouchSchema),
-    defaultValues: {
-      employmentType: 'freelance',
-      message: '',
-      pricing: 1000,
-    },
   });
 
   return (
@@ -125,7 +123,7 @@ export function GetInTouch({ setIsModalOpen, devId }: GetInTouchProps) {
             </FormItem>
           )}
         />
-        <FormField
+        {/* <FormField
           control={form.control}
           name="pricing"
           render={({ field }) => (
@@ -144,7 +142,7 @@ export function GetInTouch({ setIsModalOpen, devId }: GetInTouchProps) {
               <FormMessage />
             </FormItem>
           )}
-        />
+        /> */}
         <div className="flex justify-end">
           <Button disabled={isLoading} type="submit">
             {isLoading ? (

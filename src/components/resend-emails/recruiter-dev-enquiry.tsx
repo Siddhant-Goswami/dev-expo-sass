@@ -2,7 +2,7 @@ type OpportunityEmailProps = {
   devName: string;
   recruiterName: string;
   typeOfWork: string;
-  quotePriceInRupees: number;
+  // quotePriceInRupees: number;
   message: string;
   recruiterEmail: string;
 };
@@ -11,7 +11,7 @@ export const OpportunityEmail = ({
   devName,
   recruiterName,
   typeOfWork,
-  quotePriceInRupees,
+  // quotePriceInRupees,
   message,
   recruiterEmail,
 }: Readonly<OpportunityEmailProps>) => (
@@ -28,7 +28,7 @@ export const OpportunityEmail = ({
     <ul>
       <li>Recruiter's Name: {recruiterName}</li>
       <li>Type of Work: {typeOfWork}</li>
-      <li>Quote Price: {quotePriceInRupees}</li>
+      {/* <li>Quote Price: {quotePriceInRupees}</li> */}
       <li>Message from Recruiter: {message}</li>
       <li>Recruiter's Email: {recruiterEmail}</li>
     </ul>

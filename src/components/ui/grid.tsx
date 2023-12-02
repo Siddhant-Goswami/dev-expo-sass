@@ -15,7 +15,7 @@ type GridProps = {
 
 function Grid({ data }: GridProps) {
   return (
-    <div className="flex h-max w-full flex-wrap items-center justify-center gap-6 xl:gap-x-10 [&>*:nth-child(7)]:hidden sm:[&>*:nth-child(7)]:block [&>*:nth-child(8)]:hidden sm:[&>*:nth-child(8)]:block">
+    <div className="flex h-max w-full flex-wrap items-start justify-center gap-6 xl:gap-x-10 [&>*:nth-child(7)]:hidden sm:[&>*:nth-child(7)]:block [&>*:nth-child(8)]:hidden sm:[&>*:nth-child(8)]:block">
       {data.map((project) => (
         <Link
           href={URLs.projectPage(project.id.toString())}

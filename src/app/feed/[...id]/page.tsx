@@ -3,14 +3,13 @@ import NavBar from '@/components/ui/navbar';
 
 import MarkdownComponent from '@/components/mark-down';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Button, buttonVariants } from '@/components/ui/button';
-import { URLs } from '@/lib/constants';
+import { buttonVariants } from '@/components/ui/button';
+import GoBack from '@/components/ui/go-back';
 import { projectFormSchema } from '@/lib/validations/project';
 import { getProjectById } from '@/server/actions/projects';
 import { extractIDfromYtURL } from '@/utils';
 import { cn } from '@/utils/cn';
 import { GitHubLogoIcon, Link2Icon } from '@radix-ui/react-icons';
-import { ChevronLeft } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -19,7 +18,6 @@ import {
   GetInTouchSection,
   IsNotSameUserWrapper,
 } from './GetInTouchSections';
-import GoBack from '@/components/ui/go-back';
 
 type PageProps = {
   params: { id: string[] };
@@ -189,7 +187,7 @@ async function Page({ params }: PageProps) {
                 ),
             )}
           </div>
-          <div className="mt-8 rounded-sm border border-gray-500 p-6">
+          <div className="mt-8 rounded-sm border border-gray-300 p-6">
             {/* <section className="mb-4 flex flex-col gap-2">
               <h2 className="text-md mb-4 border-b border-gray-600 font-semibold">
                 Links
@@ -214,7 +212,7 @@ async function Page({ params }: PageProps) {
               )}
             </section> */}
             <section>
-              <h2 className="text-md mb-4 border-b border-gray-600 font-semibold">
+              <h2 className="text-md mb-4 border-b border-gray-300 font-semibold">
                 Description
               </h2>
               <MarkdownComponent content={description} />
