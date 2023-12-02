@@ -10,6 +10,8 @@ import { getProjectById, isLikedByUser } from '@/server/actions/projects';
 import { extractIDfromYtURL } from '@/utils';
 import { cn } from '@/utils/cn';
 import { GitHubLogoIcon, Link2Icon } from '@radix-ui/react-icons';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -20,8 +22,6 @@ import {
 } from './GetInTouchSections';
 import LikeButton from './LikeButton';
 import ProjectOptions from './ProjectOptions';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
 
 type PageProps = {
   params: { id: string[] };
@@ -122,8 +122,8 @@ async function Page({ params }: PageProps) {
 
             <div className="flex gap-2">
               <LikeButton
-                likesCount={projectDetails.likesCount}
-                isLiked={isLiked}
+                originalTotalLikes={projectDetails.likesCount}
+                isOriginallyLikedByUser={isLiked}
                 projectId={projectId}
               />
               {hostedUrl && (

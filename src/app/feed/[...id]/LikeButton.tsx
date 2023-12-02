@@ -1,41 +1,55 @@
 'use client';
 import { Button } from '@/components/ui/button';
-import {
-  createOrDeleteLike,
-  deleteAllLikes,
-  getAllLikes,
-} from '@/server/actions/projects';
+import { createOrDeleteLike } from '@/server/actions/projects';
 import { cn } from '@/utils/cn';
 import { LucideTriangle } from 'lucide-react';
 import { useState } from 'react';
 
 function LikeButton({
-  likesCount,
-  isLiked,
+  originalTotalLikes: originalTotalLikes,
+  isOriginallyLikedByUser,
   projectId,
 }: {
-  likesCount: number;
-  isLiked: boolean;
+  originalTotalLikes: number;
+  isOriginallyLikedByUser: boolean;
   projectId: number;
 }) {
-  console.log(likesCount, isLiked, projectId);
-  const [likes, setLikes] = useState(likesCount);
-  const [liked, setLiked] = useState(isLiked);
+  const [likes, setLikes] = useState(originalTotalLikes);
+  const [isLikedByCurrentUser, setIsLikedByCurrentUser] = useState(
+    isOriginallyLikedByUser,
+  );
 
-  const handleClick = async () => {
-    if (liked) {
+  const performOptimisticLike = () => {
+    if (isLikedByCurrentUser) {
       setLikes(likes - 1);
-      setLiked(false);
+      setIsLikedByCurrentUser(false);
     } else {
       setLikes(likes + 1);
-      setLiked(true);
+      setIsLikedByCurrentUser(true);
     }
-    await createOrDeleteLike(projectId);
-    // await getAllLikes();
-    // await deleteAllLikes();
   };
 
-  const variant = liked ? 'outline' : 'brand';
+  // TODO: Probably problematic algo, need to test
+  const revertOptimisticLike = () => {
+    if (isLikedByCurrentUser) {
+      setLikes(likes + 1);
+      setIsLikedByCurrentUser(true);
+    } else {
+      setLikes(likes - 1);
+      setIsLikedByCurrentUser(false);
+    }
+  };
+
+  const handleClick = async () => {
+    try {
+      performOptimisticLike();
+      await createOrDeleteLike(projectId);
+    } catch (err) {
+      revertOptimisticLike();
+    }
+  };
+
+  const variant = isLikedByCurrentUser ? 'outline' : 'brand';
 
   return (
     <>
@@ -47,11 +61,15 @@ function LikeButton({
         <LucideTriangle
           size={12}
           className={cn(
-            liked ? 'fill-brand stroke-brand' : 'fill-white stroke-white',
+            isLikedByCurrentUser
+              ? 'fill-brand stroke-brand'
+              : 'fill-white stroke-white',
             'transition-all duration-300',
           )}
         />
-        <span className="hidden md:block">{liked ? 'Upvoted' : 'Upvote'}</span>
+        <span className="hidden md:block">
+          {isLikedByCurrentUser ? 'Upvoted' : 'Upvote'}
+        </span>
         {likes}
       </Button>
     </>
