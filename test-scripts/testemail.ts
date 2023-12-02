@@ -11,7 +11,7 @@ const emailSendResponse = await resend.emails.send({
     devName: '',
     message: '',
     recruiterName: '',
-    quotePriceInRupees: 10000,
+    // quotePriceInRupees: 10000,
     typeOfWork: '',
     recruiterEmail: '',
   }),
