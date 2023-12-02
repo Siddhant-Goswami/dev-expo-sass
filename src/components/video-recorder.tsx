@@ -2,9 +2,11 @@
 
 import { Button } from '@/components/ui/button';
 import { ReloadIcon } from '@radix-ui/react-icons';
-import { LucideArrowLeft, LucideLoader } from 'lucide-react';
+import { LucideArrowLeft, LucideLoader, LucideVideo } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Webcam from 'react-webcam';
+
+import { cn } from '@/utils/cn';
 import { type VerificationStep } from './ui/onboarding-steps';
 
 const MAX_VIDEO_TIME_IN_SECONDS = 60 as const;
@@ -29,6 +31,7 @@ export default function VideoRecorder(props: {
   const [isSuccess, setIsSuccess] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
   const [completed, setCompleted] = useState(false);
+  const [countDown, setCountDown] = useState(0);
 
   useEffect(() => {
     setIsDesktop(window.innerWidth >= 768);
@@ -118,15 +121,15 @@ export default function VideoRecorder(props: {
   };
 
   return (
-    <div className="relative flex w-full flex-col overflow-x-hidden px-4 pb-8 pt-2 md:px-8 md:py-2">
+    <div className="flex h-full w-full flex-col gap-5 px-4 pb-8 pt-2 md:px-8 md:py-2">
       {/* <p className="absolute top-0 -ml-4 flex h-[60px] w-full flex-row justify-between md:-ml-8"></p> */}
       {completed ? (
-        <div className="mx-auto flex w-full max-w-5xl flex-col items-center gap-4 overflow-y-auto">
+        <div className="mx-auto flex w-full max-w-5xl flex-col items-center gap-4 ">
           <div
             // initial={{ y: 20 }}
             // animate={{ y: 0 }}
             // transition={{ duration: 0.35, ease: [0.075, 0.82, 0.165, 1] }}
-            className="relative flex w-full max-w-[1080px] flex-col items-center justify-center overflow-hidden rounded-lg shadow-md  md:aspect-[16/9]"
+            className="relative flex w-full max-w-[1080px] flex-col items-center justify-center rounded-lg shadow-md  md:aspect-[16/9]"
           >
             <video
               className="h-full w-full rounded-lg"
@@ -191,18 +194,12 @@ export default function VideoRecorder(props: {
       ) : (
         <div className="flex h-full w-full flex-col items-center">
           {recordingPermission ? (
-            <div className="mx-auto flex h-full w-full max-w-[1080px] flex-col justify-center">
+            <div className="mx-auto flex h-full w-full max-w-5xl flex-col justify-center">
               <div
-                // initial={{ y: -20 }}
-                // animate={{ y: 0 }}
-                // transition={{
-                //   duration: 0.35,
-                //   ease: [0.075, 0.82, 0.965, 1],
-                // }}
                 className={
                   'relative ' +
-                  (isDesktop ? 'aspect-[16/9]' : 'aspect-[9/16]') +
-                  ' w-full max-w-[1080px] overflow-hidden rounded-lg bg-brand/20 shadow-md'
+                  (isDesktop ? 'aspect-video' : 'aspect-[9/16]') +
+                  ' w-full max-w-[1080px] overflow-hidden rounded-lg shadow-md'
                 }
               >
                 {!cameraLoaded && (
@@ -230,10 +227,16 @@ export default function VideoRecorder(props: {
                   </div>
                 )}
                 <div className="relative z-10 h-full w-full rounded-lg">
-                  <div className="absolute left-5 top-5 z-20 lg:left-10 lg:top-10">
-                    <span className="inline-flex items-center rounded-md bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800">
-                      {new Date(seconds * 1000).toISOString().slice(14, 19)}
-                    </span>
+                  <span className="absolute left-5 top-5 z-50 inline-flex items-center rounded-md bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800">
+                    {new Date(seconds * 1000).toISOString().slice(14, 19)}
+                  </span>
+                  <div
+                    className={cn(
+                      countDown !== 0 ? 'bg-slate-900/50 ' : '',
+                      'absolute left-1/2 top-1/2 z-50 flex min-h-full min-w-full -translate-x-1/2 -translate-y-1/2 transform items-center justify-center rounded-md px-2.5 py-0.5 text-8xl font-medium text-white',
+                    )}
+                  >
+                    {countDown !== 0 && countDown}
                   </div>
 
                   <Webcam
@@ -247,7 +250,7 @@ export default function VideoRecorder(props: {
                       console.error(`Error while recording:`, error);
                       setRecordingPermission(false);
                     }}
-                    className="absolute z-10 h-full min-h-[100%] w-auto min-w-[100%] object-cover"
+                    className="absolute left-0 top-0 z-10 h-full min-h-[100%] w-auto min-w-[100%] object-cover"
                   />
                 </div>
                 {loading && (
@@ -259,134 +262,6 @@ export default function VideoRecorder(props: {
                     </div>
                   </div>
                 )}
-                {cameraLoaded && (
-                  <div className="absolute bottom-0 left-0 z-50 flex h-[82px] w-full items-center justify-center">
-                    {recordedChunks.length > 0 ? (
-                      <>
-                        {isSuccess ? (
-                          <button
-                            className="cursor-disabled group group inline-flex min-w-[140px] items-center justify-center rounded-full bg-green-500 px-4 py-2 text-[13px] text-sm font-semibold text-white duration-150 hover:bg-green-600 hover:text-slate-100 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 active:scale-100 active:bg-green-800 active:text-green-100"
-                            style={{
-                              boxShadow:
-                                '0px 1px 4px rgba(27, 71, 13, 0.17), inset 0px 0px 0px 1px #5fc767, inset 0px 0px 0px 2px rgba(255, 255, 255, 0.1)',
-                            }}
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="mx-auto h-5 w-5"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                              strokeWidth={2}
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                                // initial={{ pathLength: 0 }}
-                                // animate={{ pathLength: 1 }}
-                                // transition={{ duration: 0.5 }}
-                              />
-                            </svg>
-                          </button>
-                        ) : (
-                          <div className="flex flex-row gap-2">
-                            {!isSubmitting && (
-                              <Button
-                                variant={'secondary'}
-                                onClick={restartVideo}
-                                className="flex scale-100 items-center justify-center px-5 py-3 text-base no-underline transition-all duration-75 hover:bg-secondary active:scale-95"
-                              >
-                                <ReloadIcon className="mr-2" />
-                                Record again
-                              </Button>
-                            )}
-                            <Button
-                              variant={'brand'}
-                              onClick={handleDownload}
-                              disabled={isSubmitting}
-                              className="group flex scale-100 items-center justify-center text-base no-underline outline outline-white transition-all duration-75 hover:bg-brand hover:brightness-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-100"
-                            >
-                              <span>
-                                {isSubmitting ? (
-                                  <span className="flex items-center justify-center gap-x-2">
-                                    <svg
-                                      className="mx-auto h-5 w-5 animate-spin text-slate-50"
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      fill="none"
-                                      viewBox="0 0 24 24"
-                                    >
-                                      <circle
-                                        className="opacity-25"
-                                        cx="12"
-                                        cy="12"
-                                        r="10"
-                                        stroke="currentColor"
-                                        strokeWidth={3}
-                                      ></circle>
-                                      <path
-                                        className="opacity-75"
-                                        fill="currentColor"
-                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                      ></path>
-                                    </svg>
-                                    <span>{status}</span>
-                                  </span>
-                                ) : (
-                                  <span className="flex items-center justify-center gap-x-2">
-                                    <span>Review video submission</span>
-                                    <svg
-                                      className="h-5 w-5"
-                                      viewBox="0 0 24 24"
-                                      fill="none"
-                                      xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                      <path
-                                        d="M13.75 6.75L19.25 12L13.75 17.25"
-                                        stroke="white"
-                                        strokeWidth="1.5"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                      />
-                                      <path
-                                        d="M19 12H4.75"
-                                        stroke="white"
-                                        strokeWidth="1.5"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                      />
-                                    </svg>
-                                  </span>
-                                )}
-                              </span>
-                            </Button>
-                          </div>
-                        )}
-                      </>
-                    ) : (
-                      <div className="absolute bottom-[6px] left-5 right-5 md:bottom-5">
-                        <div className="flex flex-col items-center justify-center gap-2 lg:mt-4">
-                          {capturing ? (
-                            <div
-                              id="stopTimer"
-                              onClick={handleStopCaptureClick}
-                              className="flex h-10 w-10 scale-100 cursor-pointer flex-col items-center justify-center rounded-full bg-transparent text-white ring-4  ring-white duration-75 hover:shadow-xl active:scale-95"
-                            >
-                              <div className="h-5 w-5 cursor-pointer rounded bg-red-500"></div>
-                            </div>
-                          ) : (
-                            <button
-                              id="startTimer"
-                              onClick={handleStartCaptureClick}
-                              className="flex h-8 w-8 scale-100 flex-col items-center justify-center rounded-full bg-red-500 text-white ring-4 ring-white ring-offset-2 ring-offset-gray-500 duration-75 hover:shadow-xl active:scale-95 sm:h-8 sm:w-8"
-                            ></button>
-                          )}
-                          <div className="w-12"></div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
                 <div
                   className="absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 transform text-center text-5xl font-semibold text-white"
                   id="countdown"
@@ -395,15 +270,7 @@ export default function VideoRecorder(props: {
             </div>
           ) : (
             <div className="mx-auto flex w-full max-w-[1080px] flex-col justify-center">
-              <div
-                // initial={{ y: 20 }}
-                // animate={{ y: 0 }}
-                // transition={{
-                //   duration: 0.35,
-                //   ease: [0.075, 0.82, 0.165, 1],
-                // }}
-                className="relative flex w-full max-w-[1080px] flex-col items-center justify-center overflow-hidden rounded-lg shadow-md ring-1 md:aspect-[16/9]"
-              >
+              <div className="relative flex w-full max-w-[1080px] flex-col items-center justify-center overflow-hidden rounded-lg shadow-md ring-1 md:aspect-[16/9]">
                 <p className="max-w-3xl text-center text-lg font-medium text-white">
                   Camera permission is denied. We don{`'`}t store your attempts
                   anywhere, but we understand not wanting to give us access to
@@ -411,6 +278,132 @@ export default function VideoRecorder(props: {
                   window {`(`}or enable permissions in your browser settings
                   {`)`}.
                 </p>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {cameraLoaded && (
+        <div className=" flex w-full items-center justify-center">
+          {recordedChunks.length > 0 ? (
+            <>
+              {!isSuccess && (
+                <div className="flex flex-col-reverse gap-2 sm:flex-row">
+                  {!isSubmitting && (
+                    <Button
+                      variant={'secondary'}
+                      onClick={restartVideo}
+                      className="flex scale-100 items-center justify-center px-5 py-3 text-base no-underline transition-all duration-75 hover:bg-secondary active:scale-95"
+                    >
+                      <ReloadIcon className="mr-2" />
+                      Record again
+                    </Button>
+                  )}
+                  <Button
+                    variant={'brand'}
+                    onClick={handleDownload}
+                    disabled={isSubmitting}
+                    className="group flex scale-100 items-center justify-center text-base no-underline outline outline-white transition-all duration-75 hover:bg-brand hover:brightness-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-100"
+                  >
+                    <span>
+                      {isSubmitting ? (
+                        <span className="flex items-center justify-center gap-x-2">
+                          <svg
+                            className="mx-auto h-5 w-5 animate-spin text-slate-50"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth={3}
+                            ></circle>
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            ></path>
+                          </svg>
+                          <span>{status}</span>
+                        </span>
+                      ) : (
+                        <span className="flex items-center justify-center gap-x-2">
+                          <span>Review video submission</span>
+                          <svg
+                            className="h-5 w-5"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M13.75 6.75L19.25 12L13.75 17.25"
+                              stroke="white"
+                              strokeWidth="1.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                            <path
+                              d="M19 12H4.75"
+                              stroke="white"
+                              strokeWidth="1.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </span>
+                      )}
+                    </span>
+                  </Button>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="">
+              <div className="flex flex-col items-center justify-center gap-2 lg:mt-4">
+                {capturing ? (
+                  <Button
+                    id="stopTimer"
+                    onClick={handleStopCaptureClick}
+                    className="w-40 hover:brightness-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-100"
+                  >
+                    Finish Recording
+                  </Button>
+                ) : (
+                  <Button
+                    id="startTimer"
+                    disabled={countDown !== 0}
+                    onClick={async () => {
+                      setCountDown(3);
+                      await new Promise((resolve) => setTimeout(resolve, 1000));
+                      setCountDown(2);
+                      await new Promise((resolve) => setTimeout(resolve, 1000));
+                      setCountDown(1);
+                      await new Promise((resolve) => setTimeout(resolve, 1000));
+                      setCountDown(0);
+                      handleStartCaptureClick();
+                    }}
+                    className={cn(
+                      countDown !== 0 && 'disabled:cursor-progress',
+                      'w-40 select-none hover:brightness-105 active:scale-95 ',
+                    )}
+                  >
+                    {countDown === 0 ? (
+                      <>
+                        <LucideVideo size={16} className="mr-2" /> Start
+                        Recording
+                      </>
+                    ) : (
+                      'Starting . . .'
+                    )}
+                  </Button>
+                )}
+
+                <div className="w-12"></div>
               </div>
             </div>
           )}
