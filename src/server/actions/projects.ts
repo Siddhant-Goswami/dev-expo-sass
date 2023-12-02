@@ -230,9 +230,9 @@ export const uploadNewProject = async (_project: ProjectData) => {
 export const deleteProject = async (projectId: number) => {
   const project = await db.query.projects.findFirst({
     where: eq(projects.id, projectId),
-  })
-  if(!project){
-    throw new Error('Project not found')
+  });
+  if (!project) {
+    throw new Error('Project not found');
   }
   await db.delete(projectTags).where(eq(projectTags.projectId, projectId));
   await db.delete(likes).where(eq(likes.projectId, projectId));

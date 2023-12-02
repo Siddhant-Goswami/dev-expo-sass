@@ -30,7 +30,6 @@ type PageProps = {
 export const revalidate = 10;
 
 async function Page({ params }: PageProps) {
-
   const supabase = createServerComponentClient({ cookies });
   const resp = await supabase.auth.getSession();
   const userId = resp.data.session?.user.id ?? null;
@@ -65,7 +64,7 @@ async function Page({ params }: PageProps) {
     projectId: projectDetails.project.id,
   });
 
-  if(!userId){
+  if (!userId) {
     notFound();
   }
 
@@ -76,7 +75,7 @@ async function Page({ params }: PageProps) {
         <main className="mt-8 flex w-full flex-col justify-center px-4 md:max-w-4xl">
           <div className="flex w-full items-center justify-between">
             <GoBack />
-            {userId===dev.id && <ProjectOptions projectId={projectId}/>}
+            {userId === dev.id && <ProjectOptions projectId={projectId} />}
           </div>
           <h1 className="mb-4 w-full text-left text-2xl font-semibold">
             {title}
