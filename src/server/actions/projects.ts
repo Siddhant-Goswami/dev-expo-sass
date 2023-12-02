@@ -3,8 +3,8 @@ import { URLs } from '@/lib/constants';
 import { projectFormSchema } from '@/lib/validations/project';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
 import { and, desc, eq, sql } from 'drizzle-orm';
+import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { db } from '../db';
 import {
@@ -19,7 +19,6 @@ import {
   type ProjectSelect,
   type UserProfileSelect,
 } from '../db/schema';
-import { revalidatePath, revalidateTag } from 'next/cache';
 
 // TODO: filter categories
 
@@ -273,7 +272,6 @@ export const deleteProject = async (projectId: number) => {
     // Finally delete the project itself
     // This will fail if any other table that has a foreign key constraint on the project id is not deleted first
     await db.delete(projects).where(eq(projects.id, projectId));
-    redirect(URLs.feed);
   } catch (err) {
     console.error(err);
     return {
