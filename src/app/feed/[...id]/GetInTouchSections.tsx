@@ -1,26 +1,34 @@
 'use client';
 import { Button } from '@/components/ui/button';
 import GetInTouchModal from '@/components/ui/get-in-touch-modal';
-import SignUpModal from '@/components/ui/sign-up-modal';
+import SignInModal from '@/components/ui/sign-up-modal';
 import { useAuth } from '@/hooks/user/auth';
 
 type GetInTouchButtonProps = {
   displayName: string;
+  devId: string;
 };
 
-export const GetInTouchButton = ({ displayName }: GetInTouchButtonProps) => {
+export const GetInTouchButton = ({
+  displayName,
+  devId,
+}: GetInTouchButtonProps) => {
   const { userId } = useAuth();
 
   return (
     <div className="flex justify-center">
       {userId ? (
-        <GetInTouchModal username={displayName} text="Get in Touch" />
+        <GetInTouchModal
+          username={displayName}
+          devId={devId}
+          text="Get in Touch"
+        />
       ) : (
-        <SignUpModal>
+        <SignInModal>
           <Button variant="brand" className="w-fit">
             Login To Get in Touch
           </Button>
-        </SignUpModal>
+        </SignInModal>
       )}
     </div>
   );
@@ -56,7 +64,7 @@ export const GetInTouchSection = ({
           Get in touch with {userDisplayName} to discuss your project.
         </p>
       </div>
-      <GetInTouchButton displayName={userDisplayName} />
+      <GetInTouchButton displayName={userDisplayName} devId={projectUserId} />
     </IsNotSameUserWrapper>
   );
 };

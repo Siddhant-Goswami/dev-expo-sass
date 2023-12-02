@@ -1,26 +1,39 @@
 'use client';
 
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { supabaseClientComponentClient, useAuth } from '@/hooks/user/auth';
-import { useUserProfile } from '@/hooks/user/profile';
 import { URLs } from '@/lib/constants';
-import { LogOutIcon, User2Icon } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { Button } from './ui/button';
+import { api } from '@/trpc/react';
+import { ExitIcon, PersonIcon } from '@radix-ui/react-icons';
 import Link from 'next/link';
-
+import { useRouter } from 'next/navigation';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { toast } from './ui/use-toast';
 export default function UserAuthButton() {
   const { session } = useAuth();
-  // const { username } = useUserProfile();
+  const { data } = api.user.hello.useQuery(undefined, {
+    enabled: !!session?.user?.id,
+  });
+
+  const router = useRouter();
+
   const supabase = supabaseClientComponentClient();
-  // console.log(username);
+
+  const username = data?.userProfile?.username;
+
+  const userDisplayName =
+    (session?.user?.user_metadata?.name as string) ?? 'Your Account';
+
   return (
-    <Popover>
-      <PopoverTrigger>
+    <DropdownMenu>
+      <DropdownMenuTrigger className="rounded-full">
         <Avatar>
           <AvatarImage
             src={
@@ -36,41 +49,79 @@ export default function UserAuthButton() {
                 | null) ?? 'User Avatar'
             }
           />
-          <AvatarFallback>CN</AvatarFallback>
+          <AvatarFallback>
+            {
+              // First letter of the name
+              userDisplayName ? userDisplayName.charAt(0).toUpperCase() : 'U'
+            }
+          </AvatarFallback>
         </Avatar>
-      </PopoverTrigger>
-      <PopoverContent className="w-fit">
-        <ul className="flex flex-col gap-2">
-          {/* {username && <li>
-            <Link href={`/user/${username}`}>
-              <Button
-                variant="outline"
-                className="flex w-full items-center gap-3"
-              >
-                <User2Icon />
-                Profile
-              </Button>
-            </Link>
-          </li>} */}
-          <li>
-            <Button
-              variant="outline"
-              className="flex w-full items-center gap-3"
-              onClick={async () => {
-                const { error } = await supabase.auth.signOut();
-                if (error) {
-                  alert(error.message);
-                } else {
-                  window.location.href = URLs.home;
-                }
-              }}
-            >
-              <LogOutIcon />
-              Logout
-            </Button>
-          </li>
-        </ul>
-      </PopoverContent>
-    </Popover>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-56">
+        <DropdownMenuLabel>{userDisplayName}</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        {username && (
+          <Link href={`/user/${username}`}>
+            <DropdownMenuItem>
+              <PersonIcon className="mr-2" />
+              Profile
+            </DropdownMenuItem>
+          </Link>
+        )}
+
+        <DropdownMenuItem
+          onClick={async () => {
+            const { error } = await supabase.auth.signOut();
+            if (error) {
+              toast({
+                title: 'Could not logout',
+                description: error.message,
+              });
+            } else {
+              router.push(URLs.home);
+            }
+          }}
+        >
+          <ExitIcon className="mr-2" />
+          Log out
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+    // <Popover modal={true}>
+    //   <PopoverTrigger>
+
+    //   </PopoverTrigger>
+    //   <PopoverContent className="w-44 p-1">
+    //     {username && (
+    //       <Link href={`/user/${username}`}>
+    //         <Button
+    //           variant="outline"
+    //           className="flex w-full items-center gap-3"
+    //         >
+    //           <LucideUser2 />
+    //           Profile
+    //         </Button>
+    //       </Link>
+    //     )}
+    //     <Button
+    //       variant="outline"
+    //       className="flex w-full items-center gap-3 rounded-sm"
+    //       onClick={async () => {
+    //         const { error } = await supabase.auth.signOut();
+    //         if (error) {
+    //           toast({
+    //             title: 'Could not logout',
+    //             description: error.message,
+    //           });
+    //         } else {
+    //           redirect(URLs.home);
+    //         }
+    //       }}
+    //     >
+    //       <LogOutIcon />
+    //       Logout
+    //     </Button>
+    //   </PopoverContent>
+    // </Popover>
   );
 }

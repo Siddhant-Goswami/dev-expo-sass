@@ -7,19 +7,27 @@ import { createClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
 import { Resend } from 'resend';
 import { db } from '../db';
-import { RecruiterReachoutInsert, recruiterReachouts } from '../db/schema';
+import { type RecruiterReachoutInsert, recruiterReachouts } from '../db/schema';
+import { z } from 'zod';
 
 const resend = new Resend(env.RESEND_API_KEY);
 
-const createRecruiterReachout = async ({
-  devId,
-  workType,
-  quotePrice,
-  message,
-}: Pick<
-  RecruiterReachoutInsert,
-  'devId' | 'workType' | 'quotePrice' | 'message'
->) => {
+const recruiterReachoutInsertSchema = z.object({
+  devId: z.string(),
+  workType: z.enum(['full-time', 'freelance']),
+  quotePrice: z.number().min(1000).max(1000000),
+  message: z.string(),
+});
+
+const createRecruiterReachout = async (
+  props: Pick<
+    RecruiterReachoutInsert,
+    'devId' | 'workType' | 'quotePrice' | 'message'
+  >,
+) => {
+  const { devId, workType, quotePrice, message } =
+    recruiterReachoutInsertSchema.parse(props);
+
   const supabase = createServerActionClient({
     cookies,
   });
@@ -76,9 +84,9 @@ const createRecruiterReachout = async ({
     }
 
     const emailSendResponse = await resend.emails.send({
-      from: 'onboarding@resend.dev',
+      from: 'hello@overpoweredjobs.com',
       to: dev.email,
-      subject: 'hello world',
+      subject: 'Exciting Opportunity Awaits You! 🚀',
       react: OpportunityEmail({
         devName: dev.user_metadata.name as unknown as string,
         message,

@@ -1,17 +1,30 @@
-'use client';
+import AuthwallPage from '@/components/AuthwallPage';
 import Footer from '@/components/ui/footer';
 import NavBar from '@/components/ui/navbar';
 import { OnboardingSteps } from '@/components/ui/onboarding-steps';
 import { ProjectUpload } from '@/components/ui/project-upload';
-import { useState } from 'react';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 
-function Page() {
-  const isUserVerified = true;
-  const [isModalOpen, setIsModalOpen] = useState(false);
+async function Page() {
+  const supabase = createServerComponentClient({ cookies });
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  const userId = session?.user.id;
+
+  if (!userId) {
+    return AuthwallPage;
+  }
+
+  const isUserVerified = false;
+
   return (
     <>
       <NavBar />
-      <section className="mx-auto mb-32 flex max-w-4xl flex-col items-center justify-center px-4">
+      <section className="mx-auto mb-32 flex min-h-[65vh] max-w-4xl flex-col items-center justify-start px-4">
         <h1 className="mt-8 w-max text-2xl font-extrabold tracking-tight md:text-4xl lg:text-5xl">
           {isUserVerified ? 'Create a new project' : 'Become a developer now!'}
         </h1>
@@ -21,11 +34,7 @@ function Page() {
             : 'Showcase your incredible work to the world and get hired by the best companies.'}
         </p>
         <main className="mt-14 flex w-full flex-col items-center justify-center px-4">
-          {isUserVerified ? (
-            <ProjectUpload setIsModalOpen={setIsModalOpen} />
-          ) : (
-            <OnboardingSteps />
-          )}
+          {isUserVerified ? <ProjectUpload /> : <OnboardingSteps />}
         </main>
       </section>
       <Footer />

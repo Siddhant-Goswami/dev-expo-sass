@@ -30,7 +30,7 @@ function ProjectUploadModal({ children }: ProjectUploadModalProps) {
             Add and showcase your project to the community.
           </DialogDescription>
         </DialogHeader>
-        <ProjectUpload setIsModalOpen={setIsModalOpen} />
+        <ProjectUpload />
       </DialogContent>
     </Dialog>
   );

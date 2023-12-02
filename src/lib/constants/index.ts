@@ -3,6 +3,10 @@ export const URLs = {
   create: '/create',
   dashboard: '/dashboard',
   feed: '/feed',
+  projectPage(id: string) {
+    return `${this.feed}/${id}`;
+  },
+  onboardingSubmitted: '/onboarding-submitted',
   signIn: '/sign-in',
   signUp: '/sign-up',
   termsOfService: 'https://100xengineers.com/terms-and-conditions',
@@ -12,7 +16,7 @@ export const URLs = {
 export const MAX_NUMBER_OF_IMAGES = 3;
 export const MAX_NUMBER_OF_VIDEOS = 1;
 export const MAX_VIDEO_SIZE = 5 * 1024 * 1024; // 5MB
-export const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
+export const MAX_IMAGE_SIZE = 1 * 1024 * 1024; // 1MB
 
 export const categories = [
   { id: 'all', label: 'All' },

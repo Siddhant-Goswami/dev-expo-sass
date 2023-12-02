@@ -6,13 +6,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import SignUp from '@/components/ui/sign-up';
+import { UserAuthForm } from '../AuthForm';
 
-type SignUpModalProps = {
+type SignInModalProps = {
   children: React.ReactNode;
 };
 
-function SignUpModal({ children }: SignUpModalProps) {
+function SignInModal({ children }: SignInModalProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
@@ -23,10 +23,10 @@ function SignUpModal({ children }: SignUpModalProps) {
             Sign in with your Github or Google account.
           </DialogDescription>
         </DialogHeader>
-        <SignUp />
+        <UserAuthForm />
       </DialogContent>
     </Dialog>
   );
 }
 
-export default SignUpModal;
+export default SignInModal;
