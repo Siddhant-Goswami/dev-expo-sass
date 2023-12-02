@@ -1,4 +1,4 @@
-import { getOrCreateUserProfile } from '@/hooks/user/actions';
+import { getOrCreateUserProfile } from '@/hooks/user/_utils';
 import { createTRPCRouter, privateProcedure } from '@/server/api/trpc';
 
 export const userRouter = createTRPCRouter({

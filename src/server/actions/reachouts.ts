@@ -19,7 +19,7 @@ const recruiterReachoutInsertSchema = z.object({
   message: z.string(),
 });
 
-const createRecruiterReachout = async (
+export const createRecruiterReachout = async (
   props: Pick<
     RecruiterReachoutInsert,
     'devId' | 'workType' | 'quotePrice' | 'message'
@@ -117,5 +117,3 @@ const createRecruiterReachout = async (
 //   // });
 //   // return reachouts;
 // };
-
-export { createRecruiterReachout };

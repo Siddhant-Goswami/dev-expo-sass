@@ -9,8 +9,8 @@ export const URLs = {
   onboardingSubmitted: '/onboarding-submitted',
   signIn: '/sign-in',
   signUp: '/sign-up',
-  termsOfService: 'https://100xengineers.com/terms-and-conditions',
-  privacyPolicy: 'https://100xengineers.com/privacy-policy',
+  termsOfService: '/terms-and-conditions',
+  privacyPolicy: '/privacy-policy',
 } as const;
 
 export const MAX_NUMBER_OF_IMAGES = 3;

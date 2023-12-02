@@ -1,8 +1,8 @@
 import NavBar from '@/components/ui/navbar';
 
 import AuthwallPage from '@/components/AuthwallPage';
+import NewFooter from '@/components/NewFooter';
 import MarkdownComponent from '@/components/mark-down';
-import NewFooter from '@/components/newfooter';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { buttonVariants } from '@/components/ui/button';
 import GoBack from '@/components/ui/go-back';
@@ -33,11 +33,13 @@ export const revalidate = 10;
 
 async function Page({ params }: PageProps) {
   const supabase = createServerComponentClient({ cookies });
-  const resp = await supabase.auth.getSession();
-  const userId = resp.data.session?.user.id;
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  const userId = session?.user.id;
 
   if (!userId) {
-    return AuthwallPage;
+    return <AuthwallPage />;
   }
 
   const availableForWork = true;

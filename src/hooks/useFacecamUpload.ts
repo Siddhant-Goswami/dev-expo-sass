@@ -1,3 +1,4 @@
+'use client';
 import { env } from '@/env.js';
 import React from 'react';
 

@@ -1,4 +1,4 @@
-import NewFooter from '@/components/newfooter';
+import NewFooter from '@/components/NewFooter';
 import NavBar from '@/components/ui/navbar';
 
 export default function Page() {
