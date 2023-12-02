@@ -1,16 +1,26 @@
 import Footer from '@/components/ui/footer';
 import NavBar from '@/components/ui/navbar';
 
+import { UserAuthForm } from '@/components/AuthForm';
 import MarkdownComponent from '@/components/mark-down';
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Button, buttonVariants } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
+import GoBack from '@/components/ui/go-back';
 import { URLs } from '@/lib/constants';
 import { projectFormSchema } from '@/lib/validations/project';
 import { getProjectById } from '@/server/actions/projects';
 import { extractIDfromYtURL } from '@/utils';
 import { cn } from '@/utils/cn';
 import { GitHubLogoIcon, Link2Icon } from '@radix-ui/react-icons';
-import { ChevronLeft } from 'lucide-react';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -19,7 +29,6 @@ import {
   GetInTouchSection,
   IsNotSameUserWrapper,
 } from './GetInTouchSections';
-import GoBack from '@/components/ui/go-back';
 
 type PageProps = {
   params: { id: string[] };
@@ -28,6 +37,9 @@ type PageProps = {
 export const revalidate = 10;
 
 async function Page({ params }: PageProps) {
+  const supabase = createServerComponentClient({ cookies });
+  const resp = await supabase.auth.getSession();
+  const userId = resp.data.session?.user.id ?? null;
   const availableForWork = true;
 
   const projectId = params.id[0];
@@ -55,22 +67,46 @@ async function Page({ params }: PageProps) {
 
   const { sourceCodeUrl, hostedUrl } = projectDetails.project;
 
+  if (!userId) {
+    return (
+      <>
+        <NavBar />
+        <AlertDialog defaultOpen>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                <h2 className="text-lg font-medium">Get Started</h2>
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                <UserAuthForm />
+                <p className="px-8 text-center text-sm text-muted-foreground">
+                  By clicking continue, you agree to our{' '}
+                  <Link
+                    href={URLs.termsOfService}
+                    className="underline underline-offset-4 hover:text-primary"
+                  >
+                    Terms of Service
+                  </Link>{' '}
+                  and{' '}
+                  <Link
+                    href={URLs.privacyPolicy}
+                    className="underline underline-offset-4 hover:text-primary"
+                  >
+                    Privacy Policy
+                  </Link>
+                  .
+                </p>
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+          </AlertDialogContent>
+        </AlertDialog>
+      </>
+    );
+  }
+
   return (
     <>
       <NavBar />
-
-      {/* <Dialog defaultOpen>
-        <DialogContent className="h-screen w-full overflow-scroll md:h-max md:max-w-xl">
-          <DialogHeader>
-            <DialogTitle>Get Started</DialogTitle>
-            <DialogDescription>
-              Sign in with your Github or Google account.
-            </DialogDescription>
-          </DialogHeader>
-          <SignUp />
-        </DialogContent>
-      </Dialog> */}
-
       <section className="flex items-start justify-center">
         <main className="mt-8 flex w-full flex-col justify-center px-4 md:max-w-4xl">
           <GoBack />
