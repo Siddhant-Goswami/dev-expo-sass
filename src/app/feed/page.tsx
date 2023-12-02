@@ -1,6 +1,6 @@
 import ShimmerButton from '@/components/magicui/shimmer-button';
+import NewFooter from '@/components/newfooter';
 import ScrollableChips from '@/components/ui/chip';
-import Footer from '@/components/ui/footer';
 import Grid from '@/components/ui/grid';
 import NavBar from '@/components/ui/navbar';
 import { URLs, categories } from '@/lib/constants';
@@ -72,7 +72,7 @@ async function Feed({ searchParams }: FeedProps) {
           </div>
         )}
       </section>
-      <Footer />
+      <NewFooter />
     </>
   );
 }

@@ -1,8 +1,8 @@
-import Footer from '@/components/ui/footer';
 import NavBar from '@/components/ui/navbar';
 
 import AuthwallPage from '@/components/AuthwallPage';
 import MarkdownComponent from '@/components/mark-down';
+import NewFooter from '@/components/newfooter';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { buttonVariants } from '@/components/ui/button';
 import GoBack from '@/components/ui/go-back';
@@ -221,7 +221,7 @@ async function Page({ params }: PageProps) {
           />
         </main>
       </section>
-      <Footer />
+      <NewFooter />
     </>
   );
 }

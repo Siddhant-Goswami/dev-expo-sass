@@ -1,4 +1,4 @@
-import Footer from '@/components/ui/footer';
+import NewFooter from '@/components/newfooter';
 import Grid from '@/components/ui/grid';
 import NavBar from '@/components/ui/navbar';
 import { getProjectsByUserId } from '@/server/actions/projects';
@@ -94,7 +94,7 @@ async function Page({ params }: PageProps) {
           <Grid data={projectsData} />
         </main>
       </section>
-      <Footer />
+      <NewFooter />
     </div>
   );
 }

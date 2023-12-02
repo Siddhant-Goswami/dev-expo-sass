@@ -1,4 +1,4 @@
-import Footer from '@/components/ui/footer';
+import NewFooter from '@/components/newfooter';
 import NavBar from '@/components/ui/navbar';
 
 export default function Page() {
@@ -49,7 +49,7 @@ export default function Page() {
           </p>
         </section>
       </main>
-      <Footer />
+      <NewFooter />
     </>
   );
 }
