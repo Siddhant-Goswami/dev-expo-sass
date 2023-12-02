@@ -219,7 +219,7 @@ export function OnboardingSteps() {
                   <Input
                     {...field}
                     placeholder="Enter your GitHub username"
-                    disabled={githubUsername ? true : false}
+                    disabled={!!githubUsername}
                   />
                 </FormControl>
                 <FormDescription>
