@@ -2,9 +2,14 @@
 import { desc, eq } from 'drizzle-orm';
 // TODO: make these regular functions instead of server actions, and import `server-only`
 
+import {
+  DevApplicationFormSubmitType,
+  devApplicationSchema,
+} from '@/lib/validations/user';
+import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 import { db } from '../db';
 import {
-  type DevApplicationInsert,
   devApplications,
   devProfiles,
   projects,
@@ -41,31 +46,64 @@ export const createUserProfileInDb = async (
 };
 
 export const createDevApplication = async (
-  devApplicationInsertData: DevApplicationInsert,
+  unsanitizedData: DevApplicationFormSubmitType,
 ) => {
+  const supabase = createServerActionClient({ cookies });
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session) {
+    throw new Error('You must be logged in to apply!');
+  }
+
+  const userId = session.user.id;
+
+  const devApplicationInsertData = devApplicationSchema.parse(unsanitizedData);
+
   const existingApplication = await db.query.devApplications.findFirst({
-    where: eq(devApplications.userId, devApplicationInsertData.userId),
+    where: eq(devApplications.userId, userId),
   });
-  if (
-    existingApplication &&
-    (existingApplication.status === 'pending' ||
-      existingApplication.status === 'approved')
-  ) {
+  if (existingApplication?.status === 'approved') {
     return {
       success: false,
-      error: 'You already have an application pending or approved',
+      error: 'User already has a developer profile!',
     };
   }
 
-  const devApplication = await db
+  if (existingApplication?.status === 'pending') {
+    return {
+      success: false,
+      error: 'User already has a pending application!',
+    };
+  }
+
+  const appliedAt = new Date();
+
+  const [devApplication] = await db
     .insert(devApplications)
-    .values(devApplicationInsertData)
+    .values({
+      bio: `${devApplicationInsertData.bio}`,
+      displayName: devApplicationInsertData.displayName,
+      twitterUrl: devApplicationInsertData.twitterUsername
+        ? `https://twitter.com/` + devApplicationInsertData.twitterUsername
+        : null,
+      websiteUrl: devApplicationInsertData.websiteUrl,
+      status: 'pending',
+      gitHubUrl:
+        `https://github.com/` + devApplicationInsertData.githubUsername,
+      userId,
+      appliedAt,
+    })
     .returning();
-  if (!devApplication) {
+
+  if (!devApplication?.id) {
     throw new Error('Could not create dev application');
   }
   return {
     success: true,
+    devApplicationId: devApplication.id,
   };
 };
 

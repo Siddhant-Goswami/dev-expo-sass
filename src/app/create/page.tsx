@@ -1,13 +1,26 @@
-'use client';
+import AuthwallPage from '@/components/AuthwallPage';
 import Footer from '@/components/ui/footer';
 import NavBar from '@/components/ui/navbar';
 import { OnboardingSteps } from '@/components/ui/onboarding-steps';
 import { ProjectUpload } from '@/components/ui/project-upload';
-import { useState } from 'react';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 
-function Page() {
-  const isUserVerified = true;
-  const [isModalOpen, setIsModalOpen] = useState(false);
+async function Page() {
+  const supabase = createServerComponentClient({ cookies });
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  const userId = session?.user.id;
+
+  if (!userId) {
+    return AuthwallPage;
+  }
+
+  const isUserVerified = false;
+
   return (
     <>
       <NavBar />
