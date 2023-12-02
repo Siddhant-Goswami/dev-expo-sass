@@ -1,6 +1,7 @@
 import Footer from '@/components/ui/footer';
 import NavBar from '@/components/ui/navbar';
 
+import AuthwallPage from '@/components/AuthwallPage';
 import MarkdownComponent from '@/components/mark-down';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { buttonVariants } from '@/components/ui/button';
@@ -10,9 +11,12 @@ import { getProjectById } from '@/server/actions/projects';
 import { extractIDfromYtURL } from '@/utils';
 import { cn } from '@/utils/cn';
 import { GitHubLogoIcon, Link2Icon } from '@radix-ui/react-icons';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { z } from 'zod';
 import {
   GetInTouchButton,
   GetInTouchSection,
@@ -26,17 +30,32 @@ type PageProps = {
 export const revalidate = 10;
 
 async function Page({ params }: PageProps) {
-  const availableForWork = true;
+  const supabase = createServerComponentClient({ cookies });
+  const resp = await supabase.auth.getSession();
+  const userId = resp.data.session?.user.id;
 
-  const projectId = params.id[0];
-
-  if (!projectId) {
-    return notFound();
+  if (!userId) {
+    return AuthwallPage;
   }
 
-  const projectDetails = await getProjectById(Number(projectId));
+  const availableForWork = true;
 
-  if (!projectDetails?.dev) return notFound();
+  const projectIdResult = z.coerce
+    .number()
+    .int()
+    .finite()
+    .safeParse(params.id[0]);
+
+  if (!projectIdResult.success) {
+    notFound();
+  }
+  const projectId = projectIdResult.data;
+
+  const projectDetails = await getProjectById(projectId);
+
+  if (!projectDetails?.dev) {
+    notFound();
+  }
 
   const { project, dev } = projectDetails;
   const { title, description, youtubeUrl, projectMedia: media } = project;
@@ -56,19 +75,6 @@ async function Page({ params }: PageProps) {
   return (
     <>
       <NavBar />
-
-      {/* <Dialog defaultOpen>
-        <DialogContent className="h-screen w-full overflow-scroll md:h-max md:max-w-xl">
-          <DialogHeader>
-            <DialogTitle>Get Started</DialogTitle>
-            <DialogDescription>
-              Sign in with your Github or Google account.
-            </DialogDescription>
-          </DialogHeader>
-          <SignUp />
-        </DialogContent>
-      </Dialog> */}
-
       <section className="flex items-start justify-center">
         <main className="mt-8 flex w-full flex-col justify-center px-4 md:max-w-4xl">
           <GoBack />
@@ -98,7 +104,7 @@ async function Page({ params }: PageProps) {
                   <div
                     className={
                       'h-2 w-2 ' +
-                      (availableForWork ? 'bg-green-500' : 'bg-red-500') +
+                      (availableForWork ? 'bg-green-500' : 'bg-gray-500') +
                       ' mr-2 rounded-full'
                     }
                   ></div>
@@ -107,7 +113,7 @@ async function Page({ params }: PageProps) {
                       Available for work
                     </span>
                   ) : (
-                    <span className="text-xs text-red-500">
+                    <span className="text-xs text-gray-500">
                       Not available for work
                     </span>
                   )}
