@@ -11,12 +11,12 @@ const useCloudinaryUpload = ({
   onError,
   onSuccess,
 }: {
-  onError?: (error: unknown) => void;
+  onError?: (error: unknown) => Promise<void>;
   onSuccess?: (props: {
     public_id: string;
     projectId: number;
     url: string;
-  }) => void;
+  }) => Promise<void>;
 }) => {
   const generatePresignedUrlMutation = useMutation({
     mutationFn: initiateNewUpload,
@@ -81,9 +81,7 @@ const useCloudinaryUpload = ({
                     'image/png',
             }),
         )
-        .catch((error) => {
-          onError?.(error);
-        });
+        .catch(onError);
 
       if (!file) {
         throw new Error(
@@ -135,12 +133,14 @@ const useCloudinaryUpload = ({
         setStatus('succeeded');
       } catch (e) {
         setStatus('failed');
-        onError?.((e as Error)?.message ?? 'Unknown error');
+        void onError?.((e as Error)?.message ?? 'Unknown error');
       }
     } else {
       // TODO: Handle this better
       setStatus('failed');
-      onError?.('The media is not yet ready for uploading. Please try again.');
+      void onError?.(
+        'The media is not yet ready for uploading. Please try again.',
+      );
     }
   };
 

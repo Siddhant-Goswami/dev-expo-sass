@@ -41,7 +41,9 @@ const acceptedImageTypes = [
   'image/jpg',
   'image/webp',
 ];
-export function ProjectUpload() {
+export function ProjectUploadForm(props: {
+  onProjectUploadSuccess?: () => void;
+}) {
   const router = useRouter();
 
   const { toast } = useToast();
@@ -91,17 +93,21 @@ export function ProjectUpload() {
   });
 
   const { upload: uploadToCloudinary } = useCloudinaryUpload({
-    onSuccess: ({ public_id, projectId }) => {
+    onSuccess: async ({ public_id, projectId }) => {
       try {
-        void validateAndPersistUpload({
+        const { success } = await validateAndPersistUpload({
           projectId,
           publicId: public_id,
         });
+
+        if (!success) {
+          return alert('Failed to validate and persist upload');
+        }
       } catch (err) {
         setActualStatus('error');
       }
     },
-    onError: (err) => {
+    onError: async (err) => {
       setActualStatus('error');
 
       toast({
@@ -129,12 +135,25 @@ export function ProjectUpload() {
       return console.log(`Uploaded image: ${index}`);
     });
 
-    await Promise.all(imageUploadPromises).then(() => {
+    try {
+      await Promise.all(imageUploadPromises);
+
       setActualStatus('success');
-      toast({ title: 'Project uploaded successfully!' });
-      // Redirect user to their new project page
+      props?.onProjectUploadSuccess?.();
+      toast({ title: '🎉 Project uploaded successfully!' });
+
       void router.push(URLs.projectPage(projectId.toString()));
-    });
+    } catch (err) {
+      toast({
+        variant: 'destructive',
+        title: 'Failed to upload images!',
+        description:
+          'Oops! Something went wrong. ' + (err as Error)?.message ??
+          'Unknown error',
+      });
+    }
+
+    // Redirect user to their new project page
   };
 
   const isActuallyLoading =

@@ -121,77 +121,97 @@ const validateAndPersistUploadPropsSchema = z.object({
 export const validateAndPersistUpload = async (
   _props: z.infer<typeof validateAndPersistUploadPropsSchema>,
 ) => {
-  const { projectId, publicId } =
-    validateAndPersistUploadPropsSchema.parse(_props);
+  try {
+    const { projectId, publicId } =
+      validateAndPersistUploadPropsSchema.parse(_props);
 
-  const supabase = createServerActionClient({ cookies });
+    const supabase = createServerActionClient({ cookies });
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
-  if (!session) {
-    throw new Error('Unauthorized');
-  }
-  console.log(`Validating and persisting upload:`, publicId);
+    if (!session) {
+      throw new Error('Unauthorized');
+    }
+    console.log(`Validating and persisting upload:`, publicId);
 
-  const userId = session.user.id;
+    const userId = session.user.id;
 
-  const existingMediaInDb = await db.query.projectMedia.findFirst({
-    where: (pm, { eq, and }) =>
-      and(
-        eq(pm.publicId, publicId),
-        eq(pm.projectId, projectId),
-        eq(pm.userId, userId),
-      ),
-  });
+    const existingMediaInDb = await db.query.projectMedia.findFirst({
+      where: (pm, { eq, and }) =>
+        and(
+          eq(pm.publicId, publicId),
+          eq(pm.projectId, projectId),
+          eq(pm.userId, userId),
+        ),
+    });
 
-  if (!existingMediaInDb?.id) {
-    throw new Error('Could not find project media record');
-  }
+    if (!existingMediaInDb?.id) {
+      throw new Error('Could not find project media record');
+    }
 
-  if (!existingMediaInDb?.expiresAt) {
+    if (!existingMediaInDb?.expiresAt) {
+      return {
+        message: 'This upload has already been validated and persisted.',
+        success: true,
+      };
+    }
+
+    if (existingMediaInDb?.expiresAt.getTime() < new Date().getTime()) {
+      await db
+        .delete(projectMedia)
+        .where(eq(projectMedia.id, existingMediaInDb.id));
+
+      return {
+        message: 'This upload has expired.',
+        success: false,
+      };
+    }
+
+    cloudinary.v2.config({
+      api_key: env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
+      api_secret: env.CLOUDINARY_API_SECRET,
+      cloud_name: env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+      secure: true,
+    });
+
+    const assetUrl = cloudinary.v2.utils.url(publicId);
+
+    const [updatedRecord] = await db
+      .update(projectMedia)
+      .set({
+        expiresAt: null,
+        updatedAt: new Date(),
+        url: assetUrl,
+      })
+      .where(eq(projectMedia.id, existingMediaInDb.id))
+      .returning({ id: projectMedia.id });
+
+    const updatedMediaId = updatedRecord?.id;
+
+    if (!updatedMediaId) {
+      throw new Error('Could not update project media record');
+    }
+
     return {
-      message: 'This upload has already been validated and persisted.',
       success: true,
+      message: 'Successfully validated and persisted upload!',
+      projectMediaId: updatedMediaId,
     };
-  }
+  } catch (err) {
+    console.error(err);
 
-  if (existingMediaInDb?.expiresAt.getTime() < new Date().getTime()) {
-    await db
-      .delete(projectMedia)
-      .where(eq(projectMedia.id, existingMediaInDb.id));
+    await sendLogToDiscord(
+      `Error while validating and persisting Cloudinary image upload: ${
+        (err as Error)?.message ?? 'Unknown err...'
+      }`,
+    );
 
     return {
-      message: 'This upload has expired.',
       success: false,
+      error:
+        (err as Error)?.message ?? 'Could not validate and persist upload!',
     };
   }
-
-  cloudinary.v2.config({
-    api_key: env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
-    api_secret: env.CLOUDINARY_API_SECRET,
-    cloud_name: env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-    secure: true,
-  });
-
-  const assetUrl = cloudinary.v2.utils.url(publicId);
-
-  const [updatedRecord] = await db
-    .update(projectMedia)
-    .set({
-      expiresAt: null,
-      updatedAt: new Date(),
-      url: assetUrl,
-    })
-    .where(eq(projectMedia.id, existingMediaInDb.id))
-    .returning({ id: projectMedia.id });
-
-  const updatedMediaId = updatedRecord?.id;
-
-  if (!updatedMediaId) {
-    throw new Error('Could not update project media record');
-  }
-
-  console.log(`💚 Updated media id: ${updatedMediaId}`);
 };

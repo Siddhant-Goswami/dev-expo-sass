@@ -88,6 +88,16 @@ export const devApplications = pgTable('devApplication', {
   gitHubUrl: varchar('gitHubUrl', { length: 1024 }).notNull(),
   twitterUrl: varchar('twitterUrl', { length: 1024 }),
   linkedInUrl: varchar('linkedInUrl', { length: 1024 }),
+
+  createdAt: timestamp('createdAt', { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+
+  updatedAt: timestamp('updatedAt', { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+
+  statusUpdatedAt: timestamp('statusUpdatedAt', { withTimezone: true }),
 });
 
 export type DevApplicationSelect = InferSelectModel<typeof devApplications>;
