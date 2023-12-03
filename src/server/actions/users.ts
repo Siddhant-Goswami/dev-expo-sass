@@ -236,6 +236,7 @@ export const getUserFromUsername = async (username: string) => {
     where: eq(recruiterProfiles.userId, user.id),
   });
 
+  // TODO: make this a count query
   const projectsCount = (
     await db.query.projects.findMany({
       where: eq(projects.userId, user.id),
@@ -243,7 +244,7 @@ export const getUserFromUsername = async (username: string) => {
   ).length;
 
   return {
-    succcess: true,
+    success: true,
     userInfo: user,
     devInfo,
     recruiterInfo,

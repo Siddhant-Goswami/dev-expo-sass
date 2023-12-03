@@ -8,15 +8,15 @@ import { notFound } from 'next/navigation';
 import { z } from 'zod';
 
 type PageProps = {
-  params: { userName: string[] };
+  params: { username: string[] };
 };
 async function Page({ params }: PageProps) {
-  const usernameResult = z.string().max(100).safeParse(params.userName[0]);
+  const usernameResult = z.string().max(100).safeParse(params.username[0]);
   if (!usernameResult.success) {
     notFound();
   }
   const userResult = await getUserFromUsername(usernameResult.data);
-  if (!userResult.succcess) {
+  if (!userResult.success) {
     notFound();
   }
 
@@ -24,29 +24,6 @@ async function Page({ params }: PageProps) {
   if (!userInfo) {
     notFound();
   }
-
-  //   const user = {
-  //     userInfo: {
-  //       id: 'f4122dff-4398-4124-9c85-1a4a93ad2ecb',
-  //       username: 'rishabh.gurbani23',
-  //       displayName: 'Rishabh Gurbani',
-  //       displayPictureUrl:
-  //         'https://lh3.googleusercontent.com/a/ACg8ocLfbKiBRQohC1aCKjnp_7mEa7LGMSewqNZOVZHVuvjwLNFS=s96-c',
-  //       bio: "Hi, I'm Rishabh Gurbani, one of the early users of this platform!",
-  //         createdAt: `2023-11-26T14:30:55.900Z`,
-  //         updatedAt: `2023-11-26T14:30:55.900Z`
-  //     },
-  //     devInfo: {
-  //       availibity: true,
-  //       gitHubUrl: 'g',
-  //       linkedInUrl: 'l',
-  //       twitterUrl: 't',
-  //       websiteUrl: 'w',
-  //       bio: 'perfectly balanced',
-  //     },
-  //     recruiterInfo: undefined,
-  //     projectsCount: 4,
-  //   };
 
   const projects = await getProjectsByUserId(userInfo.id);
   const projectsData = projects.map((project) => {

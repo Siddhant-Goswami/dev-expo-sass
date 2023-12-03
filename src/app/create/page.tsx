@@ -2,8 +2,11 @@ import AuthwallPage from '@/components/AuthwallPage';
 import NewFooter from '@/components/NewFooter';
 import NavBar from '@/components/ui/navbar';
 import { OnboardingSteps } from '@/components/ui/onboarding-steps';
-import { ProjectUpload } from '@/components/ui/project-upload';
+import { ProjectUpload } from '@/components/ui/ProjectUpload';
+import { db } from '@/server/db';
+import { devApplications } from '@/server/db/schema';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { desc } from 'drizzle-orm';
 import { cookies } from 'next/headers';
 
 async function Page() {
@@ -19,7 +22,17 @@ async function Page() {
     return <AuthwallPage />;
   }
 
-  const isUserVerified = true;
+  // const isUserVerified = true;
+
+  const userApplication = await db.query.devApplications.findFirst({
+    where: (da, { eq }) => eq(da.userId, userId),
+    orderBy: [desc(devApplications.appliedAt)],
+  });
+
+  // TODO: Later, also check whether user has a developer profile
+  const isUserVerified = userApplication?.status === 'approved';
+
+  console.log(`Your application status is: ${userApplication?.status}`);
 
   return (
     <>
