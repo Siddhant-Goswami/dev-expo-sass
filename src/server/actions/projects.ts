@@ -3,6 +3,7 @@ import { URLs } from '@/lib/constants';
 import { projectFormSchema } from '@/lib/validations/project';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
 import { and, desc, eq, sql } from 'drizzle-orm';
+import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
@@ -19,7 +20,6 @@ import {
   type ProjectSelect,
   type UserProfileSelect,
 } from '../db/schema';
-import { revalidatePath, revalidateTag } from 'next/cache';
 
 // TODO: filter categories
 
@@ -153,15 +153,20 @@ export const isLikedByUser = async ({ projectId }: { projectId: number }) => {
       throw new Error('Unauthorized');
     }
     console.log('my user id', userId);
-    const query = sql`SELECT COUNT(*) FROM dev_expo_likes WHERE ${likes.projectId} = ${projectId} AND ${likes.userId} = ${userId}`;
-    const res = await db.execute(query);
-    // const likes = await db.query.likes.findMany({
-    //   where: (likes, { eq }) => eq(likes.projectId, projectId),
-    // });
-    // const hasUserLiked = likes.find((like) => like.userId === userId);
+    const [result] = await db
+      .select({ count: sql<number>`cast(count(${likes}) as int)` })
+      .from(likes)
+      .where(
+        and(
+          eq(likes.projectId, 31),
+          eq(likes.userId, '2212f56a-2463-48e1-900b-81cdbe802e86'),
+        ),
+      );
+
     const userLikeRecord = z.coerce
       .number()
-      .parse(res.rows[0]?.count as { count: string }[]);
+      .catch(0)
+      .parse(result?.count);
     return userLikeRecord === 1;
   } catch (err) {
     console.error(err);

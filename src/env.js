@@ -29,8 +29,16 @@ export const env = createEnv({
     NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: z.string(),
     NEXT_PUBLIC_CLOUDINARY_API_KEY: z.string(),
 
-    NEXT_PUBLIC_APP_URL: z.string().url(),
+    NEXT_PUBLIC_APP_URL: z
+      .preprocess((str) => process.env.VERCEL_URL ?? str, z.string())
+      .transform((val) => {
+        if (val?.includes('vercel') && !val?.startsWith('https://')) {
+          val = 'https://' + val;
+        }
 
+        return val;
+      })
+      .pipe(z.string().url().optional()),
     NEXT_PUBLIC_POSTHOG_PUBLIC_KEY: z.string(),
 
     NEXT_PUBLIC_VERCEL_URL: z
