@@ -10,10 +10,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { toast } from '@/components/ui/use-toast';
+import { URLs } from '@/lib/constants';
 import { deleteProject } from '@/server/actions/projects';
 import { LucideMoreVertical, LucideTrash } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 function ProjectOptions({ projectId }: { projectId: number }) {
+  const router = useRouter();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="rounded-full">
@@ -33,6 +36,7 @@ function ProjectOptions({ projectId }: { projectId: number }) {
                 title: 'Project Deleted successfully',
                 variant: 'default',
               });
+              router.push(URLs.feed);
             } catch (error) {
               toast({
                 title: 'Could not delete project',
