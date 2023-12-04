@@ -11,7 +11,7 @@ import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { desc } from 'drizzle-orm';
 import { cookies } from 'next/headers';
 
-export const runtime = 'edge';
+// export const runtime = 'edge'
 
 async function Page() {
   const supabase = createServerComponentClient({ cookies });

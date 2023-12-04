@@ -108,7 +108,8 @@ export function OnboardingSteps() {
           description: 'Your application has been submitted for review.',
         });
 
-        router.push(URLs.onboardingSubmitted);
+        router.refresh();
+        router.push(URLs.create);
       } else {
         toast({
           title: 'Could not submit video',
