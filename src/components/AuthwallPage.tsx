@@ -21,7 +21,7 @@ export default function AuthwallPage(props: { redirectAfterSignin?: string }) {
               <h2 className="text-lg font-medium">Get Started</h2>
             </AlertDialogTitle>
             <AlertDialogDescription>
-              <UserAuthForm redirectAfterSignin={props.redirectAfterSignin}/>
+              <UserAuthForm redirectAfterSignin={props.redirectAfterSignin} />
               <p className="px-8 text-center text-sm text-muted-foreground">
                 By clicking continue, you agree to our{' '}
                 <Link

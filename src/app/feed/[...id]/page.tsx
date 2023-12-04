@@ -57,7 +57,7 @@ async function Page({ params }: PageProps) {
   const projectId = projectIdResult.data;
 
   if (!userId) {
-    return <AuthwallPage redirectAfterSignin={`${URLs.feed}/${projectId}`}/>;
+    return <AuthwallPage redirectAfterSignin={`${URLs.feed}/${projectId}`} />;
   }
 
   const projectDetails = await getProjectById(projectId);

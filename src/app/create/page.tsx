@@ -20,7 +20,7 @@ async function Page() {
   const userId = session?.user.id;
 
   if (!userId) {
-    return <AuthwallPage redirectAfterSignin={URLs.create}/>;
+    return <AuthwallPage redirectAfterSignin={URLs.create} />;
   }
 
   // const isUserVerified = true;

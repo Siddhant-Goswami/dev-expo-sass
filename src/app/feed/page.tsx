@@ -19,7 +19,6 @@ type FeedProps = {
 export const dynamic = 'force-dynamic';
 
 async function Feed({ searchParams }: FeedProps) {
-
   const supabase = createServerComponentClient({ cookies });
 
   const {
@@ -29,7 +28,7 @@ async function Feed({ searchParams }: FeedProps) {
   const userId = session?.user.id;
 
   if (!userId) {
-    return <AuthwallPage redirectAfterSignin={URLs.feed}/>;
+    return <AuthwallPage redirectAfterSignin={URLs.feed} />;
   }
 
   const filter = searchParams?.filter ?? '';
