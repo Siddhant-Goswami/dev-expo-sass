@@ -3,6 +3,7 @@ import NewFooter from '@/components/NewFooter';
 import NavBar from '@/components/ui/navbar';
 import { OnboardingSteps } from '@/components/ui/onboarding-steps';
 import { ProjectUpload } from '@/components/ui/ProjectUpload';
+import { URLs } from '@/lib/constants';
 import { db } from '@/server/db';
 import { devApplications } from '@/server/db/schema';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
@@ -19,7 +20,7 @@ async function Page() {
   const userId = session?.user.id;
 
   if (!userId) {
-    return <AuthwallPage />;
+    return <AuthwallPage redirectAfterSignin={URLs.create} />;
   }
 
   // const isUserVerified = true;

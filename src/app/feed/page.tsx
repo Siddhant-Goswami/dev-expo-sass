@@ -1,3 +1,4 @@
+import AuthwallPage from '@/components/AuthwallPage';
 import NewFooter from '@/components/NewFooter';
 import ShimmerButton from '@/components/magicui/shimmer-button';
 import ScrollableChips from '@/components/ui/chip';
@@ -5,7 +6,9 @@ import Grid from '@/components/ui/grid';
 import NavBar from '@/components/ui/navbar';
 import { URLs, categories } from '@/lib/constants';
 import { getAllProjects } from '@/server/actions/projects';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import Link from 'next/link';
+import { cookies } from 'next/headers';
 
 type FeedProps = {
   searchParams: {
@@ -16,6 +19,18 @@ type FeedProps = {
 export const dynamic = 'force-dynamic';
 
 async function Feed({ searchParams }: FeedProps) {
+  const supabase = createServerComponentClient({ cookies });
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  const userId = session?.user.id;
+
+  if (!userId) {
+    return <AuthwallPage redirectAfterSignin={URLs.feed} />;
+  }
+
   const filter = searchParams?.filter ?? '';
 
   const allProjects = await getAllProjects({});
