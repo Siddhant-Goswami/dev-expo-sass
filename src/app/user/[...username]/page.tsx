@@ -10,6 +10,9 @@ import { z } from 'zod';
 type PageProps = {
   params: { username: string[] };
 };
+
+export const runtime = 'edge';
+
 async function Page({ params }: PageProps) {
   const usernameResult = z.string().max(100).safeParse(params.username[0]);
   if (!usernameResult.success) {

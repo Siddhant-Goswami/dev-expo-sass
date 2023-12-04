@@ -6,6 +6,7 @@ import MarkdownComponent from '@/components/mark-down';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { buttonVariants } from '@/components/ui/button';
 import GoBack from '@/components/ui/go-back';
+import { URLs } from '@/lib/constants';
 import { projectFormSchema } from '@/lib/validations/project';
 import {
   getAllLikes,
@@ -28,13 +29,13 @@ import {
 } from './GetInTouchSections';
 import LikeButton from './LikeButton';
 import ProjectOptions from './ProjectOptions';
-import { URLs } from '@/lib/constants';
 
 type PageProps = {
   params: { id: string[] };
 };
 
-export const revalidate = 10;
+// export const revalidate = 10;
+export const runtime = 'edge';
 
 async function Page({ params }: PageProps) {
   const supabase = createServerComponentClient({ cookies });

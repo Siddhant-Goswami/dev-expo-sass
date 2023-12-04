@@ -258,7 +258,12 @@ export const uploadNewProject = async (_project: ProjectData) => {
     });
 
     await flushServerEvents();
-    return { success: false, error: 'Could not create project!' };
+
+    if (err instanceof Error) {
+      throw err;
+    }
+
+    throw new Error(`Could not create project! ${err as string}`);
   }
 };
 

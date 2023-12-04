@@ -178,7 +178,12 @@ export function ProjectUploadForm(props: {
             <FormItem>
               <FormLabel>Title</FormLabel>
               <FormControl>
-                <Input placeholder="Project Title" {...field} />
+                <Input
+                  className="scroll-mt-24"
+                  required
+                  placeholder="Project Title"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -192,6 +197,8 @@ export function ProjectUploadForm(props: {
               <FormLabel>Description</FormLabel>
               <FormControl>
                 <Textarea
+                  required
+                  className="scroll-mt-24"
                   placeholder="A short description about the project or yourself"
                   {...field}
                 />
@@ -208,6 +215,8 @@ export function ProjectUploadForm(props: {
               <FormLabel>Hosted URL</FormLabel>
               <FormControl>
                 <Input
+                  required
+                  className="scroll-mt-24"
                   placeholder="https://yourproject.com"
                   {...field}
                   value={field.value ?? ''}
@@ -225,6 +234,8 @@ export function ProjectUploadForm(props: {
               <FormLabel>Source Code URL</FormLabel>
               <FormControl>
                 <Input
+                  required
+                  className="scroll-mt-24"
                   placeholder="https://github.com/yourproject"
                   {...field}
                   value={field.value ?? ''}
@@ -243,6 +254,8 @@ export function ProjectUploadForm(props: {
               <FormLabel>Tags</FormLabel>
               <FormControl>
                 <Input
+                  required
+                  className="scroll-mt-24"
                   placeholder="Enter tags separated by commas"
                   {...field}
                   onChange={(e) =>
@@ -269,6 +282,8 @@ export function ProjectUploadForm(props: {
               <FormLabel>Youtube video URL</FormLabel>
               <FormControl>
                 <Input
+                  required
+                  className="scroll-mt-24"
                   placeholder="https://www.youtube.com/watch?v=t4mb0H4lBDQ"
                   {...field}
                   value={field.value ?? ''}
@@ -292,7 +307,10 @@ export function ProjectUploadForm(props: {
               <FormControl>
                 <>
                   <Button asChild>
-                    <Label htmlFor="imageFiles" className={'cursor-pointer'}>
+                    <Label
+                      htmlFor="imageFiles"
+                      className={'cursor-pointer scroll-mt-24'}
+                    >
                       <LucideUploadCloud size={16} className="mr-2" />
                       Upload Images
                     </Label>
@@ -414,7 +432,7 @@ export function ProjectUploadForm(props: {
             type="submit"
             className="w-full rounded-[0.375rem] sm:w-max"
             loading={isActuallyLoading}
-            disabled={selectedImages.length === 0}
+            // disabled={selectedImages.length === 0}
           >
             {isActuallyLoading ? (
               <LucideLoader size={16} className="animate-spin" />
