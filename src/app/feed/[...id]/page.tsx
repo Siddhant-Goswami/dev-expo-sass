@@ -28,6 +28,7 @@ import {
 } from './GetInTouchSections';
 import LikeButton from './LikeButton';
 import ProjectOptions from './ProjectOptions';
+import { URLs } from '@/lib/constants';
 
 type PageProps = {
   params: { id: string[] };
@@ -42,10 +43,6 @@ async function Page({ params }: PageProps) {
   } = await supabase.auth.getSession();
   const userId = session?.user.id;
 
-  if (!userId) {
-    return <AuthwallPage />;
-  }
-
   const availableForWork = true;
 
   const projectIdResult = z.coerce
@@ -58,6 +55,10 @@ async function Page({ params }: PageProps) {
     notFound();
   }
   const projectId = projectIdResult.data;
+
+  if (!userId) {
+    return <AuthwallPage redirectAfterSignin={`${URLs.feed}/${projectId}`}/>;
+  }
 
   const projectDetails = await getProjectById(projectId);
 
