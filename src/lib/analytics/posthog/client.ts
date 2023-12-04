@@ -7,19 +7,61 @@ posthog.init(env.NEXT_PUBLIC_POSTHOG_PUBLIC_KEY, {
 
 const internal_client = posthog;
 
-// TODO: Add typesafe wrapper around this, just like we have for the server-side
-
 type VALID_CLIENT_EVENTS = {
-  signin: {
-    //
+  dev_application_submit_success: {
+    userId: string;
+    applicationId: string; // Unique identifier for the application
+    positionAppliedFor: string; // The role or position applied for
   };
 
-  project_created: {
-    //
+  dev_application_submit_failed: {
+    reason: string;
+    userId: string;
   };
 
-  project_creation_failed: {
-    //
+  dev_application_video_record_success: {
+    userId: string;
+    videoSize: number; // Size in bytes
+  };
+  dev_application_video_record_fail: {
+    userId: string;
+    reason: string;
+  };
+
+  dev_application_video_upload_success: {
+    userId: string;
+    applicationId: string;
+    videoSize: number;
+  };
+
+  dev_application_video_upload_failed: {
+    reason: string;
+    userId: string;
+    applicationId: string;
+    videoSize: number;
+  };
+
+  project_submit_failed: {
+    userId: string;
+    reason: string;
+  };
+  project_submit_success: {
+    userId: string;
+    projectId: string;
+  };
+
+  project_image_upload_failed: {
+    userId: string;
+    projectId: string;
+    imageSize: number;
+    reason: string;
+    publicId: string; // public_id of the image in cloudinary (referenced in the `projectMedia` table)
+  };
+
+  project_image_upload_success: {
+    userId: string;
+    projectId: string;
+    imageSize: number;
   };
 };
 

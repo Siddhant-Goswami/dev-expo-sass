@@ -8,16 +8,35 @@ const internal_client = new PostHog(env.NEXT_PUBLIC_POSTHOG_PUBLIC_KEY);
 export const flushServerEvents = () => internal_client.flushAsync();
 
 type VALID_SERVER_EVENTS = {
-  signin: {
-    //
+  user_signin: {
+    email: string;
+    userId: string;
   };
 
-  project_created: {
-    //
+  project_create_failed: {
+    userId: string;
+    reason: string;
+  };
+  project_create_success: {
+    userId: string;
+    projectId: string;
   };
 
-  project_creation_failed: {
-    //
+  project_delete_failed: {
+    userId: string;
+    projectId: string;
+    reason: string;
+  };
+
+  project_delete_success: {
+    userId: string;
+    projectId: string;
+  };
+
+  project_liked_toggled: {
+    userId: string;
+    projectId: string;
+    liked: boolean;
   };
 };
 

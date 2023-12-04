@@ -1,4 +1,8 @@
 'use server';
+import {
+  flushServerEvents,
+  logServerEvent,
+} from '@/lib/analytics/posthog/server';
 import { URLs } from '@/lib/constants';
 import { projectFormSchema } from '@/lib/validations/project';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
@@ -155,17 +159,13 @@ export const isLikedByUser = async ({ projectId }: { projectId: number }) => {
     const [result] = await db
       .select({ count: sql<number>`cast(count(${likes}) as int)` })
       .from(likes)
-      .where(
-        and(
-          eq(likes.projectId, 31),
-          eq(likes.userId, '2212f56a-2463-48e1-900b-81cdbe802e86'),
-        ),
-      );
+      .where(and(eq(likes.projectId, projectId), eq(likes.userId, userId)));
 
     const userLikeRecord = z.coerce
       .number()
       .catch(0)
       .parse(result?.count);
+
     return userLikeRecord === 1;
   } catch (err) {
     console.error(err);
@@ -189,73 +189,92 @@ export const uploadNewProject = async (_project: ProjectData) => {
 
   const project = projectFormSchema.parse(_project);
 
-  const projectSlug =
-    project.title.replace(/\s+/g, '-').toLowerCase() +
-    '-' +
-    Date.now().toString();
+  try {
+    const projectSlug =
+      project.title.replace(/\s+/g, '-').toLowerCase() +
+      '-' +
+      Date.now().toString();
 
-  project.tags.push('ignore_this_tag');
+    project.tags.push('ignore_this_tag');
 
-  const [result] = await db
-    .insert(projects)
-    .values({
-      ...project,
-      userId,
-      slug: projectSlug,
-      publishedAt: new Date(),
-    })
-    .returning({ projectId: projects.id });
+    const [result] = await db
+      .insert(projects)
+      .values({
+        ...project,
+        userId,
+        slug: projectSlug,
+        publishedAt: new Date(),
+      })
+      .returning({ projectId: projects.id });
 
-  const projectId = result?.projectId;
+    const projectId = result?.projectId;
 
-  if (!projectId) {
-    throw new Error('Could not get id of newly created project!');
-  }
-
-  for (const currentTag of project.tags) {
-    let [tagResult] = await db
-      .select({ tagId: tagsTable.id })
-      .from(tagsTable)
-      .where(eq(tagsTable.name, currentTag));
-    let tagId = tagResult?.tagId;
-
-    await db.query.tags.findFirst({
-      where: eq(tagsTable.name, currentTag),
-    });
-
-    if (!tagId) {
-      [tagResult] = await db
-        .insert(tagsTable)
-        .values({
-          name: currentTag,
-        })
-        .returning({ tagId: tagsTable.id });
-      tagId = tagResult!.tagId;
+    if (!projectId) {
+      throw new Error('Could not get id of newly created project!');
     }
 
-    await db.insert(projectTags).values({
-      projectId,
-      tagId,
-    });
-  }
+    for (const currentTag of project.tags) {
+      let [tagResult] = await db
+        .select({ tagId: tagsTable.id })
+        .from(tagsTable)
+        .where(eq(tagsTable.name, currentTag));
+      let tagId = tagResult?.tagId;
 
-  return { projectId };
+      await db.query.tags.findFirst({
+        where: eq(tagsTable.name, currentTag),
+      });
+
+      if (!tagId) {
+        [tagResult] = await db
+          .insert(tagsTable)
+          .values({
+            name: currentTag,
+          })
+          .returning({ tagId: tagsTable.id });
+        tagId = tagResult!.tagId;
+      }
+
+      await db.insert(projectTags).values({
+        projectId,
+        tagId,
+      });
+    }
+
+    logServerEvent('project_create_success', {
+      distinct_id: userId,
+      properties: { userId, projectId: projectId.toString() },
+    });
+    await flushServerEvents();
+
+    return { success: true, projectId };
+  } catch (err) {
+    console.error(err);
+
+    const errorMessage = (err as Error)?.message ?? 'Unknown error';
+
+    logServerEvent('project_create_failed', {
+      distinct_id: userId,
+      properties: { userId, reason: errorMessage },
+    });
+
+    await flushServerEvents();
+    return { success: false, error: 'Could not create project!' };
+  }
 };
 
 export const deleteProject = async (projectId: number) => {
+  const supabase = createServerActionClient({ cookies });
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  const userId = session?.user.id;
+  if (!userId) {
+    throw new Error('Unauthorized');
+  }
+
   try {
-    const supabase = createServerActionClient({ cookies });
-
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-
-    if (!session?.user.id) {
-      throw new Error('Unauthorized');
-    }
-
-    const userId = session.user.id;
-
     const existingProjectInDb = await db.query.projects.findFirst({
       where: (p, { eq, and }) => and(eq(p.id, projectId), eq(p.userId, userId)),
     });
@@ -277,8 +296,27 @@ export const deleteProject = async (projectId: number) => {
     // Finally delete the project itself
     // This will fail if any other table that has a foreign key constraint on the project id is not deleted first
     await db.delete(projects).where(eq(projects.id, projectId));
+
+    logServerEvent('project_delete_success', {
+      distinct_id: userId,
+      properties: { userId, projectId: projectId.toString() },
+    });
+
+    await flushServerEvents();
   } catch (err) {
     console.error(err);
+
+    const errorMessage = (err as Error)?.message ?? 'Unknown error';
+
+    logServerEvent('project_delete_failed', {
+      distinct_id: userId,
+      properties: {
+        userId,
+        projectId: projectId.toString(),
+        reason: errorMessage,
+      },
+    });
+    await flushServerEvents();
     return {
       success: false,
       error: 'Could not delete project!',
@@ -293,6 +331,7 @@ const commentInsertValidationSchema = z.object({
 });
 
 // add comment
+// TODO: add event logging for this
 export const createComment = async (
   _props: z.infer<typeof commentInsertValidationSchema>,
 ) => {
