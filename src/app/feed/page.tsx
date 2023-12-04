@@ -7,8 +7,8 @@ import NavBar from '@/components/ui/navbar';
 import { URLs, categories } from '@/lib/constants';
 import { getAllProjects } from '@/server/actions/projects';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import Link from 'next/link';
 import { cookies } from 'next/headers';
+import Link from 'next/link';
 
 type FeedProps = {
   searchParams: {
@@ -16,7 +16,7 @@ type FeedProps = {
   };
 };
 
-export const dynamic = 'force-dynamic';
+export const runtime = 'edge';
 
 async function Feed({ searchParams }: FeedProps) {
   const supabase = createServerComponentClient({ cookies });
