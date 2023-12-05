@@ -21,8 +21,8 @@ import {
 } from '../db/schema';
 
 const getProjectsValidationSchema = z.object({
-  limit: z.number(),
-  offset: z.number(),
+  limit: z.number().optional(),
+  offset: z.number().optional(),
 });
 
 export const getAllProjectsSortedByLikes = async (
