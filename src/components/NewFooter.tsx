@@ -6,7 +6,7 @@ import Logo100xTalents from './ui/logo';
 export default function NewFooter() {
   return (
     <>
-      <footer className="m-1 rounded-lg bg-white shadow dark:bg-[#020817]">
+      <footer className="mt-4 border-t border-gray-700">
         <div className="mx-auto w-full max-w-screen-xl p-4 md:py-8">
           <div className="flex flex-col gap-y-4 sm:items-center sm:justify-between lg:flex-row">
             <Link href="/" className="text-2xl font-semibold">

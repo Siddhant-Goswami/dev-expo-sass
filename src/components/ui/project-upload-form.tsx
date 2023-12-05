@@ -291,7 +291,7 @@ export function ProjectUploadForm(props: {
               {/* <FormLabel> Upload Images </FormLabel> */}
               <FormControl>
                 <>
-                  <Button asChild>
+                  <Button asChild variant="secondary">
                     <Label htmlFor="imageFiles" className={'cursor-pointer'}>
                       <LucideUploadCloud size={16} className="mr-2" />
                       Upload Images
@@ -411,6 +411,7 @@ export function ProjectUploadForm(props: {
 
         <div className="flex flex-wrap-reverse justify-end gap-3">
           <Button
+            variant="brand"
             type="submit"
             className="w-full rounded-[0.375rem] sm:w-max"
             loading={isActuallyLoading}

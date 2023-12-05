@@ -49,7 +49,7 @@ function LikeButton({
     }
   };
 
-  const variant = isLikedByCurrentUser ? 'outline' : 'brand';
+  const variant = isLikedByCurrentUser ? 'primaryOutline' : 'brand';
 
   return (
     <>
@@ -63,14 +63,17 @@ function LikeButton({
           className={cn(
             isLikedByCurrentUser
               ? 'fill-brand stroke-brand'
-              : 'fill-white stroke-white',
+              : 'fill-black stroke-black',
             'transition-all duration-300',
           )}
         />
-        <span className="hidden md:block">
-          {isLikedByCurrentUser ? 'Upvoted' : 'Upvote'}
+        <span
+          className={`hidden md:block ${
+            isLikedByCurrentUser ? 'text-brand' : ''
+          }`}
+        >
+          {isLikedByCurrentUser ? 'Upvoted' : 'Upvote'} {likes}
         </span>
-        {likes}
       </Button>
     </>
   );

@@ -5,7 +5,9 @@ import NewFooter from '@/components/NewFooter';
 import MarkdownComponent from '@/components/mark-down';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { buttonVariants } from '@/components/ui/button';
+import Carousel from '@/components/ui/carousel';
 import GoBack from '@/components/ui/go-back';
+import { URLs } from '@/lib/constants';
 import { projectFormSchema } from '@/lib/validations/project';
 import {
   getAllLikes,
@@ -28,7 +30,6 @@ import {
 } from './GetInTouchSections';
 import LikeButton from './LikeButton';
 import ProjectOptions from './ProjectOptions';
-import { URLs } from '@/lib/constants';
 
 type PageProps = {
   params: { id: string[] };
@@ -196,7 +197,9 @@ async function Page({ params }: PageProps) {
               />
             )}
 
-            {images.map(
+            <Carousel imagesArr={images} />
+
+            {/* {images.map(
               (image, index) =>
                 // h-500 w-900
                 image.url && (
@@ -213,7 +216,7 @@ async function Page({ params }: PageProps) {
                     />
                   </div>
                 ),
-            )}
+            )} */}
           </div>
 
           <div className="mt-8 rounded-sm border border-gray-500 p-6">
