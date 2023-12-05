@@ -448,4 +448,3 @@ export const createBookmark = async ({
     timestamp: new Date(),
   });
 };
-
