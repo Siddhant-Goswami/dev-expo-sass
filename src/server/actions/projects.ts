@@ -9,12 +9,12 @@ import { z } from 'zod';
 import { db } from '../db';
 import {
   comments,
-  likes,
   projectBookmarks,
   projectMedia,
   projectTags,
   projects,
   tags as tagsTable,
+  upvotes,
   userProfiles,
   type ProjectSelect,
   type UserProfileSelect,
@@ -29,7 +29,7 @@ export const getAllProjectsSortedByLikes = async (
   _props: z.infer<typeof getProjectsValidationSchema>,
 ) => {
   const { limit, offset } = getProjectsValidationSchema.parse(_props);
-  const likesCount = sql<number>`cast(COUNT(${likes}.id) as int)`;
+  const likesCount = sql<number>`cast(COUNT(${upvotes}.id) as int)`;
 
   const newProjects = await db
     .select({
@@ -38,7 +38,7 @@ export const getAllProjectsSortedByLikes = async (
       userProfile: userProfiles,
     })
     .from(projects)
-    .leftJoin(likes, eq(likes.projectId, projects.id))
+    .leftJoin(upvotes, eq(upvotes.projectId, projects.id))
     .orderBy(desc(likesCount))
     .limit(limit ? limit : 8)
     .leftJoin(userProfiles, eq(userProfiles.id, projects.userId))
@@ -163,8 +163,8 @@ export const getProjectById = async (projectId: ProjectSelect['id']) => {
 
   const totalLikes = db
     .select({ recordCount: sql`COUNT(*)` })
-    .from(likes)
-    .where(eq(likes.projectId, projectWithMedia.id));
+    .from(upvotes)
+    .where(eq(upvotes.projectId, projectWithMedia.id));
 
   const [tags, user, likesCount] = await Promise.all([
     tagsPromise,
@@ -180,11 +180,15 @@ export const getProjectById = async (projectId: ProjectSelect['id']) => {
   };
 };
 
-export const getProjectLikes = async ({ projectId }: { projectId: number }) => {
+export const getProjectUpvotes = async ({
+  projectId,
+}: {
+  projectId: number;
+}) => {
   const totalLikes = await db
     .select({ recordCount: sql`COUNT(*)` })
-    .from(likes)
-    .where(eq(likes.projectId, projectId));
+    .from(upvotes)
+    .where(eq(upvotes.projectId, projectId));
   return Number(totalLikes[0]?.recordCount);
 };
 
@@ -203,9 +207,9 @@ export const isLikedByUser = async ({ projectId }: { projectId: number }) => {
     }
     console.log('my user id', userId);
     const [result] = await db
-      .select({ count: sql<number>`cast(count(${likes}) as int)` })
-      .from(likes)
-      .where(and(eq(likes.projectId, projectId), eq(likes.userId, userId)));
+      .select({ count: sql<number>`cast(count(${upvotes}) as int)` })
+      .from(upvotes)
+      .where(and(eq(upvotes.projectId, projectId), eq(upvotes.userId, userId)));
 
     console.log('result', result);
 
@@ -312,7 +316,7 @@ export const deleteProject = async (projectId: number) => {
     }
 
     await Promise.allSettled([
-      db.delete(likes).where(eq(likes.projectId, projectId)),
+      db.delete(upvotes).where(eq(upvotes.projectId, projectId)),
 
       // TODO: This is bad because it will delete the tags from the tags table even if they are used by other projects...
       db.delete(projectTags).where(and(eq(projectTags.projectId, projectId))),
@@ -401,16 +405,16 @@ export const createOrDeleteLike = async (projectId: number) => {
     const userId = session.user.id;
 
     // TODO: Make this more efficient by taking the "state" of the like from client, and safely insert/delete in db
-    const like = await db.query.likes.findFirst({
-      where: (lk, { eq, and }) =>
-        and(eq(likes.userId, userId), eq(likes.projectId, projectId)),
+    const upvote = await db.query.upvotes.findFirst({
+      where: (upv, { eq, and }) =>
+        and(eq(upv.userId, userId), eq(upv.projectId, projectId)),
     });
-    if (like) {
+    if (upvote) {
       await db
-        .delete(likes)
-        .where(eq(likes.projectId, projectId) && eq(likes.userId, userId));
+        .delete(upvotes)
+        .where(eq(upvotes.projectId, projectId) && eq(upvotes.userId, userId));
     } else {
-      await db.insert(likes).values({
+      await db.insert(upvotes).values({
         userId: userId,
         projectId,
         timestamp: new Date(),
@@ -445,11 +449,3 @@ export const createBookmark = async ({
   });
 };
 
-export const deleteAllLikes = async () => {
-  await db.delete(likes);
-};
-
-export const getAllLikes = async () => {
-  const likes = await db.query.likes.findMany();
-  console.log(likes);
-};

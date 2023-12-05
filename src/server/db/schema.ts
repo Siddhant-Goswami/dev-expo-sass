@@ -300,8 +300,8 @@ export const comments = pgTable(
   },
 );
 
-export const likes = pgTable(
-  'likes',
+export const upvotes = pgTable(
+  'upvote',
   {
     id: bigserial('id', { mode: 'number' }).primaryKey(),
     userId: commonUserIdSchema('userId')
@@ -395,7 +395,7 @@ export const projectsRelation = relations(projects, ({ one, many }) => {
     projectTags: many(projectTags),
     projectMedia: many(projectMedia),
     comments: many(comments),
-    likes: many(likes),
+    upvotes: many(upvotes),
     projectBookmarks: many(projectBookmarks),
   };
 });
