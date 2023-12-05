@@ -17,19 +17,20 @@ type FeedProps = {
 };
 
 export const dynamic = 'force-dynamic';
+export const runtime = 'edge';
 
 async function Feed({ searchParams }: FeedProps) {
-  const supabase = createServerComponentClient({ cookies });
+  // const supabase = createServerComponentClient({ cookies });
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  // const {
+  //   data: { session },
+  // } = await supabase.auth.getSession();
 
-  const userId = session?.user.id;
+  // const userId = session?.user.id;
 
-  if (!userId) {
-    return <AuthwallPage redirectAfterSignin={URLs.feed} />;
-  }
+  // if (!userId) {
+  //   return <AuthwallPage redirectAfterSignin={URLs.feed} />;
+  // }
 
   const filter = searchParams?.filter ?? '';
 
