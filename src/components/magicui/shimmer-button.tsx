@@ -20,7 +20,7 @@ const ShimmerButton = React.forwardRef<HTMLButtonElement, ShimmerButtonProps>(
       shimmerSize = '0.1em',
       shimmerDuration = '1.5s',
       borderRadius = '100px',
-      background = '#ef5a3c',
+      background = '#75FA8D',
       className,
       children,
       ...props
@@ -40,7 +40,7 @@ const ShimmerButton = React.forwardRef<HTMLButtonElement, ShimmerButtonProps>(
           } as CSSProperties
         }
         className={cn(
-          'group relative cursor-pointer overflow-hidden whitespace-nowrap px-6 py-3 [background:var(--bg)] [border-radius:var(--radius)] ',
+          'text-brand-tertiary group relative cursor-pointer overflow-hidden whitespace-nowrap px-6 py-3 [background:var(--bg)] [border-radius:var(--radius)] ',
           'shadow-brand transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-md',
           className,
         )}

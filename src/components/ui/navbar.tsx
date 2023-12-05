@@ -2,14 +2,13 @@
 
 import { Button, buttonVariants } from '@/components/ui/button';
 import SignInModal from '@/components/ui/sign-up-modal';
-import { ThemeToggle } from '@/components/ui/toggle';
 import { useAuth } from '@/hooks/user/auth';
 import { URLs } from '@/lib/constants';
 import { cn } from '@/utils/cn';
 import { LucidePlus } from 'lucide-react';
 import Link from 'next/link';
 import UserAuthButton from '../UserAuthButton';
-import Logo100xTalents from './logo';
+import Logo from './logo';
 
 const NavBar = () => {
   const { session, isLoaded } = useAuth();
@@ -22,7 +21,7 @@ const NavBar = () => {
       <div className="flex w-full items-center justify-between space-x-4">
         <div className="flex items-center">
           <Link href="/" className="text-2xl font-semibold">
-            <Logo100xTalents />
+            <Logo />
           </Link>
         </div>
         <div className="flex h-10 items-center gap-6">
@@ -33,7 +32,7 @@ const NavBar = () => {
                   buttonVariants({
                     variant: 'outline',
                     className:
-                      'rounded-sm border-brand text-brand hover:bg-brand hover:text-white',
+                      'border-brand text-brand hover:bg-brand hover:text-black',
                   }),
                 )}
                 href={URLs.create}
@@ -55,7 +54,7 @@ const NavBar = () => {
             <span className="inline-block aspect-square h-9 w-9 animate-pulse rounded-full bg-gray-300"></span>
           )}
 
-          <ThemeToggle />
+          {/* <ThemeToggle /> */}
         </div>
       </div>
     </nav>

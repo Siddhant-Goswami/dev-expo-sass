@@ -52,10 +52,14 @@ module.exports = {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         brand: {
-          DEFAULT: '#ef5a3c',
-          background: '#f5f5f4',
-          foreground: '#ffffff',
+          DEFAULT: '#75FA8D',
+          secondary: '#2E2E2E',
+          tertiary: '#EDEDED',
+          background: '#1C1C1C',
+          foreground: '#EDEDED',
           dark: '#242424',
+          gray: '#A0A0A0',
+          secondarybg: '#E4FFE9',
         },
         primary: {
           DEFAULT: 'hsl(var(--primary))',
@@ -87,9 +91,9 @@ module.exports = {
         },
       },
       borderRadius: {
-        lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)',
+        // lg: 'var(--radius)',
+        // md: 'calc(var(--radius) - 2px)',
+        // sm: 'calc(var(--radius) - 4px)',
       },
       keyframes: {
         'accordion-down': {

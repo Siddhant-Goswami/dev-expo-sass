@@ -15,8 +15,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   const visibleTags = tags.slice(0, 3);
 
   return (
-    <div className="rounded-sm">
-      <div className="relative h-64 w-80 overflow-hidden rounded-sm sm:h-56 sm:w-72">
+    <div className="overflow-hidden rounded-md">
+      <div className="relative h-64 w-80 overflow-hidden rounded-md sm:h-56 sm:w-72">
         <Image
           // fill={true}
           width={1000}
@@ -26,7 +26,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             'https://images.unsplash.com/photo-1597484661973-ee6cd0b6482c?q=80&w=2874&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
           }
           alt="demo"
-          className="h-full w-full object-fill transition-all duration-200 group-hover:brightness-105"
+          className="aspect-video h-full w-full object-center transition-all duration-200 group-hover:brightness-105"
         />
       </div>
 
@@ -37,12 +37,12 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
           <div className="mt-1.5 flex gap-1 text-center text-xs font-medium text-white">
             {visibleTags.map((tag) => {
               return (
-                <span
+                <div
                   key={String(tag.id)}
-                  className="rounded-sm bg-[rgba(0,0,0,0.85)] px-2 py-1 text-xs"
+                  className="rounded-md border border-brand-tertiary bg-[rgba(0,0,0,0.85)] px-2 py-1 text-xs text-brand-tertiary"
                 >
                   # {tag.name}
-                </span>
+                </div>
               );
             })}
           </div>
