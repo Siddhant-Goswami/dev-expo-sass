@@ -41,11 +41,8 @@ const onboardingStepsSchema = z.object({
     .min(5, 'GitHub Username is required.')
     .max(50, 'GitHub Username must be less than 50 characters.'),
   websiteUrl: devApplicationSchema.shape.websiteUrl,
-  twitterUsername: z
-    .string()
-    .min(2, 'Twitter Username is required.')
-    .nullable()
-    .default(null),
+  twitterUsername: z.string().optional().nullable(),
+  // .default(null),
   bio: devApplicationSchema.shape.bio,
 });
 
