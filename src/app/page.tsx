@@ -42,7 +42,7 @@ export default async function Page() {
             }}
           />
         </div> */}
-        <h3 className="bg-brand-secondarybg mt-18 rounded-full border-2 border-brand px-4 py-2 font-medium text-black backdrop-blur-md sm:mt-0">
+        <h3 className="mt-18 rounded-full border-2 border-brand bg-brand-secondarybg px-4 py-2 font-medium text-black backdrop-blur-md sm:mt-0">
           Elevate Your GenAI Game
         </h3>
         <h2 className="mt-12 text-center text-2xl font-semibold leading-10 [text-wrap:balance] sm:w-3/4 sm:text-4xl sm:font-bold">
