@@ -4,13 +4,13 @@ import NewFooter from '@/components/NewFooter';
 import Grid from '@/components/ui/grid';
 import Navbar from '@/components/ui/navbar';
 import { URLs } from '@/lib/constants';
-import { getAllProjects } from '@/server/actions/projects';
+import { getAllProjectsSortedByLikes } from '@/server/actions/projects';
 import Link from 'next/link';
 
 export const revalidate = false;
 export const dynamic = 'force-dynamic';
 export default async function Page() {
-  const allProjects = await getAllProjects({ limit: 8 });
+  const allProjects = await getAllProjectsSortedByLikes({ limit: 8 });
   const filteredProjectsData = allProjects.map(
     ({ project, user, tags, media }) => {
       const { id, title } = project;

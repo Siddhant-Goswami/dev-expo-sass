@@ -2,7 +2,7 @@
 import { URLs } from '@/lib/constants';
 import { projectFormSchema } from '@/lib/validations/project';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
-import { and, desc, eq, sql } from 'drizzle-orm';
+import { and, desc, eq, inArray, sql } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 import { z } from 'zod';
@@ -21,6 +21,72 @@ import {
 } from '../db/schema';
 
 // TODO: filter categories
+export const getAllProjectsSortedByLikes = async ({
+  limit,
+  offset,
+}: {
+  limit?: number;
+  offset?: number;
+}) => {
+  const likesCount = sql<number>`cast(COUNT(${likes}.id) as int)`;
+
+  const newProjects = await db
+    .select({
+      project: projects,
+      likesCount,
+      userProfile: userProfiles,
+    })
+    .from(projects)
+    .leftJoin(likes, eq(likes.projectId, projects.id))
+    .orderBy(desc(likesCount))
+    .limit(4)
+    .leftJoin(userProfiles, eq(userProfiles.id, projects.userId))
+    .groupBy(projects.id, userProfiles.id);
+
+  const projectIds = newProjects.map((p) => p.project.id);
+  const mediaPromise = db
+    .select()
+    .from(projectMedia)
+    .where(inArray(projectMedia.projectId, projectIds));
+  const tagsPromise = db.query.projectTags.findMany({
+    where: inArray(projectTags.projectId, projectIds),
+    with: {
+      tag: true,
+    },
+  });
+
+  const [media, tags] = await Promise.all([mediaPromise, tagsPromise]);
+
+  const result = newProjects.map((data) => {
+    const { project, likesCount, userProfile } = data;
+    return {
+      project,
+      likesCount,
+      user: userProfile!,
+      tags: tags
+        .filter((pt) => pt.projectId === project.id)
+        .filter((pt) => pt.tag.name !== 'ignore_this_tag')
+        .map((pt) => pt.tag),
+      media: media.filter((m) => m.projectId === project.id),
+    };
+  });
+
+  // const allProjects = await getAllProjects({ limit, offset });
+  // const projectWithLikes = await Promise.all(
+  //   allProjects.map(async (project) => {
+  //     const likesCount = await db
+  //       .select({ recordCount: sql`COUNT(*)` })
+  //       .from(likes)
+  //       .where(eq(likes.projectId, project.project.id));
+  //     return {
+  //       ...project,
+  //       likesCount: Number(likesCount[0]?.recordCount) ?? 0,
+  //     };
+  //   }),
+  // );
+  // return projectWithLikes.sort((a, b) => b.likesCount - a.likesCount);
+  return result;
+};
 
 // get all projects ordered by date
 // for home feed
@@ -155,12 +221,9 @@ export const isLikedByUser = async ({ projectId }: { projectId: number }) => {
     const [result] = await db
       .select({ count: sql<number>`cast(count(${likes}) as int)` })
       .from(likes)
-      .where(
-        and(
-          eq(likes.projectId, 31),
-          eq(likes.userId, '2212f56a-2463-48e1-900b-81cdbe802e86'),
-        ),
-      );
+      .where(and(eq(likes.projectId, projectId), eq(likes.userId, userId)));
+
+    console.log('result', result);
 
     const userLikeRecord = z.coerce
       .number()
