@@ -20,7 +20,6 @@ import {
   type UserProfileSelect,
 } from '../db/schema';
 
-// TODO: filter categories
 export const getAllProjectsSortedByLikes = async ({
   limit,
   offset,
@@ -39,7 +38,7 @@ export const getAllProjectsSortedByLikes = async ({
     .from(projects)
     .leftJoin(likes, eq(likes.projectId, projects.id))
     .orderBy(desc(likesCount))
-    .limit(4)
+    .limit(limit ? limit : 8)
     .leftJoin(userProfiles, eq(userProfiles.id, projects.userId))
     .groupBy(projects.id, userProfiles.id);
 
@@ -70,24 +69,10 @@ export const getAllProjectsSortedByLikes = async ({
       media: media.filter((m) => m.projectId === project.id),
     };
   });
-
-  // const allProjects = await getAllProjects({ limit, offset });
-  // const projectWithLikes = await Promise.all(
-  //   allProjects.map(async (project) => {
-  //     const likesCount = await db
-  //       .select({ recordCount: sql`COUNT(*)` })
-  //       .from(likes)
-  //       .where(eq(likes.projectId, project.project.id));
-  //     return {
-  //       ...project,
-  //       likesCount: Number(likesCount[0]?.recordCount) ?? 0,
-  //     };
-  //   }),
-  // );
-  // return projectWithLikes.sort((a, b) => b.likesCount - a.likesCount);
   return result;
 };
 
+// TODO: filter categories
 // get all projects ordered by date
 // for home feed
 export const getAllProjects = async ({
