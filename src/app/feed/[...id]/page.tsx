@@ -3,7 +3,6 @@ import NavBar from '@/components/ui/navbar';
 import AuthwallPage from '@/components/AuthwallPage';
 import NewFooter from '@/components/NewFooter';
 import MarkdownComponent from '@/components/mark-down';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { buttonVariants } from '@/components/ui/button';
 import Carousel from '@/components/ui/carousel';
 import GoBack from '@/components/ui/go-back';
@@ -103,15 +102,13 @@ async function Page({ params }: PageProps) {
           <div className="mb-6 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Link href={`/user/${dev.username}`}>
-                <Avatar className="h-auto w-14">
-                  <Image
-                    width={200}
-                    height={200}
-                    src={displayPictureUrl}
-                    alt={displayName}
-                  />
-                  <AvatarFallback> {initialLetter} </AvatarFallback>
-                </Avatar>
+                <Image
+                  className="aspect-square h-14 w-14 rounded-full"
+                  width={100}
+                  height={100}
+                  src={displayPictureUrl}
+                  alt={displayName}
+                />
               </Link>
               <div>
                 <Link href={`/user/${dev.username}`}>
