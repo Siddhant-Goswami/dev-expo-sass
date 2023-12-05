@@ -7,13 +7,14 @@ import { URLs } from '@/lib/constants';
 import { getAllProjectsSortedByLikes } from '@/server/actions/projects';
 import Link from 'next/link';
 
-export const revalidate = false;
-export const dynamic = 'force-dynamic';
+export const revalidate = 15;
+// export const dynamic = 'force-dynamic';
+export const runtime = 'edge';
 export default async function Page() {
   const allProjects = await getAllProjectsSortedByLikes({ limit: 8 });
   const filteredProjectsData = allProjects.map(
-    ({ project, user, tags, media, likesCount}) => {
-      const { id, title} = project;
+    ({ project, user, tags, media, likesCount }) => {
+      const { id, title } = project;
       const displayName = user?.displayName ?? ' ';
 
       return {
@@ -22,7 +23,7 @@ export default async function Page() {
         media,
         tags,
         displayName,
-        likesCount
+        likesCount,
       };
     },
   );
