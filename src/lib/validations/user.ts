@@ -29,7 +29,7 @@ export const devApplicationSchema = z.object({
     .string()
     .min(5, 'GitHub Username is required.')
     .max(50, 'GitHub Username must be less than 50 characters.'),
-  twitterUsername: z.string().nullable().default(null),
+  twitterUsername: z.string().nullable().default(null).optional(),
   linkedInUrl: z
     .string()
     .url('Please enter a valid URL.')
