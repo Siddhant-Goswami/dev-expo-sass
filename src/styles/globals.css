@@ -71,6 +71,27 @@
 
 /* https://ui.shadcn.com/themes */
 @layer base {
+  :root {
+    --background: #1c1c1c;
+    --foreground: #75fa8d;
+    --card: #1c1c1c;
+    --card-foreground: #75fa8d;
+    --popover: #1c1c1c;
+    --popover-foreground: #75fa8d;
+    --primary: #75fa8d;
+    --primary-foreground: #ededed;
+    --secondary: #2e2e2e;
+    --secondary-foreground: #75fa8d;
+    --muted: #2e2e2e;
+    --muted-foreground: #a0a0a0;
+    --accent: #2e2e2e;
+    --accent-foreground: #75fa8d;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: #75fa8d;
+    --border: #2e2e2e;
+    --input: #2e2e2e;
+    --ring: 212.7 26.8% 83.9;
+  }
   .dark {
     --background: #1c1c1c;
     --foreground: #75fa8d;

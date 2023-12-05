@@ -35,7 +35,7 @@ type PageProps = {
   params: { id: string[] };
 };
 
-export const revalidate = 10;
+export const runtime = 'edge';
 
 async function Page({ params }: PageProps) {
   const supabase = createServerComponentClient({ cookies });
@@ -94,7 +94,7 @@ async function Page({ params }: PageProps) {
       <section className="flex items-start justify-center">
         <main className="mt-8 flex w-full flex-col justify-center px-4 md:max-w-4xl">
           <div className="flex w-full items-center justify-between">
-            <GoBack />
+            <GoBack goBackUrl={URLs.feed} />
             {userId === dev.id && <ProjectOptions projectId={projectId} />}
           </div>
           <h1 className="mb-4 w-full text-left text-2xl font-semibold">
