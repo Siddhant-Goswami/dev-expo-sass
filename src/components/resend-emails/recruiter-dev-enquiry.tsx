@@ -46,7 +46,7 @@ export const OpportunityEmail = ({
     </p>
 
     <p>
-      Best regards, <br /> The 100xTalent Team 🚀
+      Best regards, <br /> The Overpowered Team 🚀
     </p>
   </div>
 );
