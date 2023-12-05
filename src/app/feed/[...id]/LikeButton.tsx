@@ -58,7 +58,7 @@ function UpvoteButton({
         variant={variant}
         className="flex w-32 gap-3 rounded-sm"
       >
-        <span className='flex items-center justify-center gap-2'>
+        <span className="flex items-center justify-center gap-2">
           <LucideTriangle
             size={12}
             className={cn(
@@ -71,7 +71,7 @@ function UpvoteButton({
           {likes}
         </span>
 
-        <span> | </span>
+        <span className="hidden md:inline-block"> | </span>
         <span
           className={`hidden md:block ${
             isLikedByCurrentUser ? 'text-brand' : ''
