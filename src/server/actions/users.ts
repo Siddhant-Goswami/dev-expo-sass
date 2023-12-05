@@ -86,13 +86,10 @@ export const createDevApplication = async (
     .values({
       bio: `${devApplicationInsertData.bio}`,
       displayName: devApplicationInsertData.displayName,
-      twitterUsername: devApplicationInsertData.twitterUsername
-        ? `https://twitter.com/` + devApplicationInsertData.twitterUsername
-        : null,
+      twitterUsername: devApplicationInsertData.twitterUsername,
       websiteUrl: devApplicationInsertData.websiteUrl,
       status: 'pending',
-      gitHubUsername:
-        `https://github.com/` + devApplicationInsertData.githubUsername,
+      gitHubUsername: devApplicationInsertData.githubUsername,
       userId,
       appliedAt,
     })
