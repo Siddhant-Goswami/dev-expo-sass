@@ -153,7 +153,7 @@ export function OnboardingSteps() {
           bio: formValues.bio,
           displayName: formValues.displayName,
           githubUsername: formValues.githubUsername,
-          twitterUsername: formValues.twitterUsername,
+          twitterUsername: formValues.twitterUsername ?? null,
           websiteUrl: formValues.websiteUrl,
         });
 
