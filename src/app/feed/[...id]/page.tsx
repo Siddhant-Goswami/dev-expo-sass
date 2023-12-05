@@ -28,7 +28,7 @@ import {
   GetInTouchSection,
   IsNotSameUserWrapper,
 } from './GetInTouchSections';
-import LikeButton from './LikeButton';
+import UpvoteButton from './LikeButton';
 import ProjectOptions from './ProjectOptions';
 
 type PageProps = {
@@ -141,7 +141,7 @@ async function Page({ params }: PageProps) {
             </div>
 
             <div className="flex gap-2">
-              <LikeButton
+              <UpvoteButton
                 originalTotalLikes={projectDetails.likesCount}
                 isOriginallyLikedByUser={isLiked}
                 projectId={projectId}
@@ -219,11 +219,8 @@ async function Page({ params }: PageProps) {
             )} */}
           </div>
 
-          <div className="mt-8 rounded-sm border border-gray-500 p-6">
+          <div className="mt-8 p-6">
             <section>
-              <h2 className="text-md mb-4 border-b border-gray-300 font-semibold">
-                Description
-              </h2>
               <MarkdownComponent content={description} />
             </section>
           </div>
