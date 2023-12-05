@@ -12,8 +12,8 @@ export const dynamic = 'force-dynamic';
 export default async function Page() {
   const allProjects = await getAllProjectsSortedByLikes({ limit: 8 });
   const filteredProjectsData = allProjects.map(
-    ({ project, user, tags, media }) => {
-      const { id, title } = project;
+    ({ project, user, tags, media, likesCount}) => {
+      const { id, title} = project;
       const displayName = user?.displayName ?? ' ';
 
       return {
@@ -22,6 +22,7 @@ export default async function Page() {
         media,
         tags,
         displayName,
+        likesCount
       };
     },
   );

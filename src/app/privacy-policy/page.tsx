@@ -308,7 +308,7 @@ export default function Page() {
             grounds of such termination of User account.
           </p>
           <p className={paragraph}>
-            You may send a request in writing to Us to hello@100xengineers.com
+            You may send a request in writing to Us to hello@overpoweredjobs.com
           </p>
           <p className={paragraph}>
             Allow access to Your data/information or for review of Your data or
@@ -543,7 +543,7 @@ export default function Page() {
           <p className={paragraph}>
             If You have any questions about the cookie section or if You would
             like more information on the cookies that We use and their purposes,
-            please contact Us at hello@100xengineers.com
+            please contact Us at hello@overpoweredjobs.com
           </p>
           <p className={heading}>RIGHTS RELATED TO YOUR PERSONAL DATA</p>
           <p className={paragraph}>
@@ -590,8 +590,8 @@ export default function Page() {
             otherwise permitted by law.
           </p>
           <p className={paragraph}>
-            Please contact us at hello@100xengineers.com to submit a request or
-            obtain information regarding any of the above.
+            Please contact us at hello@overpoweredjobs.com to submit a request
+            or obtain information regarding any of the above.
           </p>
           <p className={heading}>SENSITIVE PERSONAL INFORMATION</p>
           <p className={paragraph}>
