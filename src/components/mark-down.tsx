@@ -13,19 +13,19 @@ function MarkdownComponent({ content }: MarkdownComponentProps) {
       components={{
         h1: ({ node, ...props }) => (
           <h1
-            className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl"
+            className="mb-2 scroll-m-20 text-2xl font-extrabold tracking-tight lg:text-3xl"
             {...props}
           />
         ),
         h2: ({ node, ...props }) => (
           <h2
-            className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0"
+            className="mt-2 scroll-m-20 pb-2 text-xl font-semibold tracking-tight first:mt-0"
             {...props}
           />
         ),
         h3: ({ node, ...props }) => (
           <h3
-            className="scroll-m-20 text-2xl font-semibold tracking-tight"
+            className="scroll-m-20 text-lg font-semibold tracking-tight"
             {...props}
           />
         ),

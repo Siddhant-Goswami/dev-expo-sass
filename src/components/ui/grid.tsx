@@ -7,6 +7,7 @@ type ProjectData = {
   id: number;
   title: string;
   displayName: string;
+  likesCount?: number;
 } & Pick<Awaited<ReturnType<typeof getAllProjects>>[number], 'tags' | 'media'>;
 
 type GridProps = {
@@ -27,6 +28,7 @@ function Grid({ data }: GridProps) {
             creator={project.displayName}
             tags={project.tags}
             media={project.media}
+            likes={project.likesCount}
           />
         </Link>
       ))}

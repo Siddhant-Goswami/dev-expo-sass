@@ -2,9 +2,8 @@ import { Analytics } from '@vercel/analytics/react';
 
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import { Toaster } from '@/components/ui/toaster';
-import '@/styles/globals.css';
-
 import { env } from '@/env';
+import '@/styles/globals.css';
 import { TRPCReactProvider } from '@/trpc/react';
 import localFont from 'next/font/local';
 import { headers } from 'next/headers';
@@ -33,12 +32,13 @@ const NeueMont = localFont({
 });
 
 export const metadata = {
-  title: '100xTalent',
-  description: '100xTalent | For finding 100x AI talent for the right job.',
+  title: 'Overpowered Jobs',
+  description:
+    'Overpowered Jobs | For finding most overpowered talent for your company',
   icons: [
     {
       rel: 'icon',
-      url: 'https://framerusercontent.com/images/yQZPiDumORgz6c8KG1wLzbJi9rQ.png',
+      url: './images/opj.png',
     },
   ],
 };
@@ -69,7 +69,7 @@ export default function RootLayout({
           <ThemeProvider
             enableSystem
             attribute="class"
-            defaultTheme="light"
+            defaultTheme="dark"
             disableTransitionOnChange
           >
             {children}
