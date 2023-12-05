@@ -20,13 +20,15 @@ import {
   type UserProfileSelect,
 } from '../db/schema';
 
-export const getAllProjectsSortedByLikes = async ({
-  limit,
-  offset,
-}: {
-  limit?: number;
-  offset?: number;
-}) => {
+const getProjectsValidationSchema = z.object({
+  limit: z.number(),
+  offset: z.number(),
+});
+
+export const getAllProjectsSortedByLikes = async (
+  _props: z.infer<typeof getProjectsValidationSchema>,
+) => {
+  const { limit, offset } = getProjectsValidationSchema.parse(_props);
   const likesCount = sql<number>`cast(COUNT(${likes}.id) as int)`;
 
   const newProjects = await db
@@ -75,13 +77,10 @@ export const getAllProjectsSortedByLikes = async ({
 // TODO: filter categories
 // get all projects ordered by date
 // for home feed
-export const getAllProjects = async ({
-  limit,
-  offset,
-}: {
-  limit?: number;
-  offset?: number;
-}) => {
+export const getAllProjects = async (
+  _props: z.infer<typeof getProjectsValidationSchema>,
+) => {
+  const { limit, offset } = getProjectsValidationSchema.parse(_props);
   const allProjects = await db.query.projects.findMany({
     where: (p, { isNotNull }) => isNotNull(p.publishedAt),
     with: {
