@@ -63,7 +63,7 @@ function LikeButton({
           className={cn(
             isLikedByCurrentUser
               ? 'fill-brand stroke-brand'
-              : 'fill-white stroke-white',
+              : 'fill-black stroke-black',
             'transition-all duration-300',
           )}
         />
