@@ -71,7 +71,7 @@ async function Page({ params }: PageProps) {
           <h2 className="text-md mt-4 font-medium tracking-tight lg:text-lg">
             Projects ({projectsData.length})
           </h2>
-          <Grid data={projectsData} />
+          <Grid projects={projectsData} />
         </main>
       </section>
       <NewFooter />

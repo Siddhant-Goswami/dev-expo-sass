@@ -8,10 +8,28 @@ posthog.init(env.NEXT_PUBLIC_POSTHOG_PUBLIC_KEY, {
 const internal_client = posthog;
 
 type VALID_CLIENT_EVENTS = {
+  click_auth_button: {
+    timestamp: number;
+  };
+
+  click_signout_button: {
+    userId: string;
+  };
+
+  click_project_card: {
+    userId?: string;
+    projectId: string;
+    timestamp: number;
+  };
+
+  click_get_started_button: {
+    userId?: string;
+    timestamp: number;
+  };
+
   dev_application_submit_success: {
     userId: string;
-    applicationId: string; // Unique identifier for the application
-    positionAppliedFor: string; // The role or position applied for
+    applicationId: string;
   };
 
   dev_application_submit_failed: {
@@ -23,6 +41,7 @@ type VALID_CLIENT_EVENTS = {
     userId: string;
     videoSize: number; // Size in bytes
   };
+
   dev_application_video_record_fail: {
     userId: string;
     reason: string;
@@ -41,6 +60,11 @@ type VALID_CLIENT_EVENTS = {
     videoSize: number;
   };
 
+  click_project_submit: {
+    userId: string;
+    timestamp: number;
+  };
+
   project_submit_failed: {
     userId: string;
     reason: string;
@@ -52,10 +76,10 @@ type VALID_CLIENT_EVENTS = {
 
   project_image_upload_failed: {
     userId: string;
-    projectId: string;
-    imageSize: number;
+    projectId?: string;
+    imageSize?: number;
+    publicId?: string; // public_id of the image in cloudinary (referenced in the `projectMedia` table)
     reason: string;
-    publicId: string; // public_id of the image in cloudinary (referenced in the `projectMedia` table)
   };
 
   project_image_upload_success: {
@@ -67,12 +91,9 @@ type VALID_CLIENT_EVENTS = {
 
 export const logClientEvent = <TEventKey extends keyof VALID_CLIENT_EVENTS>(
   event: TEventKey,
-  payload: {
-    distinct_id: string;
-    properties: VALID_CLIENT_EVENTS[TEventKey];
-  },
+  payload: VALID_CLIENT_EVENTS[TEventKey],
 ) => {
-  return internal_client.capture(event, payload.properties);
+  return internal_client.capture(event, payload);
 };
 
 export default logClientEvent;

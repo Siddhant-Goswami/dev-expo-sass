@@ -11,19 +11,20 @@ type ProjectData = {
 } & Pick<Awaited<ReturnType<typeof getAllProjects>>[number], 'tags' | 'media'>;
 
 type GridProps = {
-  data: ProjectData[];
+  projects: ProjectData[];
 };
 
-function Grid({ data }: GridProps) {
+function Grid({ projects }: GridProps) {
   return (
     <div className="flex h-max w-full flex-wrap items-start justify-center gap-6 xl:gap-x-10 [&>*:nth-child(7)]:hidden sm:[&>*:nth-child(7)]:block [&>*:nth-child(8)]:hidden sm:[&>*:nth-child(8)]:block">
-      {data.map((project) => (
+      {projects.map((project) => (
         <Link
           href={URLs.projectPage(project.id.toString())}
           key={project.id}
           className="h-max w-max"
         >
           <ProjectCard
+            projectId={project.id}
             projectName={project.title}
             creator={project.displayName}
             tags={project.tags}

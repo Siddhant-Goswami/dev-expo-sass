@@ -1,12 +1,11 @@
-import AuthwallPage from '@/components/AuthwallPage';
+import AuthwallModal from '@/components/AuthwallModal';
 import NewFooter from '@/components/NewFooter';
 import OnboardingStatus from '@/components/OnboardingStatus';
 import NavBar from '@/components/ui/navbar';
 import { OnboardingSteps } from '@/components/ui/onboarding-steps';
 import { ProjectUpload } from '@/components/ui/ProjectUpload';
-import { URLs } from '@/lib/constants';
 import { db } from '@/server/db';
-import { devApplications } from '@/server/db/schema';
+import { devApplications, type DevApplicationSelect } from '@/server/db/schema';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { desc } from 'drizzle-orm';
 import { cookies } from 'next/headers';
@@ -22,16 +21,19 @@ async function Page() {
 
   const userId = session?.user.id;
 
-  if (!userId) {
-    return <AuthwallPage redirectAfterSignin={URLs.create} />;
-  }
+  // if (!userId) {
+  //   return <AuthwallPage redirectAfterSignin={URLs.create} />;
+  // }
 
   // const isUserVerified = true;
 
-  const userApplication = await db.query.devApplications.findFirst({
-    where: (da, { eq }) => eq(da.userId, userId),
-    orderBy: [desc(devApplications.appliedAt)],
-  });
+  let userApplication: DevApplicationSelect | null | undefined = null;
+  if (userId) {
+    userApplication = await db.query.devApplications.findFirst({
+      where: (da, { eq }) => eq(da.userId, userId),
+      orderBy: [desc(devApplications.appliedAt)],
+    });
+  }
 
   // TODO: Later, also check whether user has a developer profile
   const devApplicationStatus = userApplication?.status ?? null;
@@ -46,7 +48,7 @@ async function Page() {
     return (
       <>
         <NavBar />
-        <OnboardingStatus onboardingStatus={'approved'} />
+        <OnboardingStatus onboardingStatus={devApplicationStatus} />
         <NewFooter />
       </>
     );
@@ -55,6 +57,9 @@ async function Page() {
   return (
     <>
       <NavBar />
+
+      <AuthwallModal />
+
       <div className="mx-auto mb-32 flex min-h-[105vh] max-w-4xl flex-col items-center justify-start px-4">
         <h1 className="mt-8 w-max text-2xl font-extrabold tracking-tight md:text-4xl lg:text-5xl">
           {devApplicationStatus
@@ -70,6 +75,7 @@ async function Page() {
           {devApplicationStatus ? <ProjectUpload /> : <OnboardingSteps />}
         </div>
       </div>
+
       <NewFooter />
     </>
   );

@@ -2,6 +2,10 @@
 
 import { OpportunityEmail } from '@/components/resend-emails/recruiter-dev-enquiry';
 import { env } from '@/env';
+import {
+  flushServerEvents,
+  logServerEvent,
+} from '@/lib/analytics/posthog/server';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
 import { createClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
@@ -46,20 +50,31 @@ export const createRecruiterReachout = async (
     data: { session },
   } = await supabase.auth.getSession();
 
-  if (!session) {
+  const recruiterId = session?.user.id;
+  if (!recruiterId) {
     throw new Error('Unauthenticated');
   }
 
   try {
-    const recruiterId = session.user.id;
-    await db.insert(recruiterReachouts).values({
-      recruiterId,
-      devId,
-      workType,
-      // quotePrice,
-      message,
-      timestamp: new Date(),
-    });
+    const [newlyCreatedReachout] = await db
+      .insert(recruiterReachouts)
+      .values({
+        recruiterId,
+        devId,
+        workType,
+        // quotePrice,
+        message,
+        timestamp: new Date(),
+      })
+      .returning({
+        id: recruiterReachouts.id,
+      });
+
+    const reachoutId = newlyCreatedReachout?.id;
+
+    if (!reachoutId) {
+      throw new Error('Could not create reachout!');
+    }
 
     const { data, error } = await supabaseAdmin.auth.admin.getUserById(devId);
 
@@ -98,12 +113,33 @@ export const createRecruiterReachout = async (
     });
 
     if (emailSendResponse.error) {
-      throw new Error(
-        emailSendResponse?.error?.message ?? 'Could not send email to dev!',
-      );
+      logServerEvent('reachout_email_send_failed', {
+        distinct_id: recruiterId,
+        properties: {
+          userId: recruiterId,
+          reason: emailSendResponse.error.message,
+          reachoutId: reachoutId.toString(),
+        },
+      });
+      await flushServerEvents();
+      return { success: false, message: 'Could not send email to developer!' };
     }
 
-    console.log(`ID of email sent: `, emailSendResponse.data?.id);
+    console.log(
+      `Email sent to [${dev.email}] with ID:`,
+      emailSendResponse.data?.id,
+    );
+
+    logServerEvent('reachout_email_send_success', {
+      distinct_id: recruiterId,
+      properties: {
+        recruiterId,
+        devId: dev.id,
+        reachoutId: reachoutId.toString(),
+      },
+    });
+    await flushServerEvents();
+
     return { success: true, message: 'Reachout sent!' };
   } catch (error) {
     console.error(error);

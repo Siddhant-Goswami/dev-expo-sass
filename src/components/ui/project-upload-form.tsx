@@ -18,6 +18,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
 import useCloudinaryUpload from '@/hooks/useCloudinaryUpload';
+import { useAuth } from '@/hooks/user/auth';
+import logClientEvent from '@/lib/analytics/posthog/client';
 import { MAX_IMAGE_SIZE, MAX_NUMBER_OF_IMAGES, URLs } from '@/lib/constants';
 import { projectFormSchema } from '@/lib/validations/project';
 import { validateAndPersistUpload } from '@/server/actions/projectMedia';
@@ -42,8 +44,10 @@ const acceptedImageTypes = [
   'image/webp',
 ];
 export function ProjectUploadForm(props: {
-  onProjectUploadSuccess?: () => void;
+  onProjectUploadSuccess?: (props: { projectId: number }) => void;
 }) {
+  const { userId } = useAuth();
+
   const router = useRouter();
 
   const { toast } = useToast();
@@ -73,6 +77,11 @@ export function ProjectUploadForm(props: {
   const { mutate: submitProjectData } = useMutation({
     mutationFn: async () => {
       setActualStatus('uploading-data');
+
+      logClientEvent('click_project_submit', {
+        userId: userId!,
+        timestamp: Date.now(),
+      });
       const formValues = form.getValues();
       return await uploadNewProject(formValues);
     },
@@ -89,31 +98,45 @@ export function ProjectUploadForm(props: {
           'Oops! Something went wrong. Please try again.' +
             (err as Error)?.message ?? 'Unknown error',
       });
+
+      logClientEvent('project_submit_failed', {
+        userId: userId!,
+        reason: (err as Error)?.message ?? JSON.stringify({ err }),
+      });
     },
   });
 
   const { upload: uploadToCloudinary } = useCloudinaryUpload({
-    onSuccess: async ({ public_id, projectId }) => {
+    onSuccess: async ({ public_id, projectId, fileSize }) => {
       try {
-        const { success } = await validateAndPersistUpload({
+        const { success, error } = await validateAndPersistUpload({
           projectId,
           publicId: public_id,
         });
 
         if (!success) {
-          return alert('Failed to validate and persist upload');
+          throw new Error('Failed to validate and persist upload');
         }
       } catch (err) {
         setActualStatus('error');
       }
     },
-    onError: async (err) => {
+    onError: async ({ error, projectId, fileSize, public_id }) => {
       setActualStatus('error');
 
+      const errorMessage = (error as Error)?.message ?? String(error);
+
       toast({
-        title:
-          'Oops! Something went wrong. ' + (err as Error)?.message ??
-          'Unknown error',
+        variant: 'destructive',
+        title: errorMessage ?? 'Unknown error',
+      });
+
+      logClientEvent('project_image_upload_failed', {
+        userId: userId!,
+        projectId: projectId.toString(),
+        reason: errorMessage ?? 'Unknown error',
+        publicId: public_id ?? undefined,
+        imageSize: fileSize ?? undefined,
       });
     },
   });
@@ -139,7 +162,10 @@ export function ProjectUploadForm(props: {
       await Promise.all(imageUploadPromises);
 
       setActualStatus('success');
-      props?.onProjectUploadSuccess?.();
+
+      // Log event is handled in `onProjectUploadSuccess`
+      props?.onProjectUploadSuccess?.({ projectId });
+
       toast({ title: '🎉 Project uploaded successfully!' });
 
       void router.push(URLs.projectPage(projectId.toString()));

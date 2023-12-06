@@ -1,7 +1,11 @@
 'use server';
-import { desc, eq } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 // TODO: make these regular functions instead of server actions, and import `server-only`
 
+import {
+  flushServerEvents,
+  logServerEvent,
+} from '@/lib/analytics/posthog/server';
 import {
   devApplicationSchema,
   type DevApplicationFormSubmitType,
@@ -59,53 +63,87 @@ export const createDevApplication = async (
   }
 
   const userId = session.user.id;
+  try {
+    const devApplicationInsertData =
+      devApplicationSchema.parse(unsanitizedData);
 
-  const devApplicationInsertData = devApplicationSchema.parse(unsanitizedData);
+    const existingApplication = await db.query.devApplications.findFirst({
+      where: eq(devApplications.userId, userId),
+    });
+    if (existingApplication?.status === 'approved') {
+      return {
+        success: false,
+        error: 'User already has a developer profile!',
+      };
+    }
 
-  const existingApplication = await db.query.devApplications.findFirst({
-    where: eq(devApplications.userId, userId),
-  });
-  if (existingApplication?.status === 'approved') {
+    if (existingApplication?.status === 'pending') {
+      return {
+        success: false,
+        error: 'User already has a pending application!',
+      };
+    }
+
+    const appliedAt = new Date();
+
+    const [devApplication] = await db
+      .insert(devApplications)
+      .values({
+        bio: `${devApplicationInsertData.bio}`,
+        displayName: devApplicationInsertData.displayName,
+        twitterUsername: devApplicationInsertData.twitterUsername,
+        websiteUrl: devApplicationInsertData.websiteUrl,
+        status: 'pending',
+        gitHubUsername: devApplicationInsertData.githubUsername,
+        userId,
+        appliedAt,
+      })
+      .returning();
+
+    if (!devApplication?.id) {
+      throw new Error('Could not create dev application');
+    }
+
+    logServerEvent('dev_application_create_success', {
+      distinct_id: userId,
+      properties: { userId, applicationId: devApplication.id.toString() },
+    });
+    await flushServerEvents();
+    return {
+      success: true,
+      devApplicationId: devApplication.id,
+    };
+  } catch (err) {
+    const errorMessage =
+      err instanceof Error ? err.message : JSON.stringify({ err });
+
+    logServerEvent('dev_application_create_failed', {
+      distinct_id: userId,
+      properties: { userId, reason: errorMessage },
+    });
+    await flushServerEvents();
+
     return {
       success: false,
-      error: 'User already has a developer profile!',
+      error: errorMessage,
     };
   }
-
-  if (existingApplication?.status === 'pending') {
-    return {
-      success: false,
-      error: 'User already has a pending application!',
-    };
-  }
-
-  const appliedAt = new Date();
-
-  const [devApplication] = await db
-    .insert(devApplications)
-    .values({
-      bio: `${devApplicationInsertData.bio}`,
-      displayName: devApplicationInsertData.displayName,
-      twitterUsername: devApplicationInsertData.twitterUsername,
-      websiteUrl: devApplicationInsertData.websiteUrl,
-      status: 'pending',
-      gitHubUsername: devApplicationInsertData.githubUsername,
-      userId,
-      appliedAt,
-    })
-    .returning();
-
-  if (!devApplication?.id) {
-    throw new Error('Could not create dev application');
-  }
-  return {
-    success: true,
-    devApplicationId: devApplication.id,
-  };
 };
 
 // create dev
+// ! Security RISK: This is a server-only action, but is not protected by any auth or validation. Don't make this a server action!
 export const approveDevApplication = async (applicationId: number) => {
+  const supabase = createServerActionClient({ cookies });
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  const _userId = session?.user.id;
+  if (!_userId) {
+    throw new Error('You must be logged in to approve!');
+  }
+
   const application = await db.query.devApplications.findFirst({
     where: eq(devApplications.id, applicationId),
   });
@@ -115,22 +153,43 @@ export const approveDevApplication = async (applicationId: number) => {
       error: 'Application not found',
     };
   }
-  await db.insert(devProfiles).values({
-    userId: application.userId,
-    gitHubUsername: application.gitHubUsername,
-    twitterUsername: application.twitterUsername,
-    websiteUrl: application.websiteUrl,
+
+  const now = new Date();
+
+  await Promise.allSettled([
+    db.insert(devProfiles).values({
+      userId: application.userId,
+      gitHubUsername: application.gitHubUsername,
+      twitterUsername: application.twitterUsername,
+      websiteUrl: application.websiteUrl,
+    }),
+    db
+      .update(devApplications)
+      .set({
+        status: 'approved',
+        statusUpdatedAt: now,
+        updatedAt: now,
+      })
+      .where(eq(devApplications.id, applicationId)),
+
+    db
+      .update(userProfiles)
+      .set({
+        bio: application.bio,
+        displayName: application.displayName,
+        updatedAt: now,
+      })
+      .where(eq(userProfiles.id, application.userId)),
+  ]);
+
+  logServerEvent('dev_application_approve', {
+    distinct_id: application.userId,
+    properties: {
+      userId: application.userId,
+      applicationId: application.id.toString(),
+    },
   });
-
-  await db
-    .update(devApplications)
-    .set({ status: 'approved' })
-    .where(eq(devApplications.id, applicationId));
-
-  await db
-    .update(userProfiles)
-    .set({ bio: application.bio, displayName: application.displayName })
-    .where(eq(userProfiles.id, application.userId));
+  await flushServerEvents();
 
   return {
     success: true,
@@ -157,13 +216,6 @@ export const rejectDevApplication = async (applicationId: number) => {
   };
 };
 
-export const getAllDevApplications = async () => {
-  const applications = await db.query.devApplications.findMany({
-    orderBy: [desc(devApplications.appliedAt)],
-  });
-  return applications;
-};
-
 // create recruiter
 export const approveRecruiter = async ({
   userId,
@@ -172,7 +224,6 @@ export const approveRecruiter = async ({
   await db.insert(recruiterProfiles).values({ userId, orgUrl });
 };
 
-// getUserInfo
 // TODO: dont fetch everything in one go, when in trpc.
 export const getUserInfo = async (userId: UserProfileSelect['id']) => {
   const userInfo = await db.query.userProfiles.findFirst({
@@ -187,6 +238,7 @@ export const getUserInfo = async (userId: UserProfileSelect['id']) => {
     where: eq(recruiterProfiles.userId, userId),
   });
 
+  // TODO: make this a count query instead
   const projectsCount = (
     await db.query.projects.findMany({
       where: eq(projects.userId, userId),

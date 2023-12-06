@@ -12,8 +12,6 @@ import { cookies } from 'next/headers';
 import { z } from 'zod';
 import { db } from '../db';
 import {
-  comments,
-  projectBookmarks,
   projectMedia,
   projectTags,
   projects,
@@ -389,52 +387,51 @@ const commentInsertValidationSchema = z.object({
   content: z.string().max(1500),
 });
 
-// add comment
-// TODO: add event logging for this
-export const createComment = async (
-  _props: z.infer<typeof commentInsertValidationSchema>,
-) => {
-  try {
-    const supabase = createServerActionClient({ cookies });
+// TODO: add event logging for this when done
+// export const createComment = async (
+//   _props: z.infer<typeof commentInsertValidationSchema>,
+// ) => {
+//   try {
+//     const supabase = createServerActionClient({ cookies });
 
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
+//     const {
+//       data: { session },
+//     } = await supabase.auth.getSession();
 
-    if (!session?.user.id) {
-      throw new Error('Unauthorized');
-    }
+//     if (!session?.user.id) {
+//       throw new Error('Unauthorized');
+//     }
 
-    const { projectId, content } = commentInsertValidationSchema.parse(_props);
+//     const { projectId, content } = commentInsertValidationSchema.parse(_props);
 
-    const userId = session.user.id;
+//     const userId = session.user.id;
 
-    const [newComment] = await db
-      .insert(comments)
-      .values({
-        userId,
-        projectId,
-        content,
-        postedAt: new Date(),
-      })
-      .returning({ id: comments.id });
+//     const [newComment] = await db
+//       .insert(comments)
+//       .values({
+//         userId,
+//         projectId,
+//         content,
+//         postedAt: new Date(),
+//       })
+//       .returning({ id: comments.id });
 
-    if (!newComment?.id) {
-      throw new Error('Could not get id of newly created comment!');
-    }
+//     if (!newComment?.id) {
+//       throw new Error('Could not get id of newly created comment!');
+//     }
 
-    return {
-      success: true,
-      commentId: newComment.id,
-    };
-  } catch (err) {
-    console.error(err);
-    return {
-      success: false,
-      error: 'Could not create comment!',
-    };
-  }
-};
+//     return {
+//       success: true,
+//       commentId: newComment.id,
+//     };
+//   } catch (err) {
+//     console.error(err);
+//     return {
+//       success: false,
+//       error: 'Could not create comment!',
+//     };
+//   }
+// };
 
 // add like
 export const createOrDeleteLike = async (projectId: number) => {
@@ -481,17 +478,17 @@ export const createOrDeleteLike = async (projectId: number) => {
   }
 };
 
-// bookmark
-export const createBookmark = async ({
-  userId,
-  projectId,
-}: {
-  userId: string;
-  projectId: number;
-}) => {
-  await db.insert(projectBookmarks).values({
-    userId: userId,
-    projectId,
-    timestamp: new Date(),
-  });
-};
+// TODO: add event logging for this when done
+// export const createBookmark = async ({
+//   userId,
+//   projectId,
+// }: {
+//   userId: string;
+//   projectId: number;
+// }) => {
+//   await db.insert(projectBookmarks).values({
+//     userId: userId,
+//     projectId,
+//     timestamp: new Date(),
+//   });
+// };

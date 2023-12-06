@@ -13,6 +13,21 @@ type VALID_SERVER_EVENTS = {
     userId: string;
   };
 
+  dev_application_create_success: {
+    userId: string;
+    applicationId: string; // Unique identifier for the application
+  };
+
+  dev_application_create_failed: {
+    reason: string;
+    userId: string;
+  };
+
+  dev_application_approve: {
+    userId: string;
+    applicationId: string;
+  };
+
   project_create_failed: {
     userId: string;
     reason: string;
@@ -37,6 +52,31 @@ type VALID_SERVER_EVENTS = {
     userId: string;
     projectId: string;
     liked: boolean;
+  };
+
+  project_media_upload_validation_failed: {
+    userId: string;
+    projectId: string;
+    publicId: string;
+    reason: string;
+  };
+
+  project_media_upload_validation_success: {
+    userId: string;
+    projectId: string;
+    projectMediaId: string;
+  };
+
+  reachout_email_send_failed: {
+    userId: string;
+    reachoutId: string;
+    reason: string;
+  };
+
+  reachout_email_send_success: {
+    recruiterId: string;
+    devId: string;
+    reachoutId: string;
   };
 };
 

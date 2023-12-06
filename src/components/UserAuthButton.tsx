@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { supabaseClientComponentClient, useAuth } from '@/hooks/user/auth';
+import logClientEvent from '@/lib/analytics/posthog/client';
 import { api } from '@/trpc/react';
 import { ExitIcon, PersonIcon } from '@radix-ui/react-icons';
 import Link from 'next/link';
@@ -16,7 +17,7 @@ import { useRouter } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { toast } from './ui/use-toast';
 export default function UserAuthButton() {
-  const { session } = useAuth();
+  const { session, userId } = useAuth();
   const { data } = api.user.hello.useQuery(undefined, {
     enabled: !!session?.user?.id,
   });
@@ -72,18 +73,20 @@ export default function UserAuthButton() {
           onClick={async () => {
             const { error } = await supabase.auth.signOut();
             if (error) {
-              toast({
-                title: 'Could not logout',
+              return toast({
+                title: 'Could not sign out!',
                 description: error.message,
               });
-            } else {
-              // router.push(URLs.home);
-              window.location.reload();
             }
+
+            logClientEvent('click_signout_button', { userId: userId! });
+
+            window.location.reload();
+            // router.refresh();
           }}
         >
           <ExitIcon className="mr-2" />
-          Log out
+          Sign out
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
