@@ -144,7 +144,7 @@ async function Page({ params }: PageProps) {
                   className={cn(
                     buttonVariants({
                       variant: 'outline',
-                      className: 'rounded-sm px-3.5 flex items-center gap-2',
+                      className: 'flex items-center gap-2 rounded-sm px-3.5',
                     }),
                   )}
                   href={hostedUrl}

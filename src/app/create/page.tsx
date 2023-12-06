@@ -1,7 +1,10 @@
 import AuthwallPage from '@/components/AuthwallPage';
 import NewFooter from '@/components/NewFooter';
 import NavBar from '@/components/ui/navbar';
-import { OnboardingSteps, OnboardingSubmitted } from '@/components/ui/onboarding-steps';
+import {
+  OnboardingSteps,
+  OnboardingSubmitted,
+} from '@/components/ui/onboarding-steps';
 import { ProjectUpload } from '@/components/ui/ProjectUpload';
 import { URLs } from '@/lib/constants';
 import { db } from '@/server/db';
