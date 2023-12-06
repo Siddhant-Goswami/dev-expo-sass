@@ -63,9 +63,8 @@ export const devProfiles = pgTable('devProfile', {
   devApprovedAt: timestamp('devApprovedAt', {
     withTimezone: true,
   }).defaultNow(),
-  gitHubUsername: varchar('gitHubUrl', { length: 1024 }).notNull(),
-  linkedInUrl: varchar('linkedInUrl', { length: 1024 }),
-  twitterUsername: varchar('twitterUrl', { length: 1024 }),
+  gitHubUsername: varchar('gitHubUsername', { length: 1024 }).notNull(),
+  twitterUsername: varchar('twitterUsername', { length: 1024 }),
   websiteUrl: varchar('websiteUrl', { length: 1024 }),
 });
 
