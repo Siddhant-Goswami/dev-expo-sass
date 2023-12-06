@@ -1,7 +1,7 @@
 import AuthwallPage from '@/components/AuthwallPage';
 import NewFooter from '@/components/NewFooter';
 import NavBar from '@/components/ui/navbar';
-import { OnboardingSteps } from '@/components/ui/onboarding-steps';
+import { OnboardingSteps, OnboardingSubmitted } from '@/components/ui/onboarding-steps';
 import { ProjectUpload } from '@/components/ui/ProjectUpload';
 import { URLs } from '@/lib/constants';
 import { db } from '@/server/db';
@@ -32,8 +32,7 @@ async function Page() {
 
   // TODO: Later, also check whether user has a developer profile
   const isUserVerified = userApplication?.status === 'approved';
-
-  console.log(`Your application status is: ${userApplication?.status}`);
+  const isApplicationPending = userApplication?.status === 'pending';
 
   return (
     <>
@@ -48,7 +47,13 @@ async function Page() {
             : 'Showcase your incredible work to the world and get hired by the best companies.'}
         </p>
         <div className="mt-14 flex w-full flex-col items-center justify-center px-4">
-          {isUserVerified ? <ProjectUpload /> : <OnboardingSteps />}
+          {isUserVerified ? (
+            <ProjectUpload />
+          ) : isApplicationPending ? (
+            <OnboardingSubmitted />
+          ) : (
+            <OnboardingSteps />
+          )}
         </div>
       </div>
       <NewFooter />

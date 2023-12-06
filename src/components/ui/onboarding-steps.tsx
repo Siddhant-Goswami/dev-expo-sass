@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -27,7 +27,9 @@ import { api } from '@/trpc/react';
 import { isGithubUserValid } from '@/utils';
 import { cn } from '@/utils/cn';
 import { useMutation } from '@tanstack/react-query';
-import { ChevronLeft, LucideLoader } from 'lucide-react';
+import { ChevronLeft, LucideCheckCircle2, LucideLoader } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -332,3 +334,48 @@ export function OnboardingSteps() {
     </>
   );
 }
+
+export const OnboardingSubmitted = () => {
+  return (
+    <>
+      <div className="mx-auto mt-10 flex min-h-[70vh] max-w-3xl flex-col items-center">
+        <LucideCheckCircle2
+          size={50}
+          className="fill-emerald-100 stroke-emerald-600 dark:fill-emerald-800 dark:stroke-emerald-300"
+        />
+
+        <h1 className="mt-7 scroll-m-20 text-center text-4xl font-extrabold tracking-tight lg:text-5xl">
+          Application Submitted!
+        </h1>
+        <p className="text-center leading-7 [&:not(:first-child)]:mt-6">
+          Thank you for submitting your application. We will be in touch with
+          you shortly.
+          <br />
+          Till then, you can follow us on{' '}
+          <Link
+            href={`https://twitter.com/100xengineers`}
+            className={cn(
+              buttonVariants({
+                variant: 'link',
+                className: 'pl-1 pr-0 text-lg font-semibold',
+              }),
+            )}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            𝕏
+          </Link>
+          .
+        </p>
+
+        <Image
+          src={'https://illustrations.popsy.co/white/shaking-hands.svg'}
+          width={500}
+          height={500}
+          className="w-72 dark:invert"
+          alt="Success iamge"
+        />
+      </div>
+    </>
+  );
+};

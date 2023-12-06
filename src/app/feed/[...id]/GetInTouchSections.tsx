@@ -25,7 +25,7 @@ export const GetInTouchButton = ({
         />
       ) : (
         <SignInModal>
-          <Button variant="brand" className="w-fit">
+          <Button variant="brand" className="w-fit rounded-none">
             Login To Get in Touch
           </Button>
         </SignInModal>

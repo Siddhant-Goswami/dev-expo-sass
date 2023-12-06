@@ -56,7 +56,7 @@ function UpvoteButton({
       <Button
         onClick={handleClick}
         variant={variant}
-        className="flex w-32 gap-3 rounded-sm"
+        className="flex w-fit md:w-32 gap-3 rounded-sm"
       >
         <span className="flex items-center justify-center gap-2">
           <LucideTriangle

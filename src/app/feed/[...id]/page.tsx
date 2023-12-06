@@ -144,14 +144,14 @@ async function Page({ params }: PageProps) {
                   className={cn(
                     buttonVariants({
                       variant: 'outline',
-                      className: 'rounded-sm px-3.5',
+                      className: 'rounded-sm px-3.5 flex items-center gap-2',
                     }),
                   )}
                   href={hostedUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Link2Icon className="mr-2" />
+                  <Link2Icon />
                   <span className="hidden md:inline-block">Visit</span>
                 </Link>
               )}
@@ -171,9 +171,11 @@ async function Page({ params }: PageProps) {
                   <span className="hidden md:inline-block">View Code</span>
                 </Link>
               )}
-              <IsNotSameUserWrapper projectUserId={project.userId}>
-                <GetInTouchButton displayName={displayName} devId={dev.id} />
-              </IsNotSameUserWrapper>
+              <div className="hidden md:block">
+                <IsNotSameUserWrapper projectUserId={project.userId}>
+                  <GetInTouchButton displayName={displayName} devId={dev.id} />
+                </IsNotSameUserWrapper>
+              </div>
             </div>
           </div>
           <div className="flex flex-col gap-4 md:gap-5">
