@@ -1,6 +1,6 @@
 import NavBar from '@/components/ui/navbar';
 
-import AuthwallPage from '@/components/AuthwallPage';
+import AuthwallModal from '@/components/AuthwallModal';
 import NewFooter from '@/components/NewFooter';
 import MarkdownComponent from '@/components/mark-down';
 import { buttonVariants } from '@/components/ui/button';
@@ -30,6 +30,7 @@ type PageProps = {
   params: { id: string[] };
 };
 
+// export const revalidate = 10;
 export const runtime = 'edge';
 
 async function Page({ params }: PageProps) {
@@ -52,10 +53,6 @@ async function Page({ params }: PageProps) {
   }
   const projectId = projectIdResult.data;
 
-  if (!userId) {
-    return <AuthwallPage redirectAfterSignin={`${URLs.feed}/${projectId}`} />;
-  }
-
   const projectDetails = await getProjectById(projectId);
 
   if (!projectDetails?.dev) {
@@ -73,7 +70,7 @@ async function Page({ params }: PageProps) {
 
   const toShowYTVideo = validYoutubeUrlResult.success;
 
-  const initialLetter = displayName.charAt(0).toUpperCase();
+  // const initialLetter = displayName.charAt(0).toUpperCase();
 
   const { sourceCodeUrl, hostedUrl } = projectDetails.project;
 
@@ -86,6 +83,9 @@ async function Page({ params }: PageProps) {
   return (
     <>
       <NavBar />
+
+      <AuthwallModal />
+
       <section className="flex items-start justify-center">
         <main className="mt-8 flex w-full flex-col justify-center px-4 md:max-w-4xl">
           <div className="flex w-full items-center justify-between">

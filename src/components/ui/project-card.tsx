@@ -1,24 +1,38 @@
+'use client';
+
+import { useAuth } from '@/hooks/user/auth';
+import logClientEvent from '@/lib/analytics/posthog/client';
 import { type getAllProjects } from '@/server/actions/projects';
-import { LucideTriangle } from 'lucide-react';
 import Image from 'next/image';
 
 type ProjectCardProps = {
+  projectId: number;
   projectName: string;
   creator: string;
   likes?: number;
 } & Pick<Awaited<ReturnType<typeof getAllProjects>>[number], 'tags' | 'media'>;
 
 const ProjectCard: React.FC<ProjectCardProps> = ({
+  projectId,
   projectName,
   creator,
   tags,
   media,
-  likes,
 }) => {
+  const { userId } = useAuth();
   const visibleTags = tags.slice(0, 3);
 
   return (
-    <div className="overflow-hidden rounded-md">
+    <div
+      onClick={() => {
+        logClientEvent('click_project_card', {
+          userId: userId ?? undefined,
+          projectId: projectId.toString(),
+          timestamp: Date.now(),
+        });
+      }}
+      className="overflow-hidden rounded-md"
+    >
       <div className="relative h-64 w-80 overflow-hidden rounded-md sm:h-56 sm:w-72">
         <Image
           // fill={true}

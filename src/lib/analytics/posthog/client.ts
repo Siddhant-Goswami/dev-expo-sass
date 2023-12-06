@@ -7,30 +7,93 @@ posthog.init(env.NEXT_PUBLIC_POSTHOG_PUBLIC_KEY, {
 
 const internal_client = posthog;
 
-// TODO: Add typesafe wrapper around this, just like we have for the server-side
-
 type VALID_CLIENT_EVENTS = {
-  signin: {
-    //
+  click_auth_button: {
+    timestamp: number;
   };
 
-  project_created: {
-    //
+  click_signout_button: {
+    userId: string;
   };
 
-  project_creation_failed: {
-    //
+  click_project_card: {
+    userId?: string;
+    projectId: string;
+    timestamp: number;
+  };
+
+  click_get_started_button: {
+    userId?: string;
+    timestamp: number;
+  };
+
+  dev_application_submit_success: {
+    userId: string;
+    applicationId: string;
+  };
+
+  dev_application_submit_failed: {
+    reason: string;
+    userId: string;
+  };
+
+  dev_application_video_record_success: {
+    userId: string;
+    videoSize: number; // Size in bytes
+  };
+
+  dev_application_video_record_fail: {
+    userId: string;
+    reason: string;
+  };
+
+  dev_application_video_upload_success: {
+    userId: string;
+    applicationId: string;
+    videoSize: number;
+  };
+
+  dev_application_video_upload_failed: {
+    reason: string;
+    userId: string;
+    applicationId: string;
+    videoSize: number;
+  };
+
+  click_project_submit: {
+    userId: string;
+    timestamp: number;
+  };
+
+  project_submit_failed: {
+    userId: string;
+    reason: string;
+  };
+  project_submit_success: {
+    userId: string;
+    projectId: string;
+  };
+
+  project_image_upload_failed: {
+    userId: string;
+    projectId?: string;
+    imageSize?: number;
+    publicId?: string; // public_id of the image in cloudinary (referenced in the `projectMedia` table)
+    reason: string;
+  };
+
+  project_image_upload_success: {
+    userId: string;
+    projectId: string;
+    imageSize: number;
   };
 };
 
 export const logClientEvent = <TEventKey extends keyof VALID_CLIENT_EVENTS>(
   event: TEventKey,
-  payload: {
-    distinct_id: string;
-    properties: VALID_CLIENT_EVENTS[TEventKey];
-  },
+  payload: VALID_CLIENT_EVENTS[TEventKey],
 ) => {
-  return internal_client.capture(event, payload.properties);
+  return internal_client.capture(event, payload);
 };
 
 export default logClientEvent;

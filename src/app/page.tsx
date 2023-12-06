@@ -1,11 +1,8 @@
 import GetStartedButton from '@/components/get-started-button';
 import NewFooter from '@/components/NewFooter';
-import { Button } from '@/components/ui/button';
 import Grid from '@/components/ui/grid';
 import Navbar from '@/components/ui/navbar';
-import { URLs } from '@/lib/constants';
 import { getAllProjectsSortedByLikes } from '@/server/actions/projects';
-import Link from 'next/link';
 
 export const revalidate = 15;
 // export const dynamic = 'force-dynamic';
@@ -60,18 +57,7 @@ export default async function Page() {
           expertise.
         </p>
 
-        <GetStartedButton
-          fallback={
-            <Link href={URLs.feed}>
-              {/* <ShimmerButton className="mt-10 px-6 font-medium">
-                Explore Projects
-              </ShimmerButton> */}
-              <Button variant="brand" className="mt-10 px-6 font-medium">
-                Explore Projects
-              </Button>
-            </Link>
-          }
-        />
+        <GetStartedButton />
       </section>
 
       <section className="min-h-screen w-full px-5 sm:px-18">
@@ -82,7 +68,7 @@ export default async function Page() {
           Browse through the innovative works of our members. Each project
           showcases the power and potential of GenAI.
         </p>
-        <Grid data={filteredProjectsData} />
+        <Grid projects={filteredProjectsData} />
       </section>
 
       <section className="relative flex w-full flex-col items-center justify-center px-5 py-36 sm:px-18">
@@ -106,18 +92,7 @@ export default async function Page() {
           builders.
         </p>
 
-        <GetStartedButton
-          fallback={
-            <Link href={URLs.feed}>
-              {/* <ShimmerButton className="mt-10 px-6 font-medium">
-                Explore Projects
-              </ShimmerButton> */}
-              <Button variant="brand" className="mt-10 px-6 font-medium">
-                Explore Projects
-              </Button>
-            </Link>
-          }
-        />
+        <GetStartedButton />
       </section>
       <NewFooter />
     </>

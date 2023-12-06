@@ -1,4 +1,4 @@
-import AuthwallPage from '@/components/AuthwallPage';
+import AuthwallModal from '@/components/AuthwallModal';
 import NewFooter from '@/components/NewFooter';
 import ShimmerButton from '@/components/magicui/shimmer-button';
 import ScrollableChips from '@/components/ui/chip';
@@ -6,9 +6,7 @@ import Grid from '@/components/ui/grid';
 import NavBar from '@/components/ui/navbar';
 import { URLs, categories } from '@/lib/constants';
 import { getAllProjects } from '@/server/actions/projects';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import Link from 'next/link';
-import { cookies } from 'next/headers';
 
 type FeedProps = {
   searchParams: {
@@ -16,21 +14,9 @@ type FeedProps = {
   };
 };
 
-export const dynamic = 'force-dynamic';
+export const runtime = 'edge';
 
 async function Feed({ searchParams }: FeedProps) {
-  const supabase = createServerComponentClient({ cookies });
-
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
-  const userId = session?.user.id;
-
-  if (!userId) {
-    return <AuthwallPage redirectAfterSignin={URLs.feed} />;
-  }
-
   const filter = searchParams?.filter ?? '';
 
   const allProjects = await getAllProjects({});
@@ -64,13 +50,16 @@ async function Feed({ searchParams }: FeedProps) {
   return (
     <>
       <NavBar />
+
+      <AuthwallModal />
+
       <section className="min-h-screen w-full px-5 sm:px-18">
         <div className="mb-6 flex w-full justify-center py-4">
           <ScrollableChips />
         </div>
 
         {selectedCategoryProjects.length > 0 ? (
-          <Grid data={selectedCategoryProjects} />
+          <Grid projects={selectedCategoryProjects} />
         ) : (
           <div className="flex h-96 flex-col items-center justify-center gap-8">
             <h3 className="text-3xl font-semibold">
