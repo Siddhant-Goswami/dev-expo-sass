@@ -3,16 +3,12 @@ import NavBar from '@/components/ui/navbar';
 import AuthwallPage from '@/components/AuthwallPage';
 import NewFooter from '@/components/NewFooter';
 import MarkdownComponent from '@/components/mark-down';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { buttonVariants } from '@/components/ui/button';
+import Carousel from '@/components/ui/carousel';
 import GoBack from '@/components/ui/go-back';
 import { URLs } from '@/lib/constants';
 import { projectFormSchema } from '@/lib/validations/project';
-import {
-  getAllLikes,
-  getProjectById,
-  isLikedByUser,
-} from '@/server/actions/projects';
+import { getProjectById, isLikedByUser } from '@/server/actions/projects';
 import { extractIDfromYtURL } from '@/utils';
 import { cn } from '@/utils/cn';
 import { GitHubLogoIcon, Link2Icon } from '@radix-ui/react-icons';
@@ -27,7 +23,7 @@ import {
   GetInTouchSection,
   IsNotSameUserWrapper,
 } from './GetInTouchSections';
-import LikeButton from './LikeButton';
+import UpvoteButton from './LikeButton';
 import ProjectOptions from './ProjectOptions';
 
 type PageProps = {
@@ -78,14 +74,14 @@ async function Page({ params }: PageProps) {
 
   const toShowYTVideo = validYoutubeUrlResult.success;
 
-  const initialLetter = displayName.charAt(0).toUpperCase();
+  // const initialLetter = displayName.charAt(0).toUpperCase();
 
   const { sourceCodeUrl, hostedUrl } = projectDetails.project;
 
   const isLiked = await isLikedByUser({
     projectId: projectDetails.project.id,
   });
-  await getAllLikes();
+
   console.log('isLiked', isLiked, 'devId', dev.id);
 
   return (
@@ -94,7 +90,7 @@ async function Page({ params }: PageProps) {
       <section className="flex items-start justify-center">
         <main className="mt-8 flex w-full flex-col justify-center px-4 md:max-w-4xl">
           <div className="flex w-full items-center justify-between">
-            <GoBack />
+            <GoBack goBackUrl={URLs.feed} />
             {userId === dev.id && <ProjectOptions projectId={projectId} />}
           </div>
           <h1 className="mb-4 w-full text-left text-2xl font-semibold">
@@ -103,15 +99,13 @@ async function Page({ params }: PageProps) {
           <div className="mb-6 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Link href={`/user/${dev.username}`}>
-                <Avatar className="h-auto w-14">
-                  <Image
-                    width={200}
-                    height={200}
-                    src={displayPictureUrl}
-                    alt={displayName}
-                  />
-                  <AvatarFallback> {initialLetter} </AvatarFallback>
-                </Avatar>
+                <Image
+                  className="aspect-square h-14 w-14 rounded-full"
+                  width={100}
+                  height={100}
+                  src={displayPictureUrl}
+                  alt={displayName}
+                />
               </Link>
               <div>
                 <Link href={`/user/${dev.username}`}>
@@ -141,7 +135,7 @@ async function Page({ params }: PageProps) {
             </div>
 
             <div className="flex gap-2">
-              <LikeButton
+              <UpvoteButton
                 originalTotalLikes={projectDetails.likesCount}
                 isOriginallyLikedByUser={isLiked}
                 projectId={projectId}
@@ -197,7 +191,9 @@ async function Page({ params }: PageProps) {
               />
             )}
 
-            {images.map(
+            <Carousel imagesArr={images} />
+
+            {/* {images.map(
               (image, index) =>
                 // h-500 w-900
                 image.url && (
@@ -214,14 +210,11 @@ async function Page({ params }: PageProps) {
                     />
                   </div>
                 ),
-            )}
+            )} */}
           </div>
 
-          <div className="mt-8 rounded-sm border border-gray-500 p-6">
+          <div className="mt-8 p-6">
             <section>
-              <h2 className="text-md mb-4 border-b border-gray-300 font-semibold">
-                Description
-              </h2>
               <MarkdownComponent content={description} />
             </section>
           </div>

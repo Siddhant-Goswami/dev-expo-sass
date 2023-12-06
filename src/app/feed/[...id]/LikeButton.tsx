@@ -5,7 +5,7 @@ import { cn } from '@/utils/cn';
 import { LucideTriangle } from 'lucide-react';
 import { useState } from 'react';
 
-function LikeButton({
+function UpvoteButton({
   originalTotalLikes: originalTotalLikes,
   isOriginallyLikedByUser,
   projectId,
@@ -49,31 +49,39 @@ function LikeButton({
     }
   };
 
-  const variant = isLikedByCurrentUser ? 'outline' : 'brand';
+  const variant = isLikedByCurrentUser ? 'primaryOutline' : 'brand';
 
   return (
     <>
       <Button
         onClick={handleClick}
         variant={variant}
-        className="flex w-32 gap-2 rounded-sm"
+        className="flex w-32 gap-3 rounded-sm"
       >
-        <LucideTriangle
-          size={12}
-          className={cn(
-            isLikedByCurrentUser
-              ? 'fill-brand stroke-brand'
-              : 'fill-white stroke-white',
-            'transition-all duration-300',
-          )}
-        />
-        <span className="hidden md:block">
+        <span className="flex items-center justify-center gap-2">
+          <LucideTriangle
+            size={12}
+            className={cn(
+              isLikedByCurrentUser
+                ? 'fill-brand stroke-brand'
+                : 'fill-black stroke-black',
+              'transition-all duration-300',
+            )}
+          />
+          {likes}
+        </span>
+
+        <span className="hidden md:inline-block"> | </span>
+        <span
+          className={`hidden md:block ${
+            isLikedByCurrentUser ? 'text-brand' : ''
+          }`}
+        >
           {isLikedByCurrentUser ? 'Upvoted' : 'Upvote'}
         </span>
-        {likes}
       </Button>
     </>
   );
 }
 
-export default LikeButton;
+export default UpvoteButton;

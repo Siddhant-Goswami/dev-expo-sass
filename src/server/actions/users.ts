@@ -86,13 +86,10 @@ export const createDevApplication = async (
     .values({
       bio: `${devApplicationInsertData.bio}`,
       displayName: devApplicationInsertData.displayName,
-      twitterUrl: devApplicationInsertData.twitterUsername
-        ? `https://twitter.com/` + devApplicationInsertData.twitterUsername
-        : null,
+      twitterUsername: devApplicationInsertData.twitterUsername,
       websiteUrl: devApplicationInsertData.websiteUrl,
       status: 'pending',
-      gitHubUrl:
-        `https://github.com/` + devApplicationInsertData.githubUsername,
+      gitHubUsername: devApplicationInsertData.githubUsername,
       userId,
       appliedAt,
     })
@@ -120,8 +117,8 @@ export const approveDevApplication = async (applicationId: number) => {
   }
   await db.insert(devProfiles).values({
     userId: application.userId,
-    gitHubUrl: application.gitHubUrl,
-    twitterUrl: application.twitterUrl,
+    gitHubUsername: application.gitHubUsername,
+    twitterUsername: application.twitterUsername,
     websiteUrl: application.websiteUrl,
   });
 

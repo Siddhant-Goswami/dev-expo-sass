@@ -147,9 +147,9 @@ export default function VideoRecorder(props: {
           </div>
           <div className="flex w-full justify-between">
             <Button
-              variant={'ghost'}
+              variant="secondary"
               onClick={() => retakeVideo()}
-              className="px-4 py-2 transition-all duration-75 hover:bg-secondary active:scale-95 disabled:cursor-not-allowed"
+              className="px-4 py-2 transition-all duration-75 active:scale-95 disabled:cursor-not-allowed"
             >
               <LucideArrowLeft size={16} className="mr-2" />
               Retake video
@@ -157,7 +157,7 @@ export default function VideoRecorder(props: {
 
             <Button
               disabled={props.isActuallyLoading}
-              variant="default"
+              variant="brand"
               type="button"
               onClick={() => {
                 const videoBlob = new Blob(recordedChunks, {
@@ -294,7 +294,7 @@ export default function VideoRecorder(props: {
                     <Button
                       variant={'secondary'}
                       onClick={restartVideo}
-                      className="flex scale-100 items-center justify-center px-5 py-3 text-base no-underline transition-all duration-75 hover:bg-secondary active:scale-95"
+                      className="flex scale-100 items-center justify-center px-5 py-3 text-base no-underline transition-all duration-75 active:scale-95"
                     >
                       <ReloadIcon className="mr-2" />
                       Record again
@@ -304,7 +304,7 @@ export default function VideoRecorder(props: {
                     variant={'brand'}
                     onClick={handleDownload}
                     disabled={isSubmitting}
-                    className="group flex scale-100 items-center justify-center text-base no-underline outline outline-white transition-all duration-75 hover:bg-brand hover:brightness-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-100"
+                    className="group flex scale-100 items-center justify-center text-base no-underline transition-all duration-75 hover:bg-brand hover:brightness-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-100"
                   >
                     <span>
                       {isSubmitting ? (
@@ -335,21 +335,21 @@ export default function VideoRecorder(props: {
                         <span className="flex items-center justify-center gap-x-2">
                           <span>Review video submission</span>
                           <svg
-                            className="h-5 w-5"
+                            className="h-5 w-5 text-black"
                             viewBox="0 0 24 24"
                             fill="none"
                             xmlns="http://www.w3.org/2000/svg"
                           >
                             <path
                               d="M13.75 6.75L19.25 12L13.75 17.25"
-                              stroke="white"
+                              stroke="currentColor"
                               strokeWidth="1.5"
                               strokeLinecap="round"
                               strokeLinejoin="round"
                             />
                             <path
                               d="M19 12H4.75"
-                              stroke="white"
+                              stroke="currentColor"
                               strokeWidth="1.5"
                               strokeLinecap="round"
                               strokeLinejoin="round"
@@ -367,6 +367,7 @@ export default function VideoRecorder(props: {
               <div className="flex flex-col items-center justify-center gap-2 lg:mt-4">
                 {capturing ? (
                   <Button
+                    variant="brand"
                     id="stopTimer"
                     onClick={handleStopCaptureClick}
                     className="w-40 hover:brightness-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-100"
@@ -375,6 +376,7 @@ export default function VideoRecorder(props: {
                   </Button>
                 ) : (
                   <Button
+                    variant="brand"
                     id="startTimer"
                     disabled={countDown !== 0}
                     onClick={async () => {
@@ -394,8 +396,8 @@ export default function VideoRecorder(props: {
                   >
                     {countDown === 0 ? (
                       <>
-                        <LucideVideo size={16} className="mr-2" /> Start
-                        Recording
+                        <LucideVideo size={16} className="mr-2" />
+                        Start Recording
                       </>
                     ) : (
                       'Starting . . .'

@@ -63,9 +63,9 @@ export const devProfiles = pgTable('devProfile', {
   devApprovedAt: timestamp('devApprovedAt', {
     withTimezone: true,
   }).defaultNow(),
-  gitHubUrl: varchar('gitHubUrl', { length: 1024 }).notNull(),
+  gitHubUsername: varchar('gitHubUrl', { length: 1024 }).notNull(),
   linkedInUrl: varchar('linkedInUrl', { length: 1024 }),
-  twitterUrl: varchar('twitterUrl', { length: 1024 }),
+  twitterUsername: varchar('twitterUrl', { length: 1024 }),
   websiteUrl: varchar('websiteUrl', { length: 1024 }),
 });
 
@@ -85,8 +85,8 @@ export const devApplications = pgTable('devApplication', {
     .$type<DevApplicationStatus>()
     .default('pending'),
   websiteUrl: varchar('websiteUrl', { length: 1024 }),
-  gitHubUrl: varchar('gitHubUrl', { length: 1024 }).notNull(),
-  twitterUrl: varchar('twitterUrl', { length: 1024 }),
+  gitHubUsername: varchar('gitHubUrl', { length: 1024 }).notNull(),
+  twitterUsername: varchar('twitterUrl', { length: 1024 }),
   linkedInUrl: varchar('linkedInUrl', { length: 1024 }),
 
   createdAt: timestamp('createdAt', { withTimezone: true })
@@ -300,8 +300,8 @@ export const comments = pgTable(
   },
 );
 
-export const likes = pgTable(
-  'likes',
+export const upvotes = pgTable(
+  'upvote',
   {
     id: bigserial('id', { mode: 'number' }).primaryKey(),
     userId: commonUserIdSchema('userId')
@@ -395,7 +395,7 @@ export const projectsRelation = relations(projects, ({ one, many }) => {
     projectTags: many(projectTags),
     projectMedia: many(projectMedia),
     comments: many(comments),
-    likes: many(likes),
+    upvotes: many(upvotes),
     projectBookmarks: many(projectBookmarks),
   };
 });
