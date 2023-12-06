@@ -215,8 +215,6 @@ export const isLikedByUser = async ({ projectId }: { projectId: number }) => {
       .from(upvotes)
       .where(and(eq(upvotes.projectId, projectId), eq(upvotes.userId, userId)));
 
-    console.log('result', result);
-
     const userLikeRecord = z.coerce
       .number()
       .catch(0)
