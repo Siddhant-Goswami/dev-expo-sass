@@ -10,6 +10,9 @@ import { z } from 'zod';
 type PageProps = {
   params: { username: string[] };
 };
+
+export const runtime = 'edge';
+
 async function Page({ params }: PageProps) {
   const usernameResult = z.string().max(100).safeParse(params.username[0]);
   if (!usernameResult.success) {
@@ -68,7 +71,7 @@ async function Page({ params }: PageProps) {
           <h2 className="text-md mt-4 font-medium tracking-tight lg:text-lg">
             Projects ({projectsData.length})
           </h2>
-          <Grid data={projectsData} />
+          <Grid projects={projectsData} />
         </main>
       </section>
       <NewFooter />

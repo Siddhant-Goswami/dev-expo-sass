@@ -1,7 +1,7 @@
 'use client';
 import { URLs } from '@/lib/constants';
 import Link from 'next/link';
-import Logo from './ui/logo';
+import Logo from './ui/new-logo';
 
 export default function NewFooter() {
   return (

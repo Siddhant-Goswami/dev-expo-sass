@@ -8,7 +8,7 @@ import { cn } from '@/utils/cn';
 import { LucidePlus } from 'lucide-react';
 import Link from 'next/link';
 import UserAuthButton from '../UserAuthButton';
-import Logo from './logo';
+import Logo from './new-logo';
 
 const NavBar = () => {
   const { session, isLoaded } = useAuth();
@@ -17,7 +17,7 @@ const NavBar = () => {
   const userId = session?.user?.id;
 
   return (
-    <nav className="sticky top-0 z-50 flex items-center justify-between bg-background/30 px-6 py-4 backdrop-blur-md md:px-10">
+    <nav className="sticky top-0 z-10 flex items-center justify-between bg-background/30 px-6 py-4 backdrop-blur-md md:px-10">
       <div className="flex w-full items-center justify-between space-x-4">
         <div className="flex items-center">
           <Link href="/" className="text-2xl font-semibold">

@@ -1,10 +1,14 @@
 'use client';
 
+import { useAuth } from '@/hooks/user/auth';
+import logClientEvent from '@/lib/analytics/posthog/client';
 import { useCallback, useRef } from 'react';
 import ReactCanvasConfetti, { type IProps } from 'react-canvas-confetti';
 import { ProjectUploadForm } from './project-upload-form';
 
 export function ProjectUpload() {
+  const { userId } = useAuth();
+
   const refAnimationInstance = useRef<IProps | null>(null);
 
   /**
@@ -74,8 +78,13 @@ export function ProjectUpload() {
         }}
       />
       <ProjectUploadForm
-        onProjectUploadSuccess={() => {
+        onProjectUploadSuccess={({ projectId }) => {
           fireConfettiAnimation();
+
+          logClientEvent('project_submit_success', {
+            projectId: projectId.toString(),
+            userId: userId!,
+          });
         }}
       />
     </>

@@ -15,6 +15,7 @@ type GetInTouchModalProps = {
   text?: string;
   roundedFull?: boolean;
   devId: string;
+  buttonVariant?: 'brand' | 'secondaryAction';
 };
 
 function GetInTouchModal({
@@ -22,13 +23,14 @@ function GetInTouchModal({
   text,
   roundedFull,
   devId,
+  buttonVariant,
 }: GetInTouchModalProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
       <DialogTrigger asChild>
-        <Button variant="brand" className={roundedFull ? '' : 'rounded-sm'}>
+        <Button variant={buttonVariant ?? 'brand'} className={roundedFull ? '' : 'rounded-sm'}>
           {text}
         </Button>
       </DialogTrigger>

@@ -11,11 +11,17 @@ const useCloudinaryUpload = ({
   onError,
   onSuccess,
 }: {
-  onError?: (error: unknown) => Promise<void>;
+  onError?: (props: {
+    error: unknown;
+    public_id?: string;
+    projectId: number;
+    fileSize?: number;
+  }) => Promise<void>;
   onSuccess?: (props: {
     public_id: string;
     projectId: number;
     url: string;
+    fileSize: number;
   }) => Promise<void>;
 }) => {
   const generatePresignedUrlMutation = useMutation({
@@ -116,8 +122,15 @@ const useCloudinaryUpload = ({
         const data = (await res.json()) as CloudinaryUploadResponse;
 
         if (!data.secure_url) {
-          console.error('No secure url returned from cloudinary');
-          return onError?.('No secure url returned!');
+          console.error(
+            'No secure file url returned from cloudinary after uploading!',
+          );
+          return onError?.({
+            error: 'No secure url returned!',
+            fileSize: file.size,
+            projectId,
+            public_id,
+          });
         }
         const usableUrl = isWebcam
           ? data.secure_url.replace('/upload/', '/upload/w_250,h_250,c_fill/')
@@ -129,18 +142,25 @@ const useCloudinaryUpload = ({
               public_id,
               projectId,
               url: usableUrl,
+              fileSize: file.size,
             });
         setStatus('succeeded');
       } catch (e) {
         setStatus('failed');
-        void onError?.((e as Error)?.message ?? 'Unknown error');
+        void onError?.({
+          error: (e as Error)?.message ?? 'Unknown error',
+          fileSize: file.size,
+          projectId,
+          public_id,
+        });
       }
     } else {
       // TODO: Handle this better
       setStatus('failed');
-      void onError?.(
-        'The media is not yet ready for uploading. Please try again.',
-      );
+      void onError?.({
+        error: 'The media is not yet ready for uploading. Please try again.',
+        projectId,
+      });
     }
   };
 

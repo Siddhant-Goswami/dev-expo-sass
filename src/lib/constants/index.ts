@@ -3,10 +3,9 @@ export const URLs = {
   create: '/create',
   dashboard: '/dashboard',
   feed: '/feed',
-  projectPage(id: string) {
-    return `${this.feed}/${id}`;
+  projectPage(projectId: string) {
+    return `${this.feed}/${projectId}`;
   },
-  onboardingSubmitted: '/onboarding-submitted',
   signIn: '/sign-in',
   signUp: '/sign-up',
   termsOfService: '/terms-and-conditions',

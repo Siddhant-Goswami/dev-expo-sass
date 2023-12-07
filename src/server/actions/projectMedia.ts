@@ -1,6 +1,10 @@
 'use server';
 
 import { env } from '@/env';
+import {
+  flushServerEvents,
+  logServerEvent,
+} from '@/lib/analytics/posthog/server';
 import { MAX_PENDING_UPLOAD_REQUESTS_PER_DAY } from '@/lib/constants/cloudinary';
 import { sendLogToDiscord } from '@/utils/discord';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
@@ -121,22 +125,22 @@ const validateAndPersistUploadPropsSchema = z.object({
 export const validateAndPersistUpload = async (
   _props: z.infer<typeof validateAndPersistUploadPropsSchema>,
 ) => {
+  const { projectId, publicId } =
+    validateAndPersistUploadPropsSchema.parse(_props);
+
+  const supabase = createServerActionClient({ cookies });
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session) {
+    throw new Error('Unauthorized');
+  }
+
+  const userId = session.user.id;
   try {
-    const { projectId, publicId } =
-      validateAndPersistUploadPropsSchema.parse(_props);
-
-    const supabase = createServerActionClient({ cookies });
-
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-
-    if (!session) {
-      throw new Error('Unauthorized');
-    }
     console.log(`Validating and persisting upload:`, publicId);
-
-    const userId = session.user.id;
 
     const existingMediaInDb = await db.query.projectMedia.findFirst({
       where: (pm, { eq, and }) =>
@@ -194,6 +198,16 @@ export const validateAndPersistUpload = async (
       throw new Error('Could not update project media record');
     }
 
+    logServerEvent('project_media_upload_validation_success', {
+      distinct_id: userId,
+      properties: {
+        userId,
+        projectId: projectId.toString(),
+        projectMediaId: updatedMediaId.toString(),
+      },
+    });
+    await flushServerEvents();
+
     return {
       success: true,
       message: 'Successfully validated and persisted upload!',
@@ -201,6 +215,17 @@ export const validateAndPersistUpload = async (
     };
   } catch (err) {
     console.error(err);
+
+    logServerEvent('project_media_upload_validation_failed', {
+      distinct_id: userId,
+      properties: {
+        userId,
+        projectId: projectId.toString(),
+        publicId: publicId.toString(),
+        reason: (err as Error)?.message ?? JSON.stringify({ err }),
+      },
+    });
+    await flushServerEvents();
 
     await sendLogToDiscord(
       `Error while validating and persisting Cloudinary image upload: ${

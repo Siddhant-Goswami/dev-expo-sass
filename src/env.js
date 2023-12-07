@@ -50,6 +50,9 @@ export const env = createEnv({
         return val;
       })
       .pipe(z.string().url().optional()),
+    NEXT_PUBLIC_VERCEL_ENV: z
+      .enum(['development', 'preview', 'production'])
+      .optional(),
 
     NEXT_PUBLIC_NODE_ENV: z
       .string()
@@ -65,9 +68,7 @@ export const env = createEnv({
 
     NEXT_PUBLIC_TAWK_TO_SRC_URL: z.string().url(),
 
-    NEXT_PUBLIC_VERCEL_ENV: z
-      .enum(['development', 'preview', 'production'])
-      .optional(),
+    NEXT_PUBLIC_MICROSOFT_CLARITY_CODE: z.string(),
   },
 
   /**
@@ -99,6 +100,9 @@ export const env = createEnv({
     NEXT_PUBLIC_POSTHOG_PUBLIC_KEY: process.env.NEXT_PUBLIC_POSTHOG_PUBLIC_KEY,
 
     NEXT_PUBLIC_TAWK_TO_SRC_URL: process.env.NEXT_PUBLIC_TAWK_TO_SRC_URL,
+
+    NEXT_PUBLIC_MICROSOFT_CLARITY_CODE:
+      process.env.NEXT_PUBLIC_MICROSOFT_CLARITY_CODE,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
