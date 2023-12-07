@@ -14,13 +14,11 @@ function GoBack({ goBackUrl }: { goBackUrl?: string }) {
           href={goBackUrl}
           className={buttonVariants({ variant: 'link', className: 'p-0' })}
         >
-          <ChevronLeft className="mr-2" />
-          Go back
+          <ChevronLeft />
         </Link>
       ) : (
         <Button onClick={() => router.back()} className="p-0" variant="link">
-          <ChevronLeft className="mr-2" />
-          Go back
+          <ChevronLeft />
         </Button>
       )}
     </div>

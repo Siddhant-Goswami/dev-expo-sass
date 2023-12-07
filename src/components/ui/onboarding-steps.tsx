@@ -20,7 +20,6 @@ import { toast } from '@/components/ui/use-toast';
 import VideoRecorder from '@/components/video-recorder';
 import useFacecamUpload from '@/hooks/useFacecamUpload';
 import { useAuth } from '@/hooks/user/auth';
-import { URLs } from '@/lib/constants';
 import { devApplicationSchema } from '@/lib/validations/user';
 import { type createDevApplication } from '@/server/actions/users';
 import { api } from '@/trpc/react';
@@ -110,8 +109,7 @@ export function OnboardingSteps(props: {
           description: 'Your application has been submitted for review.',
         });
 
-        router.refresh();
-        router.push(URLs.create);
+        window.location.reload();
       } else {
         toast({
           title: 'Could not submit video',
