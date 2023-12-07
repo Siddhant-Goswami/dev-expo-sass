@@ -18,6 +18,10 @@ module.exports = {
       },
     },
     extend: {
+      backgroundImage: {
+        'radial-gradient':
+          'radial-gradient(circle at bottom, #203424 0%, #1E2F21 7%, #1C271E 15%, transparent 100%)',
+      },
       screens: {
         tablet: '950px',
       },

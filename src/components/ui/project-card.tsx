@@ -33,9 +33,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       }}
       className="overflow-hidden rounded-md"
     >
-      <div className="relative h-[340px] w-[302px] overflow-clip rounded-[20px] border border-green-800 bg-neutral-900">
+      <div className="relative h-max w-72 overflow-clip rounded-[20px] border border-green-800 bg-neutral-900">
         <div className="absolute left-[-26px] top-[360px] h-[353px] w-[353px] rounded-full bg-green-600 bg-opacity-70 blur-[180px]"></div>
-        <div className="relative flex max-h-60 w-full items-center justify-center overflow-hidden rounded-xl px-2 sm:h-56 sm:w-72">
+        <div className="relative flex aspect-square w-full items-center justify-center overflow-hidden rounded-xl px-2 sm:w-72">
           <Image
             // fill={true}
             width={1000}
@@ -45,7 +45,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
               'https://images.unsplash.com/photo-1557599443-2071a2df9c19?q=80&w=3007&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
             }
             alt="demo"
-            className="max-h-full max-w-full rounded-xl object-cover object-center transition-all duration-200 group-hover:brightness-105"
+            className="aspect-square rounded-xl object-cover object-center transition-all duration-200 group-hover:brightness-105"
           />
         </div>
 

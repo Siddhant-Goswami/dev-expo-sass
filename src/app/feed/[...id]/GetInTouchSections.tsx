@@ -50,7 +50,7 @@ export const GetInTouchSection = ({
 }) => {
   return (
     <IsNotSameUserWrapper projectUserId={projectUserId}>
-      <div className="relative mt-6 flex w-full flex-col items-center justify-center gap-4 overflow-clip rounded-t-xl border-x border-t border-[#1F5D2B] p-10 pt-16">
+      <div className="relative mt-6 flex w-full flex-col items-center justify-center gap-4 overflow-clip rounded-t-xl rounded-b-md bg-radial-gradient border-x border-t border-[#1F5D2B] p-10 pt-16">
         <div className="absolute h-1/4 w-1/4 rounded-full bg-green-600 bg-opacity-70 blur-[370.40px]"></div>
         <div className="flex w-full flex-col items-center justify-center gap-3 md:flex-row">
           <Image
