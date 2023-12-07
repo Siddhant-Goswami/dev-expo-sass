@@ -39,8 +39,8 @@ export const DevApplicationApprovedEmail = ({
           welcome to you as a valued member of our community!
         </Text>
         <Text style={paragraph}>
-          Your developer profile has been successfully activated, and you are
-          now part of an exclusive community of top-tier GenAI developers.
+          Your profile has been successfully activated, and you are now part of
+          an exclusive community of top-tier GenAI developers.
         </Text>
         <Text style={paragraph}>
           This is more than just a platform; it's a gateway to a realm of
@@ -60,13 +60,17 @@ export const DevApplicationApprovedEmail = ({
         </Text>
 
         <Text style={paragraph}>
-          Should you have any questions or need assistance, our support team is
-          here to help. You can reach us at [Support Email].
+          if you have any questions or need assistance, our support team is here
+          to help. You can reach us at
+          <Link href={`mailto:overpoweredjobs@100xengineers.com`}>
+            overpoweredjobs@100xengineers.com
+          </Link>
+          .
         </Text>
 
         <Text style={paragraph}>
-          Once again, welcome to Overpowered Jobs! We are excited to support you
-          on your journey to achieving extraordinary career milestones.
+          We are excited to support you on your journey to achieving
+          extraordinary career milestones.
         </Text>
         {/* <Section style={btnContainer}>
           <Button className="" style={button} href="https://getkoala.com">
@@ -77,7 +81,7 @@ export const DevApplicationApprovedEmail = ({
           Warm regards,
           <br />
           <Link href="https://www.overpoweredjobs.com/">
-            The Overpowered Team
+            The Overpowered Jobs Team
           </Link>
         </Text>
         {/* <Hr style={hr} /> */}

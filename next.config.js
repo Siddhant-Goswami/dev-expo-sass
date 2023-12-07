@@ -4,6 +4,7 @@
  */
 await import('./src/env.js');
 import { withSentryConfig } from '@sentry/nextjs';
+import { withAxiom } from 'next-axiom';
 
 /** @type {import("next").NextConfig} */
 const config = {
@@ -47,7 +48,8 @@ const config = {
   },
 };
 
-export default config;
+export default withAxiom(config);
+
 
 const sentryConfig = withSentryConfig(
   {
