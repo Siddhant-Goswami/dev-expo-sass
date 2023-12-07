@@ -117,6 +117,8 @@ export function ProjectUploadForm(props: {
         if (!success) {
           throw new Error('Failed to validate and persist upload');
         }
+
+        return console.log(`Uploaded image: ${public_id}`);
       } catch (err) {
         setActualStatus('error');
       }
@@ -167,6 +169,8 @@ export function ProjectUploadForm(props: {
       props?.onProjectUploadSuccess?.({ projectId });
 
       toast({ title: '🎉 Project uploaded successfully!' });
+
+      await new Promise((resolve) => setTimeout(resolve, 2500));
 
       void router.push(URLs.projectPage(projectId.toString()));
     } catch (err) {
