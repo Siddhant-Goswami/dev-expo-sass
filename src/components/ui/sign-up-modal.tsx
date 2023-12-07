@@ -1,3 +1,4 @@
+'use client';
 import {
   Dialog,
   DialogContent,
@@ -6,18 +7,22 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { useAuth } from '@/hooks/user/auth';
 import { URLs } from '@/lib/constants';
 import Link from 'next/link';
 import { UserAuthForm } from '../AuthForm';
 
 type SignInModalProps = {
   children: React.ReactNode;
+  redirectAfterSignin?: string;
 };
 
-function SignInModal({ children }: SignInModalProps) {
+function AuthwallWrapper({ children, redirectAfterSignin }: SignInModalProps) {
+  const { userId } = useAuth();
+
   return (
     <Dialog>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+      {userId ? children : <DialogTrigger asChild>{children}</DialogTrigger>}
       <DialogContent className="h-screen w-full overflow-scroll md:h-max md:max-w-md">
         <DialogHeader>
           <DialogTitle>Get Started</DialogTitle>
@@ -25,10 +30,10 @@ function SignInModal({ children }: SignInModalProps) {
             Sign in with your Github or Google account.
           </DialogDescription>
         </DialogHeader>
-        <UserAuthForm />
 
+        <UserAuthForm redirectAfterSignin={redirectAfterSignin} />
         <p className="px-8 text-center text-sm text-muted-foreground">
-          By clicking continue, you agree to our{' '}
+          By proceeding, you agree to our{' '}
           <Link
             href={URLs.termsOfService}
             className="underline underline-offset-4 hover:text-primary"
@@ -49,4 +54,4 @@ function SignInModal({ children }: SignInModalProps) {
   );
 }
 
-export default SignInModal;
+export default AuthwallWrapper;

@@ -1,12 +1,15 @@
 'use client';
 import { Button } from '@/components/ui/button';
+import AuthwallWrapper from '@/components/ui/sign-up-modal';
+import { useAuth } from '@/hooks/user/auth';
+import { URLs } from '@/lib/constants';
 import { createOrDeleteLike } from '@/server/actions/projects';
 import { cn } from '@/utils/cn';
 import { LucideTriangle } from 'lucide-react';
 import { useState } from 'react';
 
 function UpvoteButton({
-  originalTotalLikes: originalTotalLikes,
+  originalTotalLikes,
   isOriginallyLikedByUser,
   projectId,
 }: {
@@ -14,6 +17,8 @@ function UpvoteButton({
   isOriginallyLikedByUser: boolean;
   projectId: number;
 }) {
+  const { userId } = useAuth();
+
   const [likes, setLikes] = useState(originalTotalLikes);
   const [isLikedByCurrentUser, setIsLikedByCurrentUser] = useState(
     isOriginallyLikedByUser,
@@ -41,6 +46,10 @@ function UpvoteButton({
   };
 
   const handleClick = async () => {
+    if (!userId) {
+      return;
+    }
+
     try {
       performOptimisticLike();
       await createOrDeleteLike(projectId);
@@ -52,7 +61,9 @@ function UpvoteButton({
   const variant = isLikedByCurrentUser ? 'primaryOutline' : 'brand';
 
   return (
-    <>
+    <AuthwallWrapper
+      redirectAfterSignin={URLs.projectPage(projectId.toString())}
+    >
       <Button
         onClick={handleClick}
         variant={variant}
@@ -80,7 +91,7 @@ function UpvoteButton({
           {isLikedByCurrentUser ? 'Upvoted' : 'Upvote'}
         </span>
       </Button>
-    </>
+    </AuthwallWrapper>
   );
 }
 
