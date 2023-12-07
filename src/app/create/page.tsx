@@ -4,6 +4,7 @@ import OnboardingStatus from '@/components/OnboardingStatus';
 import NavBar from '@/components/ui/navbar';
 import { OnboardingSteps } from '@/components/ui/onboarding-steps';
 import { ProjectUpload } from '@/components/ui/ProjectUpload';
+import { createDevApplication } from '@/server/actions/users';
 import { db } from '@/server/db';
 import { devApplications, type DevApplicationSelect } from '@/server/db/schema';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
@@ -73,7 +74,11 @@ async function Page() {
             : 'Showcase your incredible work to the world and get hired by the best companies.'}
         </p>
         <div className="mt-14 flex w-full flex-col items-center justify-center px-4">
-          {devApplicationStatus ? <ProjectUpload /> : <OnboardingSteps />}
+          {devApplicationStatus ? (
+            <ProjectUpload />
+          ) : (
+            <OnboardingSteps createDevApplication={createDevApplication} />
+          )}
         </div>
       </div>
 
