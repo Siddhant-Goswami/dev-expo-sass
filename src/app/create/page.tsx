@@ -37,7 +37,7 @@ async function Page() {
 
   // TODO: Later, also check whether user has a developer profile
   const devApplicationStatus = userApplication?.status ?? null;
-  // const devApplicationStatus = 'pending';
+  // const devApplicationStatus = 'accepted';
 
   console.log(`Your application status is: ${userApplication?.status}`);
 

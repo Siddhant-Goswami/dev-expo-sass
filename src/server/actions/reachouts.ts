@@ -112,33 +112,33 @@ export const createRecruiterReachout = async (
       }),
     });
 
-    if (emailSendResponse.error) {
-      logServerEvent('reachout_email_send_failed', {
-        distinct_id: recruiterId,
-        properties: {
-          userId: recruiterId,
-          reason: emailSendResponse.error.message,
-          reachoutId: reachoutId.toString(),
-        },
-      });
-      await flushServerEvents();
-      return { success: false, message: 'Could not send email to developer!' };
-    }
+    // if (emailSendResponse.error) {
+    //   logServerEvent('reachout_email_send_failed', {
+    //     distinct_id: recruiterId,
+    //     properties: {
+    //       userId: recruiterId,
+    //       reason: emailSendResponse.error.message,
+    //       reachoutId: reachoutId.toString(),
+    //     },
+    //   });
+    //   await flushServerEvents();
+    //   return { success: false, message: 'Could not send email to developer!' };
+    // }
 
     console.log(
       `Email sent to [${dev.email}] with ID:`,
       emailSendResponse.data?.id,
     );
 
-    logServerEvent('reachout_email_send_success', {
-      distinct_id: recruiterId,
-      properties: {
-        recruiterId,
-        devId: dev.id,
-        reachoutId: reachoutId.toString(),
-      },
-    });
-    await flushServerEvents();
+    // logServerEvent('reachout_email_send_success', {
+    //   distinct_id: recruiterId,
+    //   properties: {
+    //     recruiterId,
+    //     devId: dev.id,
+    //     reachoutId: reachoutId.toString(),
+    //   },
+    // });
+    // await flushServerEvents();
 
     return { success: true, message: 'Reachout sent!' };
   } catch (error) {
