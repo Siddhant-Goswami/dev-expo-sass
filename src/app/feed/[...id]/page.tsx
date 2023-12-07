@@ -1,6 +1,5 @@
 import NavBar from '@/components/ui/navbar';
 
-import AuthwallModal from '@/components/AuthwallModal';
 import NewFooter from '@/components/NewFooter';
 import MarkdownComponent from '@/components/mark-down';
 import { buttonVariants } from '@/components/ui/button';
@@ -85,7 +84,7 @@ async function Page({ params }: PageProps) {
     <>
       <NavBar />
 
-      <AuthwallModal />
+      {/* <AuthwallModal /> */}
 
       <section className="flex items-start justify-center">
         <main className="mt-8 flex w-full flex-col justify-center px-4 md:max-w-4xl">
@@ -171,12 +170,14 @@ async function Page({ params }: PageProps) {
                 <div className="hidden md:block">
                   <IsNotSameUserWrapper projectUserId={project.userId}>
                     <GetInTouchButton
+                      projectId={projectId}
                       buttonVariant={'secondaryAction'}
                       displayName={displayName}
                       devId={dev.id}
                     />
                   </IsNotSameUserWrapper>
                 </div>
+
                 <UpvoteButton
                   originalTotalLikes={projectDetails.likesCount}
                   isOriginallyLikedByUser={isLiked}
@@ -227,6 +228,7 @@ async function Page({ params }: PageProps) {
             </div>
 
             <GetInTouchSection
+              projectId={projectId}
               projectUserId={project.userId}
               userDisplayName={displayName}
               displayPictureUrl={displayPictureUrl}

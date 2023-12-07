@@ -7,8 +7,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { useAuth } from '@/hooks/user/auth';
+import { URLs } from '@/lib/constants';
 import { useState } from 'react';
 import { GetInTouch } from './reachouts';
+import AuthwallWrapper from './sign-up-modal';
 
 type GetInTouchModalProps = {
   username?: string;
@@ -16,6 +19,7 @@ type GetInTouchModalProps = {
   roundedFull?: boolean;
   devId: string;
   buttonVariant?: 'brand' | 'secondaryAction';
+  projectId: number;
 };
 
 function GetInTouchModal({
@@ -23,20 +27,36 @@ function GetInTouchModal({
   text,
   roundedFull,
   devId,
+  projectId,
   buttonVariant,
 }: GetInTouchModalProps) {
+  const { userId } = useAuth();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-      <DialogTrigger asChild>
-        <Button
-          variant={buttonVariant ?? 'brand'}
-          className={roundedFull ? '' : 'rounded-sm'}
+      {userId ? (
+        <DialogTrigger asChild>
+          <Button
+            variant={buttonVariant ?? 'brand'}
+            className={roundedFull ? '' : 'rounded-sm'}
+          >
+            {text}
+          </Button>
+        </DialogTrigger>
+      ) : (
+        <AuthwallWrapper
+          redirectAfterSignin={URLs.projectPage(projectId.toString())}
         >
-          {text}
-        </Button>
-      </DialogTrigger>
+          <Button
+            variant={buttonVariant ?? 'brand'}
+            className={roundedFull ? '' : 'rounded-sm'}
+          >
+            {text}
+          </Button>
+        </AuthwallWrapper>
+      )}
       <DialogContent className="h-screen min-w-full overflow-scroll md:h-max md:min-w-50">
         <DialogHeader>
           <DialogTitle>Message {username}</DialogTitle>

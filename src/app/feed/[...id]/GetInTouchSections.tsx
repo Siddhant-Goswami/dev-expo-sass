@@ -4,25 +4,32 @@ import { useAuth } from '@/hooks/user/auth';
 import Image from 'next/image';
 
 type GetInTouchButtonProps = {
+  projectId: number;
   displayName: string;
   devId: string;
   buttonVariant?: 'brand' | 'secondaryAction';
 };
 
 export const GetInTouchButton = ({
-  displayName,
   devId,
+  projectId,
+  displayName,
   buttonVariant,
 }: GetInTouchButtonProps) => {
   return (
     <div className="flex justify-center">
+      {/* <AuthwallWrapper
+        redirectAfterSignin={URLs.projectPage(projectId.toString())}
+      > */}
       <GetInTouchModal
+        projectId={projectId}
         username={displayName}
         devId={devId}
         text="Get in Touch"
         roundedFull={true}
         buttonVariant={buttonVariant}
       />
+      {/* </AuthwallWrapper> */}
     </div>
   );
 };
@@ -43,10 +50,12 @@ export const GetInTouchSection = ({
   projectUserId,
   userDisplayName,
   displayPictureUrl,
+  projectId,
 }: {
   projectUserId: string;
   userDisplayName: string;
   displayPictureUrl: string;
+  projectId: number;
 }) => {
   return (
     <IsNotSameUserWrapper projectUserId={projectUserId}>
@@ -64,7 +73,11 @@ export const GetInTouchSection = ({
             Hire {userDisplayName} for your next GenAI project
           </div>
         </div>
-        <GetInTouchButton displayName={userDisplayName} devId={projectUserId} />
+        <GetInTouchButton
+          projectId={projectId}
+          displayName={userDisplayName}
+          devId={projectUserId}
+        />
       </div>
     </IsNotSameUserWrapper>
   );

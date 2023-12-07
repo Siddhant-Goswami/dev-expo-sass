@@ -116,6 +116,9 @@ dependencies:
   next:
     specifier: ^14.0.3
     version: 14.0.3(react-dom@18.2.0)(react@18.2.0)
+  next-axiom:
+    specifier: ^1.1.1
+    version: 1.1.1(next@14.0.3)(react@18.2.0)
   next-themes:
     specifier: ^0.2.1
     version: 0.2.1(next@14.0.3)(react-dom@18.2.0)(react@18.2.0)
@@ -6657,6 +6660,22 @@ packages:
       }
     dev: true
 
+  /next-axiom@1.1.1(next@14.0.3)(react@18.2.0):
+    resolution:
+      {
+        integrity: sha512-0r/TJ+/zetD+uDc7B+2E7WpC86hEtQ1U+DuWYrP/JNmUz+ZdPFbrZgzOSqaZ6TwYbXP56VVlPfYwq1YsKHTHYQ==,
+      }
+    engines: { node: '>=18' }
+    peerDependencies:
+      next: '>=13.4'
+      react: '>=18.0.0'
+    dependencies:
+      next: 14.0.3(react-dom@18.2.0)(react@18.2.0)
+      react: 18.2.0
+      remeda: 1.29.0
+      whatwg-fetch: 3.6.19
+    dev: false
+
   /next-themes@0.2.1(next@14.0.3)(react-dom@18.2.0)(react@18.2.0):
     resolution:
       {
@@ -7659,6 +7678,13 @@ packages:
       unified: 11.0.4
     dev: false
 
+  /remeda@1.29.0:
+    resolution:
+      {
+        integrity: sha512-M3LQ14KtMdQ1879lj/kKji3zBk158s7Rwg963mEkTfQFMxnKrIEAMxJfo/+0sp/+uGgN/KMVU2MBA4LNjqf8YQ==,
+      }
+    dev: false
+
   /resend@2.0.0:
     resolution:
       {
@@ -8578,6 +8604,13 @@ packages:
       yaeti: 0.0.6
     transitivePeerDependencies:
       - supports-color
+    dev: false
+
+  /whatwg-fetch@3.6.19:
+    resolution:
+      {
+        integrity: sha512-d67JP4dHSbm2TrpFj8AbO8DnL1JXL5J9u0Kq2xW6d0TFDbCA3Muhdt8orXC22utleTVj7Prqt82baN6RBvnEgw==,
+      }
     dev: false
 
   /whatwg-url@5.0.0:
