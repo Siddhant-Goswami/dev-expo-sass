@@ -3,7 +3,9 @@ import { PostHog } from 'posthog-node';
 
 /**
  * @deprecated Don't use this directly, use `logServerEvent` instead. */
-const internal_client = new PostHog(env.NEXT_PUBLIC_POSTHOG_PUBLIC_KEY);
+const internal_client = new PostHog(env.NEXT_PUBLIC_POSTHOG_PUBLIC_KEY, {
+  enable: env.NEXT_PUBLIC_VERCEL_ENV === 'production',
+});
 
 export const flushServerEvents = () => internal_client.flushAsync();
 

@@ -6,7 +6,7 @@ import { URLs } from '@/lib/constants';
 import Link from 'next/link';
 import ShimmerButton from './magicui/shimmer-button';
 import { Button } from './ui/button';
-import SignInModal from './ui/sign-up-modal';
+import AuthwallWrapper from './ui/sign-up-modal';
 
 function GetStartedButton() {
   const { userId } = useAuth();
@@ -26,7 +26,7 @@ function GetStartedButton() {
       </Button>
     </Link>
   ) : (
-    <SignInModal>
+    <AuthwallWrapper>
       <ShimmerButton
         onClick={() => {
           logClientEvent('click_get_started_button', {
@@ -38,7 +38,7 @@ function GetStartedButton() {
       >
         Get Started Now
       </ShimmerButton>
-    </SignInModal>
+    </AuthwallWrapper>
   );
 }
 

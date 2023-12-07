@@ -39,7 +39,7 @@ export const DevApplicationSubmittedEmail = ({
           to dive into the details of your application.
         </Text>
         <Text style={paragraph}>
-          Expect to hear back from us within two weeks. Upon approval of your
+          Expect to hear back from us shortly. Upon approval of your
           application, you will receive detailed instructions on the next steps
           to fully activate your membership and begin connecting with top-tier
           employers.
@@ -47,14 +47,12 @@ export const DevApplicationSubmittedEmail = ({
         <Text style={paragraph}>
           We strive to provide a comprehensive assessment, considering not just
           your technical expertise but also your unique experiences and
-          perspectives in the field of development.
+          perspectives in the field of development. As a result, we evaluate
+          each application carefully to ensure that every developer we onboard
+          aligns with the high standards of skill, innovation, and passion that
+          define the Overpowered Jobs community.
         </Text>
 
-        <Text style={paragraph}>
-          As a result, we evaluate each application carefully to ensure that
-          every developer we onboard aligns with the high standards of skill,
-          innovation, and passion that define the Overpowered Jobs community.
-        </Text>
         <Text style={paragraph}>
           We are excited about the potential of working together. Keep your
           fingers crossed, and hope for the best!
@@ -68,7 +66,7 @@ export const DevApplicationSubmittedEmail = ({
           Warm regards,
           <br />
           <Link href="https://www.overpoweredjobs.com/">
-            The Overpowered Team
+            The Overpowered Jobs Team
           </Link>
         </Text>
         {/* <Hr style={hr} /> */}
