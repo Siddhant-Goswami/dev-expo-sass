@@ -95,7 +95,7 @@ async function Page({ params }: PageProps) {
             </h1>
             {userId === dev.id && <ProjectOptions projectId={projectId} />}
           </div>
-          <div className='md:px-12'>
+          <div className="md:px-12">
             <div className="mb-6 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <Link href={`/user/${dev.username}`}>

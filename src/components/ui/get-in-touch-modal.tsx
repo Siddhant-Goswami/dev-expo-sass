@@ -30,7 +30,10 @@ function GetInTouchModal({
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
       <DialogTrigger asChild>
-        <Button variant={buttonVariant ?? 'brand'} className={roundedFull ? '' : 'rounded-sm'}>
+        <Button
+          variant={buttonVariant ?? 'brand'}
+          className={roundedFull ? '' : 'rounded-sm'}
+        >
           {text}
         </Button>
       </DialogTrigger>
