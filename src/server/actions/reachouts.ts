@@ -6,15 +6,13 @@ import {
   flushServerEvents,
   logServerEvent,
 } from '@/lib/analytics/posthog/server';
+import { sendEmail } from '@/lib/emails/resend';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
 import { createClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
-import { Resend } from 'resend';
 import { z } from 'zod';
 import { db } from '../db';
 import { recruiterReachouts, type RecruiterReachoutInsert } from '../db/schema';
-
-const resend = new Resend(env.RESEND_API_KEY);
 
 const recruiterReachoutInsertSchema = z.object({
   devId: z.string(),
@@ -98,8 +96,7 @@ export const createRecruiterReachout = async (
       throw new Error('You cannot send enquiry to yourself!');
     }
 
-    const emailSendResponse = await resend.emails.send({
-      from: 'hello@overpoweredjobs.com',
+    const emailSendResponse = await sendEmail({
       to: dev.email,
       subject: 'Exciting Opportunity Awaits You! 🚀',
       react: OpportunityEmail({

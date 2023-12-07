@@ -13,6 +13,32 @@ type VALID_SERVER_EVENTS = {
     userId: string;
   };
 
+  dev_application_submit_email_send_success: {
+    userId: string;
+    devApplicationId: string;
+    userEmail: string;
+  };
+
+  dev_application_submit_email_send_fail: {
+    userId: string;
+    devApplicationId: string;
+    userEmail: string;
+    reason: string;
+  };
+
+  dev_application_approve_email_send_success: {
+    userId: string;
+    devApplicationId: string;
+    userEmail: string;
+  };
+
+  dev_application_approve_email_send_fail: {
+    userId: string;
+    devApplicationId: string;
+    userEmail: string;
+    reason: string;
+  };
+
   dev_application_create_success: {
     userId: string;
     applicationId: string; // Unique identifier for the application
