@@ -16,6 +16,7 @@ type FeedProps = {
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'edge';
+export const preferredRegion = 'sin1'; // only executes this page in this region
 
 async function Feed({ searchParams }: FeedProps) {
   // const supabase = createServerComponentClient({ cookies });

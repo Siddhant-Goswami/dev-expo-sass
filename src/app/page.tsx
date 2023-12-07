@@ -34,6 +34,8 @@ export const revalidate = 15;
 // export const dynamic = 'force-dynamic';
 const jetBrainFont = JetBrains_Mono({ weight: ['400'], subsets: ['latin'] });
 export const runtime = 'edge';
+export const preferredRegion = 'sin1'; // only executes this page in this region
+
 export default async function Page() {
   const allProjects = await getAllProjectsSortedByLikes({ limit: 6 });
   const filteredProjectsData = allProjects.map(
