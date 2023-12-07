@@ -1,20 +1,30 @@
-import GetStartedButton from '@/components/get-started-button';
 import NewFooter from '@/components/NewFooter';
+import GetStartedButton from '@/components/get-started-button';
 import BackgroundLooper from '@/components/ui/background-looper';
 import Grid from '@/components/ui/grid';
 import Navbar from '@/components/ui/navbar';
 import { getAllProjectsSortedByLikes } from '@/server/actions/projects';
 import { JetBrains_Mono } from 'next/font/google';
 import React from 'react';
+import MagicIcon from './magic-icon';
+import PlayIcon from './play-icon';
+import ShareIcon from './share-icon';
 
-const GradientCard = ({ children }: { children: React.ReactNode }) => {
+const GradientCard = ({
+  children,
+  icon,
+}: {
+  children: React.ReactNode;
+  icon: React.ReactNode;
+}) => {
   return (
     <>
-      <div className="relative flex h-72 w-[304px] flex-col justify-end overflow-hidden rounded-[20px] border border-green-800 bg-neutral-900 p-2 pb-3">
+      <div className="relative flex h-72 w-[316px] flex-col justify-end overflow-hidden rounded-[20px] border border-green-800 p-2 pb-3 py-1">
         <div className="absolute left-[-26px] top-[254px] h-[353px] w-[353px] rounded-full bg-green-600 bg-opacity-70 blur-[370.40px]" />
-        <div className="bg-neutral-900 bg-opacity-20 py-1">{children}</div>
-
-        {/* <div className="absolute left-[-21px] top-[-143px] h-[327px] w-[343px] bg-neutral-900 bg-opacity-20"></div> */}
+        <div className="flex h-full w-full items-center justify-items-center">
+          {icon}
+        </div>
+        <div className="bg-neutral-900 bg-opacity-20">{children}</div>
       </div>
     </>
   );
@@ -86,7 +96,7 @@ export default async function Page() {
           distinguished. Here’s what it takes:
         </p>
         <div className="flex w-11/12 max-w-6xl flex-col items-center justify-center gap-6 lg:flex-row lg:gap-0">
-          <GradientCard>
+          <GradientCard icon={<PlayIcon />}>
             <div className="z-50 px-2 text-base font-medium text-white">
               Submit Your Pitch
             </div>
@@ -97,7 +107,7 @@ export default async function Page() {
 
           <div className="w-[0px] flex-grow border border-dashed border-green-800/40 md:h-[0px]"></div>
 
-          <GradientCard>
+          <GradientCard icon={<ShareIcon />}>
             <div className="z-50 px-2 text-base font-medium text-white">
               Share your work
             </div>
@@ -109,7 +119,7 @@ export default async function Page() {
 
           <div className="w-[0px] flex-grow border border-dashed border-green-800/40 md:h-[0px]"></div>
 
-          <GradientCard>
+          <GradientCard icon={<MagicIcon />}>
             <div className="z-50 px-2 text-base font-medium text-white">
               Welcome to the community
             </div>
