@@ -11,6 +11,7 @@ import { desc } from 'drizzle-orm';
 import { cookies } from 'next/headers';
 
 // export const runtime = 'edge'
+// export const preferredRegion = 'sin1'; // only executes this page in this region
 
 async function Page() {
   const supabase = createServerComponentClient({ cookies });

@@ -28,6 +28,8 @@
     "@radix-ui/react-select": "^2.0.0",
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-toast": "^1.1.5",
+    "@react-email/components": "^0.0.12",
+    "@react-email/tailwind": "^0.0.13",
     "@sentry/nextjs": "^7.81.1",
     "@supabase/auth-helpers-nextjs": "^0.8.7",
     "@supabase/auth-ui-react": "^0.4.6",

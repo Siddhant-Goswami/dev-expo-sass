@@ -2,16 +2,19 @@
 import { eq } from 'drizzle-orm';
 // TODO: make these regular functions instead of server actions, and import `server-only`
 
+import DevApplicationSubmittedEmail from '@/components/emails/dev-application-submitted';
 import {
   flushServerEvents,
   logServerEvent,
 } from '@/lib/analytics/posthog/server';
+import { sendEmail } from '@/lib/emails/resend';
 import {
   devApplicationSchema,
   type DevApplicationFormSubmitType,
 } from '@/lib/validations/user';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
+import { z } from 'zod';
 import { db } from '../db';
 import {
   devApplications,
@@ -63,6 +66,7 @@ export const createDevApplication = async (
   }
 
   const userId = session.user.id;
+  const userEmail = z.string().email().parse(session.user.email);
   try {
     const devApplicationInsertData =
       devApplicationSchema.parse(unsanitizedData);
@@ -108,6 +112,46 @@ export const createDevApplication = async (
       distinct_id: userId,
       properties: { userId, applicationId: devApplication.id.toString() },
     });
+
+    const emailSendResponse = await sendEmail({
+      to: userEmail,
+      subject: 'Dev Application Submitted! 😎',
+      react: DevApplicationSubmittedEmail({
+        userFirstname: session.user.user_metadata.name as unknown as string,
+      }),
+    });
+
+    if (emailSendResponse.error ?? !emailSendResponse.data?.id) {
+      console.error(
+        `🔴 Failed to send dev application confirmation email to [${userEmail}]!`,
+      );
+      logServerEvent('dev_application_submit_email_send_fail', {
+        distinct_id: userId,
+        properties: {
+          userId,
+          userEmail,
+          devApplicationId: devApplication.id.toString(),
+          reason: emailSendResponse.error?.message ?? 'Unknown error',
+        },
+      });
+      await flushServerEvents();
+      return { success: false, message: 'Could not send email to developer!' };
+    }
+
+    console.log(
+      `Email sent to [${userEmail}] with ID:`,
+      emailSendResponse.data.id,
+    );
+
+    logServerEvent('dev_application_submit_email_send_success', {
+      distinct_id: userId,
+      properties: {
+        userId,
+        userEmail,
+        devApplicationId: devApplication.id.toString(),
+      },
+    });
+
     await flushServerEvents();
     return {
       success: true,
@@ -128,72 +172,6 @@ export const createDevApplication = async (
       error: errorMessage,
     };
   }
-};
-
-// create dev
-// ! Security RISK: This is a server-only action, but is not protected by any auth or validation. Don't make this a server action!
-export const approveDevApplication = async (applicationId: number) => {
-  const supabase = createServerActionClient({ cookies });
-
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
-  const _userId = session?.user.id;
-  if (!_userId) {
-    throw new Error('You must be logged in to approve!');
-  }
-
-  const application = await db.query.devApplications.findFirst({
-    where: eq(devApplications.id, applicationId),
-  });
-  if (!application) {
-    return {
-      success: false,
-      error: 'Application not found',
-    };
-  }
-
-  const now = new Date();
-
-  await Promise.allSettled([
-    db.insert(devProfiles).values({
-      userId: application.userId,
-      gitHubUsername: application.gitHubUsername,
-      twitterUsername: application.twitterUsername,
-      websiteUrl: application.websiteUrl,
-    }),
-    db
-      .update(devApplications)
-      .set({
-        status: 'approved',
-        statusUpdatedAt: now,
-        updatedAt: now,
-      })
-      .where(eq(devApplications.id, applicationId)),
-
-    db
-      .update(userProfiles)
-      .set({
-        bio: application.bio,
-        displayName: application.displayName,
-        updatedAt: now,
-      })
-      .where(eq(userProfiles.id, application.userId)),
-  ]);
-
-  logServerEvent('dev_application_approve', {
-    distinct_id: application.userId,
-    properties: {
-      userId: application.userId,
-      applicationId: application.id.toString(),
-    },
-  });
-  await flushServerEvents();
-
-  return {
-    success: true,
-  };
 };
 
 export const rejectDevApplication = async (applicationId: number) => {
