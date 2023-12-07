@@ -339,7 +339,6 @@ export function ProjectUploadForm(props: {
                     </Label>
                   </Button>
                   <Input
-                    required
                     multiple
                     accept="image/*"
                     id="imageFiles"

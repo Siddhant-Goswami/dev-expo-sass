@@ -91,109 +91,116 @@ async function Page({ params }: PageProps) {
         <main className="mt-8 flex w-full flex-col justify-center px-4 md:max-w-4xl">
           <div className="flex w-full items-center justify-between">
             <GoBack goBackUrl={URLs.feed} />
+            <h1 className="mb-4 w-full text-left text-2xl font-semibold">
+              {title}
+            </h1>
             {userId === dev.id && <ProjectOptions projectId={projectId} />}
           </div>
-          <h1 className="mb-4 w-full text-left text-2xl font-semibold">
-            {title}
-          </h1>
-          <div className="mb-6 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Link href={`/user/${dev.username}`}>
-                <Image
-                  className="aspect-square h-14 w-14 rounded-full"
-                  width={100}
-                  height={100}
-                  src={displayPictureUrl}
-                  alt={displayName}
-                />
-              </Link>
-              <div>
+          <div className="md:px-12">
+            <div className="mb-6 flex items-center justify-between">
+              <div className="flex items-center gap-3">
                 <Link href={`/user/${dev.username}`}>
-                  <div className="mb-0.5 text-sm font-semibold">
-                    {displayName}
-                  </div>
+                  <Image
+                    className="aspect-square h-14 w-14 rounded-full"
+                    width={100}
+                    height={100}
+                    src={displayPictureUrl}
+                    alt={displayName}
+                  />
                 </Link>
-                <div className="flex items-center">
-                  <div
-                    className={
-                      'h-2 w-2 ' +
-                      (availableForWork ? 'bg-green-500' : 'bg-gray-500') +
-                      ' mr-2 rounded-full'
-                    }
-                  ></div>
-                  {availableForWork ? (
-                    <span className="text-xs text-green-500">
-                      Available for work
-                    </span>
-                  ) : (
-                    <span className="text-xs text-gray-500">
-                      Not available for work
-                    </span>
-                  )}
+                <div>
+                  <Link href={`/user/${dev.username}`}>
+                    <div className="mb-0.5 text-sm font-semibold">
+                      {displayName}
+                    </div>
+                  </Link>
+                  <div className="flex items-center">
+                    <div
+                      className={
+                        'h-2 w-2 ' +
+                        (availableForWork ? 'bg-green-500' : 'bg-gray-500') +
+                        ' mr-2 rounded-full'
+                      }
+                    ></div>
+                    {availableForWork ? (
+                      <span className="text-xs text-green-500">
+                        Available for work
+                      </span>
+                    ) : (
+                      <span className="text-xs text-gray-500">
+                        Not available for work
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
+
+              <div className="flex gap-2">
+                {hostedUrl && (
+                  <Link
+                    className={cn(
+                      buttonVariants({
+                        variant: 'ghost',
+                        className: 'rounded-sm px-3.5',
+                      }),
+                    )}
+                    href={hostedUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Link2Icon className="mr-2" />
+                    <span className="hidden md:inline-block">Visit</span>
+                  </Link>
+                )}
+                {sourceCodeUrl && (
+                  <Link
+                    className={cn(
+                      buttonVariants({
+                        variant: 'ghost',
+                        className: 'rounded-sm px-3.5',
+                      }),
+                    )}
+                    href={sourceCodeUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <GitHubLogoIcon className="md:mr-2" />
+                    <span className="hidden md:inline-block">View Code</span>
+                  </Link>
+                )}
+                <div className="hidden md:block">
+                  <IsNotSameUserWrapper projectUserId={project.userId}>
+                    <GetInTouchButton
+                      buttonVariant={'secondaryAction'}
+                      displayName={displayName}
+                      devId={dev.id}
+                    />
+                  </IsNotSameUserWrapper>
+                </div>
+                <UpvoteButton
+                  originalTotalLikes={projectDetails.likesCount}
+                  isOriginallyLikedByUser={isLiked}
+                  projectId={projectId}
+                />
+              </div>
             </div>
-
-            <div className="flex gap-2">
-              <UpvoteButton
-                originalTotalLikes={projectDetails.likesCount}
-                isOriginallyLikedByUser={isLiked}
-                projectId={projectId}
-              />
-              {hostedUrl && (
-                <Link
-                  className={cn(
-                    buttonVariants({
-                      variant: 'outline',
-                      className: 'rounded-sm px-3.5',
-                    }),
-                  )}
-                  href={hostedUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Link2Icon className="mr-2" />
-                  <span className="hidden md:inline-block">Visit</span>
-                </Link>
+            <div className="flex flex-col gap-4 md:gap-5">
+              {youtubeUrl && toShowYTVideo && (
+                <iframe
+                  className="aspect-video w-full max-w-4xl self-center overflow-hidden rounded-lg"
+                  src={
+                    'https://www.youtube.com/embed/' +
+                    extractIDfromYtURL(validYoutubeUrlResult.data!)
+                  }
+                  title="YouTube video player"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                />
               )}
-              {sourceCodeUrl && (
-                <Link
-                  className={cn(
-                    buttonVariants({
-                      variant: 'outline',
-                      className: 'rounded-sm px-3.5',
-                    }),
-                  )}
-                  href={sourceCodeUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <GitHubLogoIcon className="md:mr-2" />
-                  <span className="hidden md:inline-block">View Code</span>
-                </Link>
-              )}
-              <IsNotSameUserWrapper projectUserId={project.userId}>
-                <GetInTouchButton displayName={displayName} devId={dev.id} />
-              </IsNotSameUserWrapper>
-            </div>
-          </div>
-          <div className="flex flex-col gap-4 md:gap-5">
-            {youtubeUrl && toShowYTVideo && (
-              <iframe
-                className="aspect-video w-full max-w-4xl self-center overflow-hidden rounded-lg"
-                src={
-                  'https://www.youtube.com/embed/' +
-                  extractIDfromYtURL(validYoutubeUrlResult.data!)
-                }
-                title="YouTube video player"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-              />
-            )}
 
-            <Carousel imagesArr={images} />
+              <Carousel imagesArr={images} />
 
-            {/* {images.map(
+              {/* {images.map(
               (image, index) =>
                 // h-500 w-900
                 image.url && (
@@ -211,18 +218,20 @@ async function Page({ params }: PageProps) {
                   </div>
                 ),
             )} */}
-          </div>
+            </div>
 
-          <div className="mt-8 p-6">
-            <section>
-              <MarkdownComponent content={description} />
-            </section>
-          </div>
+            <div className="mt-8 p-6">
+              <section>
+                <MarkdownComponent content={description} />
+              </section>
+            </div>
 
-          <GetInTouchSection
-            projectUserId={project.userId}
-            userDisplayName={displayName}
-          />
+            <GetInTouchSection
+              projectUserId={project.userId}
+              userDisplayName={displayName}
+              displayPictureUrl={displayPictureUrl}
+            />
+          </div>
         </main>
       </section>
       <NewFooter />
