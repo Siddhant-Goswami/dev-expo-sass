@@ -7,9 +7,9 @@ import Link from 'next/link';
 export default function NewFooter() {
   return (
     <>
-      <footer className="flex w-full justify-center py-20">
-        <div className="mx-auto inline-flex h-14 w-full max-w-5xl items-center justify-start gap-[489px]">
-          <div className="flex items-center justify-start gap-4">
+      <footer className="mx-auto flex w-full max-w-6xl justify-center py-20">
+        <div className="mx-auto flex flex-col items-center justify-start gap-y-4 px-20 lg:w-full lg:flex-row lg:justify-between">
+          <div className="flex w-max flex-col items-center justify-between gap-4 md:flex-row">
             <div className="inline-flex flex-col items-end justify-center py-[7px] pl-px">
               <div className=" text-xl font-medium text-green-300">
                 OverpoweredJobs
@@ -27,7 +27,7 @@ export default function NewFooter() {
                 </Link>
               </div>
             </div>
-            <div className=" text-sm font-medium text-white">
+            <div className="text-sm font-medium text-white">
               Codible Ventures LLP © {new Date().getFullYear()}
               <br />
               <Link href={URLs.termsOfService} className="hover:underline">
