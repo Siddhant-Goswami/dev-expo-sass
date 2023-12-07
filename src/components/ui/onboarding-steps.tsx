@@ -21,7 +21,7 @@ import VideoRecorder from '@/components/video-recorder';
 import useFacecamUpload from '@/hooks/useFacecamUpload';
 import { useAuth } from '@/hooks/user/auth';
 import { devApplicationSchema } from '@/lib/validations/user';
-import { createDevApplication } from '@/server/actions/users';
+import { type createDevApplication } from '@/server/actions/users';
 import { api } from '@/trpc/react';
 import { isGithubUserValid } from '@/utils';
 import { cn } from '@/utils/cn';
@@ -47,7 +47,9 @@ const onboardingStepsSchema = z.object({
 type OnbaordingStepsValues = z.infer<typeof onboardingStepsSchema>;
 export type VerificationStep = 'fields' | 'video' | 'submitting';
 
-export function OnboardingSteps() {
+export function OnboardingSteps(props: {
+  createDevApplication: typeof createDevApplication;
+}) {
   const { session } = useAuth();
   const router = useRouter();
 
@@ -147,7 +149,7 @@ export function OnboardingSteps() {
       mutationFn: async () => {
         const formValues = form.getValues();
 
-        const { error, devApplicationId } = await createDevApplication({
+        const { error, devApplicationId } = await props.createDevApplication({
           bio: formValues.bio,
           displayName: formValues.displayName,
           githubUsername: formValues.githubUsername,
