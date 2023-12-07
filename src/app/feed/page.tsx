@@ -14,9 +14,22 @@ type FeedProps = {
   };
 };
 
+export const dynamic = 'force-dynamic';
 export const runtime = 'edge';
 
 async function Feed({ searchParams }: FeedProps) {
+  // const supabase = createServerComponentClient({ cookies });
+
+  // const {
+  //   data: { session },
+  // } = await supabase.auth.getSession();
+
+  // const userId = session?.user.id;
+
+  // if (!userId) {
+  //   return <AuthwallPage redirectAfterSignin={URLs.feed} />;
+  // }
+
   const filter = searchParams?.filter ?? '';
 
   const allProjects = await getAllProjects({});
