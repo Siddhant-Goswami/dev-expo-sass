@@ -8,7 +8,7 @@ import { cn } from '@/utils/cn';
 import { LucidePlus } from 'lucide-react';
 import Link from 'next/link';
 import UserAuthButton from '../UserAuthButton';
-import Logo from './logo';
+import Logo from './new-logo';
 
 const NavBar = () => {
   const { session, isLoaded } = useAuth();

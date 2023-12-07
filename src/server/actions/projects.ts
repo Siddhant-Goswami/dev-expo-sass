@@ -353,7 +353,7 @@ export const deleteProject = async (projectId: number) => {
     // Finally delete the project itself
     // This will fail if any other table that has a foreign key constraint on the project id is not deleted first
     await db.delete(projects).where(eq(projects.id, projectId));
-
+    // console.log('Project deleted successfully');
     logServerEvent('project_delete_success', {
       distinct_id: userId,
       properties: { userId, projectId: projectId.toString() },

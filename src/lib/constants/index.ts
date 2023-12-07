@@ -10,6 +10,10 @@ export const URLs = {
   signUp: '/sign-up',
   termsOfService: '/terms-and-conditions',
   privacyPolicy: '/privacy-policy',
+  _100xengineers: 'https://100xengineers.com/',
+  instagram: 'https://www.instagram.com/overpowered.ai/',
+  youtube: 'https://www.youtube.com/@AI.Overpowered',
+  x: 'https://twitter.com/100xengineers',
 } as const;
 
 export const MAX_NUMBER_OF_IMAGES = 3;
