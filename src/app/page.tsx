@@ -149,7 +149,7 @@ export default async function Page() {
       </section>
 
       <section className="mt-32 flex w-full flex-col items-center justify-center">
-        <div className="flex w-3/4 flex-col items-center justify-center rounded-t-xl rounded-b-md border-x border-t border-green-800 bg-radial-gradient py-12">
+        <div className="flex w-3/4 flex-col items-center justify-center rounded-b-md rounded-t-xl border-x border-t border-green-800 bg-radial-gradient py-12">
           <h2 className="w-full text-center text-3xl sm:w-3/4 sm:text-6xl">
             Ready to Join the GenAI Elite?
           </h2>
