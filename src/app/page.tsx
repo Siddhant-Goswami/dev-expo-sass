@@ -7,6 +7,8 @@ import { getAllProjectsSortedByLikes } from '@/server/actions/projects';
 export const revalidate = 15;
 // export const dynamic = 'force-dynamic';
 export const runtime = 'edge';
+export const preferredRegion = 'sin1'; // only executes this page in this region
+
 export default async function Page() {
   const allProjects = await getAllProjectsSortedByLikes({ limit: 8 });
   const filteredProjectsData = allProjects.map(

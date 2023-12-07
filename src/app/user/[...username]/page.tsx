@@ -12,6 +12,7 @@ type PageProps = {
 };
 
 export const runtime = 'edge';
+export const preferredRegion = 'sin1'; // only executes this page in this region
 
 async function Page({ params }: PageProps) {
   const usernameResult = z.string().max(100).safeParse(params.username[0]);
