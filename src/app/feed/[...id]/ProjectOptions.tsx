@@ -36,12 +36,14 @@ function ProjectOptions({ projectId }: { projectId: number }) {
                 title: 'Project Deleted successfully',
                 variant: 'default',
               });
-              router.push(URLs.feed);
+              // router.push(URLs.feed);
             } catch (error) {
               toast({
                 title: 'Could not delete project',
                 variant: 'destructive',
               });
+            } finally {
+              window.location.href = URLs.feed;
             }
           }}
         >
