@@ -118,8 +118,10 @@ export const createRecruiterReachout = async (
           reachoutId: reachoutId.toString(),
         },
       });
-      await flushServerEvents();
-      return { success: false, message: 'Could not send email to developer!' };
+
+      console.error(`Resend errrrrr`, emailSendResponse.error);
+
+      throw new Error('Could not send email to developer!');
     }
 
     console.log(
