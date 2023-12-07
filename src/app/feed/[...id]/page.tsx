@@ -32,6 +32,7 @@ type PageProps = {
 
 // export const revalidate = 10;
 export const runtime = 'edge';
+export const preferredRegion = 'sin1'; // only executes this page in this region
 
 async function Page({ params }: PageProps) {
   const supabase = createServerComponentClient({ cookies });

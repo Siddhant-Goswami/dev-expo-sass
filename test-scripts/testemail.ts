@@ -1,4 +1,4 @@
-import { OpportunityEmail } from '@/components/resend-emails/recruiter-dev-enquiry';
+import { OpportunityEmail } from '@/components/emails/recruiter-dev-enquiry';
 import { env } from '@/env';
 import { Resend } from 'resend';
 

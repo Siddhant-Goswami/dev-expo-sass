@@ -3,7 +3,9 @@ import { PostHog } from 'posthog-node';
 
 /**
  * @deprecated Don't use this directly, use `logServerEvent` instead. */
-const internal_client = new PostHog(env.NEXT_PUBLIC_POSTHOG_PUBLIC_KEY);
+const internal_client = new PostHog(env.NEXT_PUBLIC_POSTHOG_PUBLIC_KEY, {
+  enable: env.NEXT_PUBLIC_VERCEL_ENV === 'production',
+});
 
 export const flushServerEvents = () => internal_client.flushAsync();
 
@@ -11,6 +13,32 @@ type VALID_SERVER_EVENTS = {
   user_signin: {
     email: string;
     userId: string;
+  };
+
+  dev_application_submit_email_send_success: {
+    userId: string;
+    devApplicationId: string;
+    userEmail: string;
+  };
+
+  dev_application_submit_email_send_fail: {
+    userId: string;
+    devApplicationId: string;
+    userEmail: string;
+    reason: string;
+  };
+
+  dev_application_approve_email_send_success: {
+    userId: string;
+    devApplicationId: string;
+    userEmail: string;
+  };
+
+  dev_application_approve_email_send_fail: {
+    userId: string;
+    devApplicationId: string;
+    userEmail: string;
+    reason: string;
   };
 
   dev_application_create_success: {

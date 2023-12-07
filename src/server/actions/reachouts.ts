@@ -1,20 +1,18 @@
 'use server';
 
-import { OpportunityEmail } from '@/components/resend-emails/recruiter-dev-enquiry';
+import { OpportunityEmail } from '@/components/emails/recruiter-dev-enquiry';
 import { env } from '@/env';
 import {
   flushServerEvents,
   logServerEvent,
 } from '@/lib/analytics/posthog/server';
+import { sendEmail } from '@/lib/emails/resend';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
 import { createClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
-import { Resend } from 'resend';
 import { z } from 'zod';
 import { db } from '../db';
 import { recruiterReachouts, type RecruiterReachoutInsert } from '../db/schema';
-
-const resend = new Resend(env.RESEND_API_KEY);
 
 const recruiterReachoutInsertSchema = z.object({
   devId: z.string(),
@@ -98,8 +96,7 @@ export const createRecruiterReachout = async (
       throw new Error('You cannot send enquiry to yourself!');
     }
 
-    const emailSendResponse = await resend.emails.send({
-      from: 'hello@overpoweredjobs.com',
+    const emailSendResponse = await sendEmail({
       to: dev.email,
       subject: 'Exciting Opportunity Awaits You! 🚀',
       react: OpportunityEmail({
@@ -112,33 +109,35 @@ export const createRecruiterReachout = async (
       }),
     });
 
-    // if (emailSendResponse.error) {
-    //   logServerEvent('reachout_email_send_failed', {
-    //     distinct_id: recruiterId,
-    //     properties: {
-    //       userId: recruiterId,
-    //       reason: emailSendResponse.error.message,
-    //       reachoutId: reachoutId.toString(),
-    //     },
-    //   });
-    //   await flushServerEvents();
-    //   return { success: false, message: 'Could not send email to developer!' };
-    // }
+    if (emailSendResponse.error) {
+      logServerEvent('reachout_email_send_failed', {
+        distinct_id: recruiterId,
+        properties: {
+          userId: recruiterId,
+          reason: emailSendResponse.error.message,
+          reachoutId: reachoutId.toString(),
+        },
+      });
+
+      console.error(`Resend errrrrr`, emailSendResponse.error);
+
+      throw new Error('Could not send email to developer!');
+    }
 
     console.log(
       `Email sent to [${dev.email}] with ID:`,
       emailSendResponse.data?.id,
     );
 
-    // logServerEvent('reachout_email_send_success', {
-    //   distinct_id: recruiterId,
-    //   properties: {
-    //     recruiterId,
-    //     devId: dev.id,
-    //     reachoutId: reachoutId.toString(),
-    //   },
-    // });
-    // await flushServerEvents();
+    logServerEvent('reachout_email_send_success', {
+      distinct_id: recruiterId,
+      properties: {
+        recruiterId,
+        devId: dev.id,
+        reachoutId: reachoutId.toString(),
+      },
+    });
+    await flushServerEvents();
 
     return { success: true, message: 'Reachout sent!' };
   } catch (error) {
