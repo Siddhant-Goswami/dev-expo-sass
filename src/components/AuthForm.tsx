@@ -19,7 +19,6 @@ export const UserAuthForm = (props: { redirectAfterSignin?: string }) => {
     <div
       onClick={() => {
         // The auth form buttons have some invisible vertical padding, so clicking in that area will also trigger this handler.
-
         logClientEvent('click_auth_button', { timestamp: Date.now() });
       }}
     >
@@ -30,7 +29,7 @@ export const UserAuthForm = (props: { redirectAfterSignin?: string }) => {
         // providerScopes={{google: }}
         supabaseClient={supabase}
         providers={['github', 'google']}
-        appearance={{ theme: ThemeSupa, className: 'py-0 my-0' }}
+        appearance={{ theme: ThemeSupa }}
         redirectTo={
           (env.NEXT_PUBLIC_VERCEL_ENV === 'production'
             ? env.NEXT_PUBLIC_APP_URL

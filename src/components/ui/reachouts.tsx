@@ -144,7 +144,7 @@ export function GetInTouch({ setIsModalOpen, devId }: GetInTouchProps) {
           )}
         /> */}
         <div className="flex justify-end">
-          <Button disabled={isLoading} type="submit">
+          <Button variant="brand" disabled={isLoading} type="submit">
             {isLoading ? (
               <LucideLoader size={20} className="animate-spin" />
             ) : (

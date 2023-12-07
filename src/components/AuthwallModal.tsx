@@ -25,7 +25,7 @@ export default function AuthwallModal(props: { redirectAfterSignin?: string }) {
           <AlertDialogDescription>
             <UserAuthForm redirectAfterSignin={props.redirectAfterSignin} />
             <p className="px-8 text-center text-sm text-muted-foreground">
-              By signing in, you agree to our{' '}
+              By proceeding, you agree to our{' '}
               <Link
                 href={URLs.termsOfService}
                 className="underline underline-offset-4 hover:text-primary"

@@ -146,3 +146,24 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
 });
 
 export const privateProcedure = publicProcedure.use(enforceUserIsAuthed);
+
+const enforceUserIsAdmin = t.middleware(({ ctx, next }) => {
+  if (!ctx.session?.user.id) {
+    throw new TRPCError({ code: 'UNAUTHORIZED' });
+  }
+
+  if (ctx.session?.user.role !== 'admin') {
+    throw new TRPCError({
+      code: 'FORBIDDEN',
+      message: 'You must be an admin to perform this action.',
+    });
+  }
+
+  return next({
+    ctx: {
+      // infers the `session` as non-nullable
+      session: ctx.session,
+    },
+  });
+});
+export const adminProcedure = privateProcedure.use(enforceUserIsAdmin);

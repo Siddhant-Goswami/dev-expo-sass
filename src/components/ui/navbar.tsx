@@ -1,14 +1,14 @@
 'use client';
 
 import { Button, buttonVariants } from '@/components/ui/button';
-import SignInModal from '@/components/ui/sign-up-modal';
+import AuthwallWrapper from '@/components/ui/sign-up-modal';
 import { useAuth } from '@/hooks/user/auth';
 import { URLs } from '@/lib/constants';
 import { cn } from '@/utils/cn';
 import { LucidePlus } from 'lucide-react';
 import Link from 'next/link';
 import UserAuthButton from '../UserAuthButton';
-import Logo from './logo';
+import Logo from './new-logo';
 
 const NavBar = () => {
   const { session, isLoaded } = useAuth();
@@ -45,9 +45,9 @@ const NavBar = () => {
           )}
 
           {!userId && isLoaded && (
-            <SignInModal>
+            <AuthwallWrapper>
               <Button variant="secondary">Sign In</Button>
-            </SignInModal>
+            </AuthwallWrapper>
           )}
 
           {!isLoaded && !userId && (

@@ -1,9 +1,10 @@
-'use client';
-
 import { UserAuthForm } from '@/components/AuthForm';
 import NavBar from '@/components/ui/navbar';
 import { URLs } from '@/lib/constants';
 import Link from 'next/link';
+
+export const runtime = 'edge';
+export const preferredRegion = 'sin1'; // only executes this page in this region
 
 export default function Page() {
   return (
@@ -22,7 +23,7 @@ export default function Page() {
             </div> */}
             <UserAuthForm />
             <p className="px-8 text-center text-sm text-muted-foreground">
-              By clicking continue, you agree to our{' '}
+              By proceeding, you agree to our{' '}
               <Link
                 href={URLs.termsOfService}
                 className="underline underline-offset-4 hover:text-primary"
