@@ -50,7 +50,6 @@ const config = {
 
 export default withAxiom(config);
 
-
 const sentryConfig = withSentryConfig(
   {
     // For all available options, see:
