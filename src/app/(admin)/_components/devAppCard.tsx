@@ -1,4 +1,14 @@
 'use client';
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -10,15 +20,20 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { DevApplicationSelect } from '@/server/db/schema';
+import { type DevApplicationSelect } from '@/server/db/schema';
+import { api } from '@/trpc/react';
 
 import { LucideGithub } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export function DevApplicationCard({
   application,
 }: {
   application: DevApplicationSelect;
 }) {
+  const { isSuccess, isLoading, data, mutateAsync } =
+    api.admin.approveDev.useMutation();
+  const router = useRouter();
   return (
     <Card key={application.id} className=" grid max-w-md gap-4">
       <CardHeader className="space-y-1">
@@ -55,7 +70,32 @@ export function DevApplicationCard({
         </div>
       </CardContent>
       <CardFooter>
-        <Button className="w-full">Create account</Button>
+        <AlertDialog>
+          <Button asChild variant={'brand'} className="hover:cursor-pointer">
+            <AlertDialogTrigger>Approve</AlertDialogTrigger>
+          </Button>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+               This will approve the developer and allow them to upload their projects.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <Button
+                variant={'brand'}
+                type="button"
+                onClick={async () => {
+                  await mutateAsync({ applicationId: application.id });
+                  router.refresh();
+                }}
+              >
+                {isLoading ? 'Loading' : 'Yes Bro'}
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </CardFooter>
     </Card>
   );

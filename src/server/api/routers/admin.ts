@@ -39,9 +39,9 @@ export const adminRouter = createTRPCRouter({
 
       const {
         data: { user: userOfApplication },
-      } = await supabaseAdmin.auth.getUser(application.userId);
+      } = await supabaseAdmin.auth.admin.getUserById(application.userId);
 
-      if (!userOfApplication) {
+      if (!userOfApplication?.id) {
         throw new TRPCError({ code: 'NOT_FOUND', message: 'User not found!' });
       }
 
