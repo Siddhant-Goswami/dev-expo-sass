@@ -115,9 +115,13 @@ export const logServerEvent = <TEventKey extends keyof VALID_SERVER_EVENTS>(
     properties: VALID_SERVER_EVENTS[TEventKey];
   },
 ) => {
-  return internal_client.capture({
-    distinctId: payload.distinct_id,
-    event,
-    properties: payload.properties,
-  });
+  try {
+    internal_client.capture({
+      distinctId: payload.distinct_id,
+      event,
+      properties: payload.properties,
+    });
+  } catch (err) {
+    console.error(`Posthog failed on server??`, err);
+  }
 };
