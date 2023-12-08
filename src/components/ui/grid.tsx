@@ -11,10 +11,11 @@ type ProjectData = {
 } & Pick<Awaited<ReturnType<typeof getAllProjects>>[number], 'tags' | 'media'>;
 
 type GridProps = {
+  hideTags?: boolean;
   projects: ProjectData[];
 };
 
-function Grid({ projects }: GridProps) {
+function Grid({ projects, hideTags }: GridProps) {
   return (
     <div className="flex h-max w-full flex-wrap items-start justify-center gap-6 xl:gap-x-10 [&>*:nth-child(7)]:hidden sm:[&>*:nth-child(7)]:block [&>*:nth-child(8)]:hidden sm:[&>*:nth-child(8)]:block">
       {projects.map((project) => (
@@ -24,6 +25,7 @@ function Grid({ projects }: GridProps) {
           className="h-max w-max"
         >
           <ProjectCard
+            hideTags={hideTags}
             projectId={project.id}
             projectName={project.title}
             creator={project.displayName}
