@@ -34,7 +34,7 @@ type PageProps = {
 export const runtime = 'edge';
 export const preferredRegion = 'sin1'; // only executes this page in this region
 
-async function Page({ params }: PageProps) {
+function Page({ params }: PageProps) {
   return (
     <>
       <NavBar />
