@@ -18,12 +18,13 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { toast } from '@/components/ui/use-toast';
 import { type DevApplicationSelect } from '@/server/db/schema';
 import { api } from '@/trpc/react';
 
-import { LucideGithub } from 'lucide-react';
+import { LucideGithub, LucideLink } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 export function DevApplicationCard({
@@ -31,45 +32,69 @@ export function DevApplicationCard({
 }: {
   application: DevApplicationSelect;
 }) {
-  const { isSuccess, isLoading, data, mutateAsync } =
-    api.admin.approveDev.useMutation();
+  const { isLoading, mutateAsync } = api.admin.approveDev.useMutation({
+    onSuccess: () => {
+      toast({ title: 'Approved' });
+    },
+  });
+  const { data } = api.admin.getDevApplicationMedia.useQuery({
+    applicationId: application.id,
+  });
+  const videoUrl = data?.applicationMedia?.url;
   const router = useRouter();
+  const gitHubLink = application.gitHubUsername.startsWith(
+    'https://github.com/',
+  )
+    ? application.gitHubUsername
+    : `https://github.com/${application.gitHubUsername}`;
   return (
-    <Card key={application.id} className=" grid max-w-md gap-4">
+    <Card key={application.id} className="grid w-full max-w-[16rem] gap-1">
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl">{application.displayName}</CardTitle>
-
         <CardDescription>{application.bio}</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
-        <div className="grid grid-cols-2 gap-6">
-          <Button variant="outline" className="aspect-square h-10 w-10 p-0">
-            <LucideGithub />
-          </Button>
-          <Button variant="outline" className="aspect-square h-10 w-10 p-0">
-            𝕏
-          </Button>
-        </div>
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">
-              Or continue with
-            </span>
-          </div>
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="email">Email</Label>
-          <Input id="email" type="email" placeholder="m@example.com" />
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="password">Password</Label>
-          <Input id="password" type="password" />
+        <div className="grid grid-cols-3 ">
+          <Link href={gitHubLink} target="_blank" rel="noopener noreferrer">
+            <Button variant="outline" className="aspect-square h-10 w-10 p-0">
+              <LucideGithub />
+            </Button>
+          </Link>
+          <Link
+            href={`https://twitter.com/${application.twitterUsername}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Button variant="outline" className="aspect-square h-10 w-10 p-0">
+              𝕏
+            </Button>
+          </Link>
+
+          {application.websiteUrl && (
+            <Link
+              href={application.websiteUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button variant="outline" className="aspect-square h-10 w-10 p-0">
+                <LucideLink />
+              </Button>
+            </Link>
+          )}
         </div>
       </CardContent>
+
       <CardFooter>
+        <Dialog>
+          <Button asChild variant={'link'} className="underline">
+            {videoUrl && <DialogTrigger>View Video</DialogTrigger>}
+          </Button>
+          <DialogContent>
+            {videoUrl && (
+              <video src={videoUrl + '.mp4'} autoPlay controls></video>
+            )}
+          </DialogContent>
+        </Dialog>
         <AlertDialog>
           <Button asChild variant={'brand'} className="hover:cursor-pointer">
             <AlertDialogTrigger>Approve</AlertDialogTrigger>
@@ -78,7 +103,8 @@ export function DevApplicationCard({
             <AlertDialogHeader>
               <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
               <AlertDialogDescription>
-               This will approve the developer and allow them to upload their projects.
+                This will approve the developer and allow them to upload their
+                projects.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
