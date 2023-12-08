@@ -21,7 +21,7 @@ export default async function DemoCreateAccount() {
   }
 
   const { applications } = await api.admin.getAllPendingApplications.query();
-  
+
   return (
     <>
       <div>
