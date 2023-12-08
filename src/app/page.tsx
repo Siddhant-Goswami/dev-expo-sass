@@ -1,34 +1,16 @@
 import NewFooter from '@/components/NewFooter';
+import ProjectsGrid from '@/components/ProjectsGrid';
 import GetStartedButton from '@/components/get-started-button';
 import BackgroundLooper from '@/components/ui/background-looper';
-import Grid from '@/components/ui/grid';
+import GradientCard from '@/components/ui/gradient-card';
+import { GridFallback } from '@/components/ui/grid-fallback';
 import Navbar from '@/components/ui/navbar';
 import { getAllProjectsSortedByLikes } from '@/server/actions/projects';
 import { JetBrains_Mono } from 'next/font/google';
-import React from 'react';
+import { Suspense } from 'react';
 import MagicIcon from './magic-icon';
 import PlayIcon from './play-icon';
 import ShareIcon from './share-icon';
-
-const GradientCard = ({
-  children,
-  icon,
-}: {
-  children: React.ReactNode;
-  icon: React.ReactNode;
-}) => {
-  return (
-    <>
-      <div className="relative flex h-72 w-[316px] flex-col justify-end overflow-hidden rounded-[20px] border border-green-800 p-2 py-1 pb-3">
-        <div className="absolute left-[-26px] top-[254px] h-[353px] w-[353px] rounded-full bg-green-600 bg-opacity-70 blur-[370.40px]" />
-        <div className="flex h-full w-full items-center justify-items-center">
-          {icon}
-        </div>
-        <div className="bg-neutral-900 bg-opacity-20">{children}</div>
-      </div>
-    </>
-  );
-};
 
 export const revalidate = 15;
 // export const dynamic = 'force-dynamic';
@@ -36,7 +18,7 @@ const jetBrainFont = JetBrains_Mono({ weight: ['400'], subsets: ['latin'] });
 export const runtime = 'edge';
 export const preferredRegion = 'sin1'; // only executes this page in this region
 
-export default async function Page() {
+const trendingProjects = async () => {
   const allProjects = await getAllProjectsSortedByLikes({ limit: 6 });
   const filteredProjectsData = allProjects.map(
     ({ project, user, tags, media, likesCount }) => {
@@ -53,7 +35,12 @@ export default async function Page() {
       };
     },
   );
+  return filteredProjectsData;
+};
 
+export type projectReturnType = ReturnType<typeof trendingProjects>;
+
+export default function Page() {
   return (
     <>
       <Navbar />
@@ -144,12 +131,14 @@ export default async function Page() {
           showcases the power and potential of GenAI.
         </p>
         <div className="max-w-6xl">
-          <Grid projects={filteredProjectsData} />
+          <Suspense fallback={<GridFallback count={6} />}>
+            <ProjectsGrid dataFn={trendingProjects} />
+          </Suspense>
         </div>
       </section>
 
       <section className="mt-32 flex w-full flex-col items-center justify-center">
-        <div className="flex w-3/4 flex-col items-center justify-center rounded-b-md rounded-t-xl border-x border-t border-green-800 bg-radial-gradient py-12">
+        <div className="bg-radial-gradient flex w-3/4 flex-col items-center justify-center rounded-xl border border-green-800 py-12 px-6">
           <h2 className="w-full text-center text-3xl sm:w-3/4 sm:text-6xl">
             Ready to Join the GenAI Elite?
           </h2>

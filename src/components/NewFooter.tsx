@@ -11,7 +11,7 @@ export default function NewFooter() {
         <div className="mx-auto flex flex-col items-center justify-start gap-y-4 px-20 lg:w-full lg:flex-row lg:justify-between">
           <div className="flex w-max flex-col items-center justify-between gap-4 md:flex-row">
             <div className="inline-flex flex-col items-end justify-center py-[7px] pl-px">
-              <div className=" text-xl font-medium text-green-300">
+              <div className=" text-xl font-medium text-brand">
                 OverpoweredJobs
               </div>
               <div className=" text-sm font-medium text-zinc-100 ">
