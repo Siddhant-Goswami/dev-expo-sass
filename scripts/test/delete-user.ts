@@ -12,6 +12,4 @@ const supabaseAdmin = createClient(
   },
 );
 
-await supabaseAdmin.auth.admin.deleteUser(
-  '1ed689a6-e359-4c1f-821d-8c67d56c586f',
-);
+await supabaseAdmin.auth.admin.deleteUser('');
