@@ -39,9 +39,9 @@ export const adminRouter = createTRPCRouter({
 
       const {
         data: { user: userOfApplication },
-      } = await supabaseAdmin.auth.getUser(application.userId);
+      } = await supabaseAdmin.auth.admin.getUserById(application.userId);
 
-      if (!userOfApplication) {
+      if (!userOfApplication?.id) {
         throw new TRPCError({ code: 'NOT_FOUND', message: 'User not found!' });
       }
 
@@ -132,5 +132,22 @@ export const adminRouter = createTRPCRouter({
       return {
         success: true,
       };
+    }),
+  getAllPendingApplications: adminProcedure.query(async ({ ctx }) => {
+    const applications = await ctx.db.query.devApplications.findMany({
+      where: (da, { eq }) => eq(da.status, 'pending'),
+    });
+    return { applications };
+  }),
+
+  getDevApplicationMedia: adminProcedure
+    .input(z.object({ applicationId: z.number() }))
+    .query(async ({ ctx, input }) => {
+      const applicationMedia = await ctx.db.query.devApplicationMedia.findFirst(
+        {
+          where: (m, { eq }) => eq(m.applicationId, input.applicationId),
+        },
+      );
+      return { applicationMedia };
     }),
 });
