@@ -61,7 +61,7 @@ export const DevApplicationApprovedEmail = ({
 
         <Text style={paragraph}>
           if you have any questions or need assistance, our support team is here
-          to help. You can reach us at
+          to help. You can reach us at{' '}
           <Link href={`mailto:overpoweredjobs@100xengineers.com`}>
             overpoweredjobs@100xengineers.com
           </Link>
