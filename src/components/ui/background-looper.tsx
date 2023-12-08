@@ -1,7 +1,7 @@
 function BackgroundLooper() {
   return (
     <div>
-      &lt;&gt;
+      {/* &lt;&gt; */}
       <div className="flex gap-24">
         <svg
           viewBox="0 0 945 954"
