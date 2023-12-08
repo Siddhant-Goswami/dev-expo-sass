@@ -84,7 +84,7 @@ export default function Page() {
           Becoming a member of OverpoweredJobs is straightforward yet
           distinguished. Here’s what it takes:
         </p>
-        <div className="flex w-11/12 max-w-6xl flex-col items-center justify-center gap-6 lg:flex-row lg:gap-0">
+        <div className="flex w-11/12 max-w-6xl flex-col items-center justify-center gap-6 lg:flex-row lg:gap-2">
           <GradientCard icon={<PlayIcon />}>
             <div className="z-50 px-2 text-base font-medium text-white">
               Submit Your Pitch
@@ -132,7 +132,7 @@ export default function Page() {
         </p>
         <div className="max-w-6xl">
           <Suspense fallback={<GridFallback count={6} />}>
-            <ProjectsGrid dataFn={trendingProjects} />
+            <ProjectsGrid hideTags={true} dataFn={trendingProjects} />
           </Suspense>
         </div>
       </section>

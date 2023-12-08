@@ -10,6 +10,7 @@ type ProjectCardProps = {
   projectName: string;
   creator: string;
   likes?: number;
+  hideTags?: boolean;
 } & Pick<Awaited<ReturnType<typeof getAllProjects>>[number], 'tags' | 'media'>;
 
 const ProjectCard: React.FC<ProjectCardProps> = ({
@@ -18,9 +19,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   creator,
   tags,
   media,
+  hideTags,
 }) => {
   const { userId } = useAuth();
-  const visibleTags = tags.slice(0, 3);
+  const visibleTags = hideTags ? [] : tags.slice(0, 3);
 
   return (
     <div
