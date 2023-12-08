@@ -139,4 +139,15 @@ export const adminRouter = createTRPCRouter({
     });
     return { applications };
   }),
+
+  getDevApplicationMedia: adminProcedure
+    .input(z.object({ applicationId: z.number() }))
+    .query(async ({ ctx, input }) => {
+      const applicationMedia = await ctx.db.query.devApplicationMedia.findFirst(
+        {
+          where: (m, { eq }) => eq(m.applicationId, input.applicationId),
+        },
+      );
+      return { applicationMedia };
+    }),
 });
