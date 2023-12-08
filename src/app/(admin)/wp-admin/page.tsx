@@ -5,6 +5,7 @@ import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { DevApplicationCard } from '../_components/devAppCard';
+import { ADMIN_ROLES } from '../constants';
 
 export default async function DemoCreateAccount() {
   const supabase = createServerComponentClient({ cookies });
@@ -15,7 +16,7 @@ export default async function DemoCreateAccount() {
 
   const userRole = session?.user.role;
 
-  const isAdmin = userRole === '100x-admin';
+  const isAdmin = userRole === ADMIN_ROLES._100xAdmin;
   if (!isAdmin) {
     redirect(URLs.home);
   }

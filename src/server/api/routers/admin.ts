@@ -96,6 +96,7 @@ export const adminRouter = createTRPCRouter({
       if (emailSendResponse.error ?? !emailSendResponse.data?.id) {
         console.error(
           `🔴 Failed to send dev application approval email to [${userEmail}]!`,
+          { error: emailSendResponse.error },
         );
         logServerEvent('dev_application_approve_email_send_fail', {
           distinct_id: userId,
