@@ -133,4 +133,10 @@ export const adminRouter = createTRPCRouter({
         success: true,
       };
     }),
+  getAllPendingApplications: adminProcedure.query(async ({ ctx }) => {
+    const applications = await ctx.db.query.devApplications.findMany({
+      where: (da, { eq }) => eq(da.status, 'pending'),
+    });
+    return { applications };
+  }),
 });
