@@ -46,7 +46,7 @@ export const adminRouter = createTRPCRouter({
       }
 
       const userId = application.userId;
-      const userEmail = z.string().email().parse(ctx.session.user.email);
+      const userEmail = z.string().email().parse(userOfApplication.email);
 
       const now = new Date();
 
