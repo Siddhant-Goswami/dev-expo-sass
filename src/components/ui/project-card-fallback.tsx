@@ -17,8 +17,8 @@ export const ProjectCardFallback = () => {
             </svg>
           </div>
 
-          <div className="w-full flex items-center justify-between px-3 pb-6 pt-1.5">
-            <div className="w-full flex flex-col gap-2">
+          <div className="flex w-full items-center justify-between px-3 pb-6 pt-1.5">
+            <div className="flex w-full flex-col gap-2">
               <div className="mb-4 h-2.5 w-48 rounded-full bg-gray-200 dark:bg-gray-700" />
               <div className="mb-2.5 h-2 rounded-full bg-gray-200 dark:bg-gray-700" />
               <div className="mb-2.5 h-2 rounded-full bg-gray-200 dark:bg-gray-700" />

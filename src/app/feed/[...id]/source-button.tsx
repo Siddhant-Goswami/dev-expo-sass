@@ -1,15 +1,22 @@
 'use client';
 import { buttonVariants } from '@/components/ui/button';
 import AuthwallWrapper from '@/components/ui/sign-up-modal';
+import { URLs } from '@/lib/constants';
 import { cn } from '@/utils/cn';
 import { GitHubLogoIcon } from '@radix-ui/react-icons';
 import Link from 'next/link';
 
-function SourceCode({ projectId, sourceCodeUrl }: { projectIdsourceCodeUrl: string }) {
+function SourceCode({
+  projectId,
+  sourceCodeUrl,
+}: {
+  projectId: number;
+  sourceCodeUrl: string;
+}) {
   return (
     <AuthwallWrapper
-    redirectAfterSignin={URLs.projectPage(projectId.toString())}
-  >
+      redirectAfterSignin={URLs.projectPage(projectId.toString())}
+    >
       <Link
         className={cn(
           buttonVariants({

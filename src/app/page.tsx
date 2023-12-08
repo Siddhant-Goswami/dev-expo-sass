@@ -138,7 +138,7 @@ export default function Page() {
       </section>
 
       <section className="mt-32 flex w-full flex-col items-center justify-center">
-        <div className="bg-radial-gradient flex w-3/4 flex-col items-center justify-center rounded-xl border border-green-800 py-12 px-6">
+        <div className="flex w-3/4 flex-col items-center justify-center rounded-xl border border-green-800 bg-radial-gradient px-6 py-12">
           <h2 className="w-full text-center text-3xl sm:w-3/4 sm:text-6xl">
             Ready to Join the GenAI Elite?
           </h2>
