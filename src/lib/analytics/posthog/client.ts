@@ -93,7 +93,11 @@ export const logClientEvent = <TEventKey extends keyof VALID_CLIENT_EVENTS>(
   event: TEventKey,
   payload: VALID_CLIENT_EVENTS[TEventKey],
 ) => {
-  return internal_client.capture(event, payload);
+  try {
+    internal_client.capture(event, payload);
+  } catch (err) {
+    console.error(`Posthog failed on client??`, err);
+  }
 };
 
 export default logClientEvent;

@@ -312,7 +312,7 @@ export function ProjectUploadForm(props: {
               <FormLabel>Youtube video URL</FormLabel>
               <FormControl>
                 <Input
-                  required
+                  // required
                   className="scroll-mt-24"
                   placeholder="https://www.youtube.com/watch?v=t4mb0H4lBDQ"
                   {...field}
