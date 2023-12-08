@@ -113,6 +113,8 @@ export const getAllProjects = async (
   return result;
 };
 
+export type getProjectsReturnType = ReturnType<typeof getAllProjects>;
+
 // get all projects of a user
 export const getProjectsByUserId = async (userId: UserProfileSelect['id']) => {
   const allProjects = await db.query.projects.findMany({
