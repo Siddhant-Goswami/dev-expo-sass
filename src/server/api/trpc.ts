@@ -10,6 +10,7 @@ import { TRPCError, initTRPC } from '@trpc/server';
 import superjson from 'superjson';
 import { ZodError } from 'zod';
 
+import { ADMIN_ROLES } from '@/app/(admin)/constants';
 import { db } from '@/server/db';
 import {
   createRouteHandlerClient,
@@ -152,7 +153,7 @@ const enforceUserIsAdmin = t.middleware(({ ctx, next }) => {
     throw new TRPCError({ code: 'UNAUTHORIZED' });
   }
 
-  if (ctx.session?.user.role !== '100x-admin') {
+  if (ctx.session?.user.role !== ADMIN_ROLES._100xAdmin) {
     throw new TRPCError({
       code: 'FORBIDDEN',
       message: 'You must be an admin to perform this action.',

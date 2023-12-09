@@ -11,7 +11,8 @@ export const sendEmail = async (
     text: props.text!,
 
     ...props,
-    from: 'hello@overpoweredjobs.com',
+
+    from: 'Overpowered Jobs <hello@overpoweredjobs.com>',
     reply_to: 'overpoweredjobs@100xengineers.com',
   });
 
