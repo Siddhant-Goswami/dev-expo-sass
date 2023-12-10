@@ -19,7 +19,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/components/ui/use-toast';
 import VideoRecorder from '@/components/video-recorder';
 import useFacecamUpload from '@/hooks/useFacecamUpload';
-import { useAuth } from '@/hooks/user/auth';
+import logClientEvent from '@/lib/analytics/posthog/client';
 import { devApplicationSchema } from '@/lib/validations/user';
 import { type createDevApplication } from '@/server/actions/users';
 import { api } from '@/trpc/react';
@@ -27,7 +27,6 @@ import { isGithubUserValid } from '@/utils';
 import { cn } from '@/utils/cn';
 import { useMutation } from '@tanstack/react-query';
 import { ChevronLeft, LucideLoader } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 const onboardingStepsSchema = z.object({
@@ -49,28 +48,18 @@ export type VerificationStep = 'fields' | 'video' | 'submitting';
 
 export function OnboardingSteps(props: {
   createDevApplication: typeof createDevApplication;
+  defaultDisplayName: string;
+  defaultGithubUsername: string;
 }) {
-  const { session } = useAuth();
-  const router = useRouter();
-
   const [verificationStep, setVerificationStep] =
     useState<VerificationStep>('fields');
   const [facecamBlobUrl, setFacecamBlobUrl] = useState<string | null>(null);
 
-  const displayName = z
-    .string()
-    .catch('')
-    .parse(session?.user.user_metadata?.name);
-  const githubUsername = z
-    .string()
-    .catch('')
-    .parse(session?.user.user_metadata?.user_name);
-
   const form = useForm<OnbaordingStepsValues>({
     resolver: zodResolver(onboardingStepsSchema),
     defaultValues: {
-      displayName,
-      githubUsername,
+      displayName: props.defaultDisplayName,
+      githubUsername: props.defaultGithubUsername,
       websiteUrl: '',
       twitterUsername: '',
       bio: '',
@@ -80,12 +69,12 @@ export function OnboardingSteps(props: {
   async function submitFields(data: OnbaordingStepsValues) {
     console.log(data);
 
-    const validGithubUsername = githubUsername
-      ? githubUsername
-      : await isGithubUserValid(data.githubUsername);
-    console.log(validGithubUsername);
+    const validGithubUsername =
+      props.defaultGithubUsername.length > 1
+        ? props.defaultGithubUsername
+        : await isGithubUserValid(data.githubUsername);
 
-    console.log('isValidGithubUsername', validGithubUsername);
+    console.log({ validGithubUsername });
 
     if (!validGithubUsername) {
       toast({
@@ -102,6 +91,14 @@ export function OnboardingSteps(props: {
     mutateAsync: validateAndPersistFacecamUpload,
     isLoading: isValidatingUpload,
   } = api.devApplication.validateAndPersistFacecamUpload.useMutation({
+    onMutate: async ({ devApplicationId, publicId }) => {
+      logClientEvent('click_application_submit', {
+        timestamp: Date.now(),
+        devApplicationId,
+        videoPublicId: publicId,
+      });
+    },
+
     onSuccess: (data) => {
       if (data?.success) {
         toast({
@@ -220,7 +217,7 @@ export function OnboardingSteps(props: {
                   <Input
                     {...field}
                     placeholder="Enter your GitHub username"
-                    disabled={!!githubUsername}
+                    disabled={!!props.defaultGithubUsername}
                   />
                 </FormControl>
                 <FormDescription>

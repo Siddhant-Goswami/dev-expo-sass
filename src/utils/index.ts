@@ -33,15 +33,15 @@ export async function isGithubUserValid(username: string) {
   try {
     const response = await fetch(`https://api.github.com/users/${username}`);
 
-    if (response.ok) {
-      console.log(`The GitHub user '${username}' exists.`);
-      return username;
-    } else {
-      console.log(`The GitHub user '${username}' does not exist.`);
-      return '';
+    if (!response.ok) {
+      throw new Error(`Error: [${response.status}] ${response.status}`);
     }
+
+    console.log(`The GitHub user '${username}' exists.`);
+    return username;
   } catch (error) {
     console.error('Error:', error);
+    return null;
   }
 }
 

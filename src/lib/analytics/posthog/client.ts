@@ -8,6 +8,12 @@ posthog.init(env.NEXT_PUBLIC_POSTHOG_PUBLIC_KEY, {
 const internal_client = posthog;
 
 type VALID_CLIENT_EVENTS = {
+  click_application_submit: {
+    devApplicationId: number;
+    timestamp: number;
+    videoPublicId: string;
+  };
+
   click_auth_button: {
     timestamp: number;
   };
