@@ -10,6 +10,7 @@ import { devApplications, type DevApplicationSelect } from '@/server/db/schema';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { desc } from 'drizzle-orm';
 import { cookies } from 'next/headers';
+import { z } from 'zod';
 
 // export const runtime = 'edge'
 // export const preferredRegion = 'sin1'; // only executes this page in this region
@@ -56,6 +57,15 @@ async function Page() {
     );
   }
 
+  const defaultDisplayName = z
+    .string()
+    .catch('')
+    .parse(session?.user.user_metadata?.name);
+  const defaultGithubUsername = z
+    .string()
+    .catch('')
+    .parse(session?.user.user_metadata?.user_name);
+
   return (
     <>
       <NavBar />
@@ -77,7 +87,11 @@ async function Page() {
           {devApplicationStatus ? (
             <ProjectUpload />
           ) : (
-            <OnboardingSteps createDevApplication={createDevApplication} />
+            <OnboardingSteps
+              defaultDisplayName={defaultDisplayName}
+              defaultGithubUsername={defaultGithubUsername}
+              createDevApplication={createDevApplication}
+            />
           )}
         </div>
       </div>
