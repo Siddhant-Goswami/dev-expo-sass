@@ -69,12 +69,12 @@ export function OnboardingSteps(props: {
   async function submitFields(data: OnbaordingStepsValues) {
     console.log(data);
 
-    const validGithubUsername = githubUsername
-      ? githubUsername
-      : await isGithubUserValid(data.githubUsername);
-    console.log(validGithubUsername);
+    const validGithubUsername =
+      props.defaultGithubUsername.length > 1
+        ? props.defaultGithubUsername
+        : await isGithubUserValid(data.githubUsername);
 
-    console.log('isValidGithubUsername', validGithubUsername);
+    console.log({ validGithubUsername });
 
     if (!validGithubUsername) {
       toast({
