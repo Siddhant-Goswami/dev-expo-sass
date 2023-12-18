@@ -102,7 +102,7 @@ async function ProjectData({ params }: PageProps) {
           {userId === dev.id && <ProjectOptions projectId={projectId} />}
         </div>
         <div className="md:px-12">
-          <div className="mb-6 flex items-center justify-between">
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Link href={`/user/${dev.username}`}>
                 <Image
@@ -208,10 +208,10 @@ async function ProjectData({ params }: PageProps) {
             <Carousel imagesArr={images} />
           </div>
 
-          <div className="mt-8 p-6">
-            <section>
+          <div className="">
+            <article className="prose block w-full dark:prose-invert">
               <MarkdownComponent content={description} />
-            </section>
+            </article>
           </div>
 
           <GetInTouchSection
